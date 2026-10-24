@@ -19,6 +19,8 @@ let currentHat = localStorage.getItem('pawly_pet_hat') || '';
 let currentClothes = localStorage.getItem('pawly_pet_clothes') || '';
 let sseConnection = null;
 let toastTimer = null;
+let missCombo = 0;
+let comboTimer = null;
 
 // API Yardımcısı
 const api = async (p, o = {}) => {
@@ -85,6 +87,7 @@ function connectEvents() {
 
     sse.addEventListener('widget:miss_you', (e) => {
       const data = JSON.parse(e.data);
+      if (window.PawlyAudio) window.PawlyAudio.soundHeart();
       spawnHeart(null, null, '❤️');
       toast(data.toast || 'Partnerin seni çok özledi! ❤️');
       loadHomeBento();
@@ -92,12 +95,14 @@ function connectEvents() {
 
     sse.addEventListener('widget:distance', (e) => {
       const data = JSON.parse(e.data);
+      if (window.PawlyAudio) window.PawlyAudio.soundPop(550);
       toast(`Partnerin konumunu güncelledi: ${data.location?.name || ''}`);
       loadHomeBento();
     });
 
     sse.addEventListener('widget:jar', (e) => {
       const data = JSON.parse(e.data);
+      if (window.PawlyAudio) window.PawlyAudio.soundBubble();
       toast(data.toast || 'Kavanoza yeni bir duygu şekeri eklendi! 🍬');
       loadHomeBento();
     });
@@ -111,6 +116,7 @@ function connectEvents() {
 
     sse.addEventListener('pet:tap', (e) => {
       const data = JSON.parse(e.data);
+      if (window.PawlyAudio) window.PawlyAudio.soundHappy();
       spawnHeart(null, null, '💖');
       toast(`${data.actor.name} canavarı okşadı 🤗`);
       triggerPetSquish();
@@ -118,6 +124,7 @@ function connectEvents() {
 
     sse.addEventListener('pet:created', (e) => {
       const data = JSON.parse(e.data);
+      if (window.PawlyAudio) window.PawlyAudio.soundFanfare();
       if (data.message) toast(data.message);
       loadPets();
     });
@@ -135,7 +142,7 @@ function connectEvents() {
 }
 
 function triggerPetSquish() {
-  const fig = $('#petAvatarFigure');
+  const fig = $('#petAvatarFigure') || $('#petSvgBox');
   if (fig) {
     fig.classList.add('squish-anim');
     setTimeout(() => fig.classList.remove('squish-anim'), 400);
@@ -146,6 +153,8 @@ function triggerPetSquish() {
 // EKRAN VE SEKME DEĞİŞİMİ
 // ==========================================================================
 function showScreen(screenId) {
+  if (window.PawlyAudio) window.PawlyAudio.soundPop(500);
+
   $$('.screen').forEach(s => s.classList.add('hidden'));
   const target = $(`#screen-${screenId}`);
   if (target) target.classList.remove('hidden');
@@ -181,10 +190,9 @@ async function loadHomeBento() {
       api('/api/widgets/status').catch(() => ({ me: { status: 'Mutlu 🥰' } }))
     ]);
 
-    // Aktif pet bul
     const currentPet = pets[0] || null;
 
-    // 1. MISS YOU WIDGET
+    // 1. MISS YOU WIDGET (With 3D puffy heart & combo counter)
     const missCount = (missData.sent || 0) + (missData.received || 0);
     const missCard = `
       <div class="bento-card widget-miss-you">
@@ -192,7 +200,8 @@ async function loadHomeBento() {
           <span class="bento-label">❤️ Miss You</span>
           <span class="badge badge-couple">+1 Özlem</span>
         </div>
-        <div class="miss-you-heart-wrap" id="btnMissYouHeart">
+        ${missCombo > 1 ? `<div class="miss-you-combo-badge">${missCombo}x COMBO! 🔥</div>` : ''}
+        <div class="miss-you-heart-wrap" id="btnMissYouHeart" title="Kalbi pompala!">
           <svg class="miss-you-heart-svg" viewBox="0 0 100 90">
             <defs>
               <linearGradient id="heartGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -226,12 +235,9 @@ async function loadHomeBento() {
           <div class="sleep-circles">
             <!-- Concentric Progress Rings -->
             <svg width="130" height="130" viewBox="0 0 130 130">
-              <!-- Background Tracks -->
               <circle cx="65" cy="65" r="54" fill="none" stroke="#E2E8F0" stroke-width="8"/>
               <circle cx="65" cy="65" r="40" fill="none" stroke="#E2E8F0" stroke-width="8"/>
-              <!-- Partner Arc (Mint) -->
               <circle cx="65" cy="65" r="54" fill="none" stroke="#38C793" stroke-width="8" stroke-dasharray="339" stroke-dashoffset="${339 - (339 * Math.min(partnerHours / 10, 1))}" stroke-linecap="round" transform="rotate(-90 65 65)"/>
-              <!-- Me Arc (Peach) -->
               <circle cx="65" cy="65" r="40" fill="none" stroke="#FFA34E" stroke-width="8" stroke-dasharray="251" stroke-dashoffset="${251 - (251 * Math.min(meHours / 10, 1))}" stroke-linecap="round" transform="rotate(-90 65 65)"/>
             </svg>
             <div class="sleep-vs-badge">VS</div>
@@ -290,7 +296,6 @@ async function loadHomeBento() {
 
     // 4. MOOD CANDY JAR WIDGET
     const candies = jarData.candies || [];
-    const candyColors = ['#FF7B90', '#FFD166', '#06D6A0', '#118AB2', '#9D7BFF'];
     const moodJarCard = `
       <div class="bento-card widget-jar">
         <div class="bento-header">
@@ -340,10 +345,13 @@ async function loadHomeBento() {
       </div>
     `;
 
-    // 6. PET SUMMARY CARD
+    // 6. PET SUMMARY CARD WITH SVG MASCOT
     let petSummaryCard = '';
     if (currentPet) {
-      const petFace = !currentPet.hatched ? '🥚' : (currentPet.sleeping ? '💤' : speciesIcon(currentPet.species));
+      const petMascotSvg = window.PawlyMascot && currentPet.hatched ?
+        window.PawlyMascot.renderMascotSVG(currentPet.species, currentPet.sleeping ? 'sleeping' : 'idle', { hat: currentHat, clothes: currentClothes }) :
+        (window.PawlyMascot ? window.PawlyMascot.renderEggSVG(currentPet.hatchProgress, currentPet.hatchNeeded) : '🐱');
+
       petSummaryCard = `
         <div class="bento-card bento-span-2" style="background:linear-gradient(145deg,#FFFBF5,#FFF2E5);border-color:#FFE0C2">
           <div class="bento-header">
@@ -351,7 +359,7 @@ async function loadHomeBento() {
             <span class="badge">Sv.${currentPet.level} · ${esc(currentPet.stageName)}</span>
           </div>
           <div style="display:flex;align-items:center;gap:16px">
-            <div style="font-size:52px;cursor:pointer;line-height:1" id="homePetTap" title="Okşa!">${petFace}</div>
+            <div style="width:75px;height:75px;cursor:pointer;flex-shrink:0" id="homePetTap" title="Okşa!">${petMascotSvg}</div>
             <div style="flex:1">
               <div style="font-family:var(--font-display);font-size:18px;font-weight:700;color:var(--text-pure)">${esc(currentPet.name)}</div>
               <div style="font-size:12px;color:var(--text-muted);margin:2px 0 6px">
@@ -378,7 +386,6 @@ async function loadHomeBento() {
       ${petSummaryCard}
     `;
 
-    // Dinleyicileri Bağla
     bindHomeEvents();
 
   } catch (err) {
@@ -387,25 +394,39 @@ async function loadHomeBento() {
 }
 
 function bindHomeEvents() {
-  // Miss you heart click
+  // Miss you heart click with combo & sound
   const sendMiss = async () => {
-    spawnHeart(null, null, '❤️');
+    missCombo++;
+    clearTimeout(comboTimer);
+    comboTimer = setTimeout(() => { missCombo = 0; }, 2500);
+
+    if (window.PawlyAudio) window.PawlyAudio.soundHeart();
+    for (let i = 0; i < 3; i++) {
+      setTimeout(() => spawnHeart(null, null, '❤️'), i * 70);
+    }
     triggerPetSquish();
+
+    const cnt = $('#missYouCount');
+    if (cnt) cnt.textContent = parseInt(cnt.textContent || '999') + 1;
+
+    if (missCombo > 1) {
+      toast(`${missCombo}x AŞK KOMBOSU! ❤️‍🔥`);
+    }
+
     try {
       const res = await api('/api/widgets/miss-you', { method: 'POST' });
-      toast('Özlemin partnerine uçtu! ❤️');
-      const cnt = $('#missYouCount');
-      if (cnt) cnt.textContent = res.count || (parseInt(cnt.textContent) + 1);
+      if (cnt && res.count) cnt.textContent = res.count;
     } catch {}
   };
 
   if ($('#btnMissYouHeart')) $('#btnMissYouHeart').onclick = sendMiss;
   if ($('#btnSendMissYou')) $('#btnSendMissYou').onclick = sendMiss;
 
-  // Candy Jar Drop
+  // Candy Jar Drop with audio
   $$('.jar-mood-btn').forEach(btn => {
     btn.onclick = async () => {
       const { dropMood, emoji, color } = btn.dataset;
+      if (window.PawlyAudio) window.PawlyAudio.soundBubble();
       spawnHeart(null, null, emoji);
       try {
         await api('/api/widgets/jar/drop', {
@@ -421,6 +442,7 @@ function bindHomeEvents() {
   // Location chips
   $$('.dist-chip').forEach(btn => {
     btn.onclick = async () => {
+      if (window.PawlyAudio) window.PawlyAudio.soundPop(520);
       if (btn.dataset.together) {
         await api('/api/widgets/distance', {
           method: 'POST',
@@ -446,6 +468,7 @@ function bindHomeEvents() {
   $$('.status-pick-item').forEach(btn => {
     btn.onclick = async () => {
       const { status, emoji, text } = btn.dataset;
+      if (window.PawlyAudio) window.PawlyAudio.soundPop(650);
       try {
         await api('/api/widgets/status', {
           method: 'POST',
@@ -460,6 +483,7 @@ function bindHomeEvents() {
   // Home pet tap
   if ($('#homePetTap')) {
     $('#homePetTap').onclick = () => {
+      if (window.PawlyAudio) window.PawlyAudio.soundHappy();
       spawnHeart(null, null, '💖');
       triggerPetSquish();
       toast('Canavarı okşadın 🤗');
@@ -472,6 +496,7 @@ function bindHomeEvents() {
 
   if ($('#btnRefreshBoard')) {
     $('#btnRefreshBoard').onclick = () => {
+      if (window.PawlyAudio) window.PawlyAudio.soundPop(700);
       loadHomeBento();
       toast('Pano yenilendi 🔄');
     };
@@ -479,7 +504,7 @@ function bindHomeEvents() {
 }
 
 // ==========================================================================
-// EKRAN 2: PET HOUSE & ODALAR (SCREENSHOT 2 & 3)
+// EKRAN 2: PET HOUSE & MİNİ-OYUNLAR (SCREENSHOT 2 & 3)
 // ==========================================================================
 async function loadPets() {
   try {
@@ -510,111 +535,12 @@ function renderSpeciesRow() {
 
 function renderPetHouse() {
   const stage = $('#roomStage');
-  const bubble = $('#petSpeechBubble');
-  const face = $('#petFaceEmoji');
-  const hatSlot = $('#petHatSlot');
-  const clothesSlot = $('#petClothesSlot');
+  if (!stage) return;
 
-  if (!stage || !activePet) {
-    if (bubble) bubble.textContent = 'Henüz canavarın yok. Aşağıdan bir yumurta al! 🥚';
-    return;
-  }
-
-  // Kıyafetleri göster
-  if (hatSlot) hatSlot.textContent = currentHat;
-  if (clothesSlot) clothesSlot.textContent = currentClothes;
-
-  // Yüz ifadesi
-  const petIcon = !activePet.hatched ? '🥚' : (activePet.sleeping ? '💤' : speciesIcon(activePet.species));
-  if (face) face.textContent = petIcon;
-
-  // Temizle ve odayı kur
-  stage.className = `room-stage room-theme-${currentRoom}`;
-  $$('.room-prop').forEach(p => p.remove());
-
-  // Oda öğeleri
-  if (currentRoom === 'living') {
-    stage.insertAdjacentHTML('afterbegin', `
-      <div class="living-fireplace room-prop">🔥</div>
-      <div class="living-plant room-prop">🪴</div>
-      <div class="living-picture room-prop">🖼️</div>
-    `);
-    if (bubble) bubble.textContent = activePet.hatched ? 'Cozy living room! Let\'s cuddle by the fire! 🛋️' : 'Yumurta şömine yanında ısınıyor 🥚';
-  } else if (currentRoom === 'kitchen') {
-    stage.insertAdjacentHTML('afterbegin', `
-      <div class="kitchen-tablecloth room-prop"></div>
-      <div class="kitchen-dish room-prop">🍓 🥛 🐟</div>
-    `);
-    if (bubble) bubble.textContent = 'So hungry! My tummy is rumbling! 🥺';
-  } else if (currentRoom === 'bath') {
-    stage.insertAdjacentHTML('afterbegin', `
-      <div class="bath-tub-visual room-prop">
-        <div class="bath-ducky">🐥</div>
-      </div>
-      <div class="floating-soap-bubble room-prop" style="top:40px;left:40px" data-pop="true">🫧</div>
-      <div class="floating-soap-bubble room-prop" style="top:80px;right:60px" data-pop="true">🫧</div>
-      <div class="floating-soap-bubble room-prop" style="top:120px;left:70px" data-pop="true">🫧</div>
-    `);
-    if (bubble) bubble.textContent = 'Mmm... warm bubble bath is so fresh! 🫧';
-
-    // Baloncuk patlatma
-    $$('[data-pop]').forEach(b => {
-      b.onclick = () => {
-        spawnHeart(b.getBoundingClientRect().left, b.getBoundingClientRect().top, '✨');
-        b.style.transform = 'scale(1.6)';
-        b.style.opacity = '0';
-        setTimeout(() => b.remove(), 200);
-        toast('Baloncuk patlattın! 🫧');
-      };
+  if (window.PawlyRoomGame) {
+    window.PawlyRoomGame.setupRoomStage(stage, activePet, currentRoom, async (act) => {
+      if (activePet) await petCare(activePet.id, act);
     });
-  } else if (currentRoom === 'bed') {
-    stage.insertAdjacentHTML('afterbegin', `
-      <div class="bed-frame-visual room-prop">
-        <div class="bed-duvet"></div>
-      </div>
-      <div class="zzz-cloud room-prop">💤</div>
-    `);
-    if (bubble) bubble.textContent = activePet.sleeping ? 'Mışıl mışıl uyuyor... Zzz 💤' : 'I\'m so sleepy... tuck me in! 🛏️';
-  } else if (currentRoom === 'tamagotchi') {
-    // Screenshot 3 Retro Casing
-    stage.innerHTML = `
-      <div class="tamagotchi-casing room-prop">
-        <div class="tamagotchi-keychain-loop"></div>
-        <div class="tamagotchi-screen-frame">
-          <div class="pet-speech-bubble" style="font-size:11px;padding:4px 8px;margin-bottom:6px">So hungry! My tummy is rumbling! 🥺</div>
-          <div style="font-size:54px;line-height:1" class="clickable-pet" id="tamagotchiPet">${petIcon}</div>
-        </div>
-        <div class="tamagotchi-buttons-row">
-          <button class="tamagotchi-btn" data-tama="feed" title="Mama">🦴</button>
-          <button class="tamagotchi-btn" data-tama="water" title="Su">🥣</button>
-          <button class="tamagotchi-btn" data-tama="love" title="Sevgi">🍼</button>
-        </div>
-      </div>
-    `;
-
-    // Tamagotchi düğmeleri
-    $$('[data-tama]').forEach(btn => {
-      btn.onclick = async () => {
-        spawnHeart(null, null, '💖');
-        toast('Tamagotchi düğmesine bastın!');
-        if (activePet) {
-          const act = btn.dataset.tama === 'feed' ? 'feed' : btn.dataset.tama === 'water' ? 'water' : 'pet';
-          await petCare(activePet.id, act);
-        }
-      };
-    });
-    return;
-  }
-
-  // Tıklama ile okşama
-  const petFig = $('#petAvatarFigure');
-  if (petFig) {
-    petFig.onclick = () => {
-      spawnHeart(null, null, '💖');
-      triggerPetSquish();
-      if (bubble) bubble.textContent = 'I love you so much! 🤗';
-      if (activePet) api(`/api/pets/${activePet.id}/tap`, { method: 'POST' }).catch(() => {});
-    };
   }
 }
 
@@ -644,7 +570,9 @@ function renderPetList() {
   $$('[data-hatch]').forEach(b => {
     b.onclick = async () => {
       try {
+        if (window.PawlyAudio) window.PawlyAudio.soundPop(400);
         const res = await api(`/api/pets/${b.dataset.hatch}/hatch`, { method: 'POST' });
+        if (window.PawlyAudio) window.PawlyAudio.soundFanfare();
         toast(res.toast || 'Yumurtaya tıkladın! 🥚');
         loadPets();
       } catch (e) { toast(e.message); }
@@ -674,7 +602,9 @@ function renderPhoneSimulator() {
   const screen = $('#iphoneScreenContent');
   if (!screen) return;
 
-  const petIcon = activePet ? speciesIcon(activePet.species) : '🐱';
+  const petSvg = window.PawlyMascot && activePet ?
+    window.PawlyMascot.renderMascotSVG(activePet.species, 'happy', { hat: currentHat, clothes: currentClothes }) :
+    '<div style="font-size:32px">🐱</div>';
 
   if (currentSimMode === 'lock') {
     // Kilit Ekranı (Screenshot 3 & 4)
@@ -692,22 +622,22 @@ function renderPhoneSimulator() {
       <!-- Kilit Ekranı Widget'ları -->
       <div class="lockscreen-widgets-rail">
         <!-- Outline Pet Widget (Screenshot 3) -->
-        <div class="lockscreen-widget-rect">
-          <span style="font-size:26px">${petIcon}</span>
+        <div class="lockscreen-widget-rect" id="simWidgetKiss" style="cursor:pointer">
+          <div style="width:36px;height:36px;flex-shrink:0">${petSvg}</div>
           <div style="font-size:10px;font-weight:700;line-height:1.2;color:#2D1E14">
             "Wait! I forgot to kiss you! 💋"
           </div>
         </div>
 
         <!-- Egg Hatch Circle Widget (Screenshot 3) -->
-        <div class="lockscreen-widget-circle">
-          <span style="font-size:20px">🥚</span>
+        <div class="lockscreen-widget-circle" id="simWidgetEgg" style="cursor:pointer">
+          <span style="font-size:22px">🥚</span>
           <span style="font-size:8px;font-weight:700;color:#2D1E14;margin-top:2px">Hatch 20h</span>
         </div>
       </div>
 
       <!-- Kilit Ekranı Bildirim Kartı (Miss You) -->
-      <div style="background:rgba(255,255,255,0.7);backdrop-filter:blur(16px);border-radius:18px;padding:12px;margin-top:14px;border:1.5px solid rgba(255,255,255,0.8)">
+      <div style="background:rgba(255,255,255,0.7);backdrop-filter:blur(16px);border-radius:18px;padding:12px;margin-top:14px;border:1.5px solid rgba(255,255,255,0.8);cursor:pointer" id="simMissCard">
         <div style="display:flex;justify-content:space-between;font-size:11px;font-weight:700;color:var(--text-muted)">
           <span>🐾 Pawly Miss You</span>
           <span>Az önce</span>
@@ -785,8 +715,8 @@ function renderPhoneSimulator() {
             <span>🐾 Ponçik (Kedi)</span>
             <span style="color:#2EB080">Mutlu 🥰</span>
           </div>
-          <div style="display:flex;align-items:center;gap:10px;margin-top:6px">
-            <span style="font-size:38px">${petIcon}</span>
+          <div style="display:flex;align-items:center;gap:12px;margin-top:6px">
+            <div style="width:50px;height:50px;flex-shrink:0">${petSvg}</div>
             <div style="font-size:11px;font-weight:600;color:#2D1E14;line-height:1.3">
               "Karnım tok, enerjim yerinde! Beni sevmeye devam et 💕"
             </div>
@@ -795,6 +725,15 @@ function renderPhoneSimulator() {
       </div>
     `;
   }
+
+  // Simülatör widget tıklama sesleri
+  screen.querySelectorAll('[id^="sim"]').forEach(el => {
+    el.onclick = () => {
+      if (window.PawlyAudio) window.PawlyAudio.soundPop(600);
+      el.classList.add('squish-anim');
+      setTimeout(() => el.classList.remove('squish-anim'), 300);
+    };
+  });
 }
 
 // ==========================================================================
@@ -807,11 +746,9 @@ async function loadTogetherHub() {
       api('/api/friends/relationships').catch(() => ({ relationships: [] }))
     ]);
 
-    // Kod görüntüle
     const codeEl = $('#myPairCode');
     if (codeEl) codeEl.textContent = codeData.pairCode || '------';
 
-    // Aktif ilişkiler
     const rels = relData.relationships || [];
     myRelationship = rels[0] || null;
     partnerUser = myRelationship ? myRelationship.partner : null;
@@ -846,11 +783,11 @@ async function loadTogetherHub() {
       }
     }
 
-    // Demo partner butonu
     const btnDemo = $('#btnConnectDemoPartner');
     if (btnDemo) {
       btnDemo.onclick = async () => {
         try {
+          if (window.PawlyAudio) window.PawlyAudio.soundFanfare();
           const res = await api('/api/pair/demo', { method: 'POST' });
           toast(res.message || 'Alex 💕 ile eşleştin!');
           await loadTogetherHub();
@@ -978,6 +915,18 @@ function renderProfile() {
 // BAŞLANGIÇ VE EVENT ATAMALARI (INIT)
 // ==========================================================================
 async function init() {
+  // Ses Aç/Kapat Butonu
+  const btnSound = $('#btnSoundToggle');
+  if (btnSound && window.PawlyAudio) {
+    btnSound.textContent = window.PawlyAudio.isSoundEnabled() ? '🔊' : '🔇';
+    btnSound.onclick = () => {
+      const active = window.PawlyAudio.toggleSound();
+      btnSound.textContent = active ? '🔊' : '🔇';
+      if (active) window.PawlyAudio.soundPop(880);
+      toast(active ? 'Oyun sesleri açıldı 🔊' : 'Oyun sesleri kapatıldı 🔇');
+    };
+  }
+
   // Tabbar butonları
   $$('#tabbar button').forEach(b => {
     b.onclick = () => showScreen(b.dataset.screen);
@@ -986,6 +935,7 @@ async function init() {
   // Kilit / Ana Ekran Simülatör geçişi
   $$('[data-sim-mode]').forEach(b => {
     b.onclick = () => {
+      if (window.PawlyAudio) window.PawlyAudio.soundPop(600);
       $$('[data-sim-mode]').forEach(x => x.classList.remove('active'));
       b.classList.add('active');
       currentSimMode = b.dataset.simMode;
@@ -996,6 +946,7 @@ async function init() {
   // Oda Sekmeleri (Screenshot 2)
   $$('#roomTabsBar .room-tab-btn').forEach(b => {
     b.onclick = () => {
+      if (window.PawlyAudio) window.PawlyAudio.soundPop(550);
       $$('#roomTabsBar .room-tab-btn').forEach(x => x.classList.remove('active'));
       b.classList.add('active');
       currentRoom = b.dataset.room;
@@ -1012,19 +963,23 @@ async function init() {
   // Gardırop butonları
   $$('[data-outfit-hat]').forEach(b => {
     b.onclick = () => {
+      if (window.PawlyAudio) window.PawlyAudio.soundPop(700);
       currentHat = b.dataset.outfitHat;
       localStorage.setItem('pawly_pet_hat', currentHat);
       toast('Şapka giyildi! 👒');
       renderPetHouse();
+      loadHomeBento();
     };
   });
 
   $$('[data-outfit-clothes]').forEach(b => {
     b.onclick = () => {
+      if (window.PawlyAudio) window.PawlyAudio.soundPop(700);
       currentClothes = b.dataset.outfitClothes;
       localStorage.setItem('pawly_pet_clothes', currentClothes);
       toast('Kıyafet giyildi! 👗');
       renderPetHouse();
+      loadHomeBento();
     };
   });
 
@@ -1032,6 +987,7 @@ async function init() {
   $$('#petCareActionsGrid .pet-care-btn').forEach(b => {
     b.onclick = async () => {
       if (!activePet) return;
+      if (window.PawlyAudio) window.PawlyAudio.soundPop(600);
       await petCare(activePet.id, b.dataset.petCare);
     };
   });
@@ -1043,6 +999,7 @@ async function init() {
       const withUser = $('#petWith').value.trim();
       if (!name) return toast('Canavarına bir isim ver!');
       try {
+        if (window.PawlyAudio) window.PawlyAudio.soundFanfare();
         await api('/api/pets', {
           method: 'POST',
           body: JSON.stringify({ name, species: 'cat', withUser })
@@ -1058,6 +1015,7 @@ async function init() {
   // Kod Kopyalama
   if ($('#btnCopyCode')) {
     $('#btnCopyCode').onclick = () => {
+      if (window.PawlyAudio) window.PawlyAudio.soundPop(800);
       const c = $('#myPairCode').textContent;
       navigator.clipboard.writeText(c);
       toast('Eşleşme kodu panoya kopyalandı! 📋');
@@ -1076,6 +1034,7 @@ async function init() {
           method: 'POST',
           body: JSON.stringify({ code, type })
         });
+        if (window.PawlyAudio) window.PawlyAudio.soundFanfare();
         toast(res.message || 'Eşleşme başarıyla tamamlandı! 🎉');
         $('#inputPairCode').value = '';
         loadTogetherHub();
@@ -1106,6 +1065,7 @@ async function init() {
   if ($('#authGuest')) {
     $('#authGuest').onclick = async () => {
       try {
+        if (window.PawlyAudio) window.PawlyAudio.soundHappy();
         const res = await api('/api/auth/guest', { method: 'POST' });
         token = res.token;
         localStorage.setItem('pawly_token', token);
