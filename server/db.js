@@ -1,7 +1,9 @@
 const fs = require('fs');
 const path = require('path');
 
-const DATA_DIR = path.join(__dirname, '..', 'data');
+const isVercel = !!(process.env.VERCEL || process.env.NOW_REGION);
+const SEED_FILE = path.join(__dirname, '..', 'data', 'db.json');
+const DATA_DIR = isVercel ? '/tmp/pawly_data' : path.join(__dirname, '..', 'data');
 const FILE = path.join(DATA_DIR, 'db.json');
 
 const CODE_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
@@ -75,15 +77,39 @@ function migrate(d) {
 let db = null;
 
 function load() {
-  if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
-  if (!fs.existsSync(FILE)) { db = migrate(fresh()); save(); return db; }
-  try { db = migrate(JSON.parse(fs.readFileSync(FILE, 'utf8'))); }
-  catch { db = migrate(fresh()); }
+  try {
+    if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
+    
+    // Vercel'de /tmp içine ilk kez seed kopyala
+    if (isVercel && !fs.existsSync(FILE) && fs.existsSync(SEED_FILE)) {
+      try {
+        fs.copyFileSync(SEED_FILE, FILE);
+      } catch {}
+    }
+
+    if (!fs.existsSync(FILE)) {
+      db = migrate(fresh());
+      save();
+      return db;
+    }
+
+    db = migrate(JSON.parse(fs.readFileSync(FILE, 'utf8')));
+  } catch {
+    db = migrate(fresh());
+  }
   return db;
 }
 
 function get() { return db || load(); }
-function save() { fs.writeFileSync(FILE, JSON.stringify(db, null, 2)); }
+
+function save() {
+  try {
+    if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
+    fs.writeFileSync(FILE, JSON.stringify(db, null, 2));
+  } catch (err) {
+    console.warn('DB save warning:', err.message);
+  }
+}
 function nid(p) { return `${p}_${(db.seq++).toString(36)}${Date.now().toString(36)}`; }
 
 module.exports = { load, get, save, nid, generatePairCode };
