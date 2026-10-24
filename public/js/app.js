@@ -216,6 +216,14 @@ function connectEvents() {
       loadHomeBento();
     });
 
+    sse.addEventListener('widget:plant_watered', (e) => {
+      const data = JSON.parse(e.data);
+      if (window.PawlyAudio) window.PawlyAudio.soundBubble();
+      spawnHeart(null, null, '💧');
+      toast(data.toast || 'Partnerin ortak çiçeği suladı! 💧');
+      loadHomeBento();
+    });
+
     sseConnection = sse;
   } catch (err) {
     console.error('SSE bağlantı hatası:', err);
@@ -262,7 +270,7 @@ async function loadHomeBento() {
   if (!container) return;
 
   try {
-    const [boardData, missData, sleepData, distData, jarData, statusData, doodleData] = await Promise.all([
+    const [boardData, missData, sleepData, distData, jarData, statusData, doodleData, plantData] = await Promise.all([
       api('/api/widgets'),
       api('/api/widgets/miss-you').catch(() => ({ sent: 999, received: 420 })),
       api('/api/widgets/sleep').catch(() => ({
@@ -274,7 +282,8 @@ async function loadHomeBento() {
       api('/api/widgets/distance').catch(() => ({ distanceKm: 5.3, myLocation: { name: 'Evde 🏠' }, partnerLocation: { name: 'Kafede ☕' } })),
       api('/api/widgets/jar').catch(() => ({ candies: [] })),
       api('/api/widgets/status').catch(() => ({ me: { status: 'Mutlu 🥰' } })),
-      api('/api/widgets/doodle').catch(() => ({ doodle: null }))
+      api('/api/widgets/doodle').catch(() => ({ doodle: null })),
+      api('/api/widgets/plant').catch(() => ({ plant: { stageLabel: 'Filiz', stageEmoji: '🌿', growth: 35, info: { name: 'Aşk Gülü 🌹' } } }))
     ]);
 
     const currentPet = pets[0] || null;
@@ -520,6 +529,31 @@ async function loadHomeBento() {
       `;
     }
 
+    // 8. COUPLES LOVE GARDEN WIDGET (Ortak Aşk & Çiçek Bahçesi)
+    const plantObj = plantData?.plant || {
+      stageLabel: 'Filiz',
+      stageEmoji: '🌿',
+      growth: 35,
+      info: { name: 'Aşk Gülü 🌹' }
+    };
+    const plantCard = `
+      <div class="bento-card widget-plant">
+        <div class="bento-header">
+          <span class="bento-label">🌱 Ortak Çift Bahçesi</span>
+          <span class="badge" style="background:#D8F5EA;color:#1B4D3E">${esc(plantObj.stageLabel || 'Filiz')}</span>
+        </div>
+        <div class="plant-display-stage">
+          <div class="plant-flower-hero">${plantObj.stageEmoji || '🌿'}</div>
+          <div style="font-size:12px;font-weight:700;color:var(--text-pure);margin-top:4px">${esc(plantObj.info?.name || 'Aşk Çiçeği')}</div>
+          <div class="plant-growth-track">
+            <div class="plant-growth-fill" style="width:${plantObj.growth || 0}%"></div>
+          </div>
+          <div style="font-size:10px;font-weight:700;color:#2EB080">%${plantObj.growth || 0} Büyüme İlerlemesi</div>
+        </div>
+        <button class="btn-water-plant" id="btnWaterPlant">💧 Birlikte Sula (+25)</button>
+      </div>
+    `;
+
     container.innerHTML = `
       ${missCard}
       ${sleepCard}
@@ -527,6 +561,7 @@ async function loadHomeBento() {
       ${moodJarCard}
       ${doodleCard}
       ${statusCard}
+      ${plantCard}
       ${petSummaryCard}
     `;
 
@@ -1160,6 +1195,87 @@ function downloadHdWallpaper() {
   });
 }
 
+// ==========================================================================
+// RAHATLATICI ORTAM SESLERİ (COZY LO-FI AMBIENCE) & BÜYÜME GÜNLÜĞÜ
+// ==========================================================================
+
+function openAmbienceModal() {
+  $('#ambienceModal')?.classList.remove('hidden');
+  updateAmbienceUI();
+}
+
+function closeAmbienceModal() {
+  $('#ambienceModal')?.classList.add('hidden');
+}
+
+function updateAmbienceUI() {
+  const activeType = window.PawlyAudio ? window.PawlyAudio.getActiveAmbience() : null;
+  $$('.ambience-card-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.ambience === (activeType || 'off'));
+  });
+  const topbarBtn = $('#btnAmbienceToggle');
+  if (topbarBtn) {
+    topbarBtn.textContent = activeType === 'rain' ? '🌧️' : activeType === 'fire' ? '🔥' : activeType === 'musicbox' ? '🎶' : '🎵';
+  }
+}
+
+function openPetDiaryModal() {
+  if (!activePet) return toast('Önce bir canavar seçmelisin!');
+  const modal = $('#petDiaryModal');
+  if (!modal) return;
+  modal.classList.remove('hidden');
+
+  const list = $('#diaryTimelineList');
+  if (!list) return;
+
+  const milestones = [
+    { icon: '🥚', title: 'Yumurta Sıcak Yuvaya Kondu', desc: `${activePet.name} için sevgi dolu bir yuva hazırlandı.`, date: activePet.createdAt ? new Date(activePet.createdAt).toLocaleDateString('tr-TR') : '1. Gün', xp: '+20 XP' },
+    { icon: '🐣', title: 'İlk Çatlama ve Merhaba!', desc: activePet.hatched ? 'Kabuk çatladı ve dünyaya gözlerini açtı!' : 'Henüz kuluçkada ısınıyor...', date: activePet.hatched ? 'Çatladı' : 'Bekleniyor', xp: '+50 XP' },
+    { icon: '🍓', title: 'İlk Lezzetli Öğün', desc: 'Mutfakta taze çilek ve süt ile karnını doyurdu.', date: 'Harika İştah', xp: '+25 XP' },
+    { icon: '🫧', title: 'Köpüklü Banyo Keyfi', desc: 'Süngerle sabunlanıp mis kokulu baloncuklar çıkardı.', date: 'Pırıl Pırıl', xp: '+30 XP' }
+  ];
+
+  if (activePet.souvenirs && activePet.souvenirs.length > 0) {
+    activePet.souvenirs.forEach(s => {
+      milestones.push({
+        icon: '🎒',
+        title: `${s.destinationName || s.city} Macerası`,
+        desc: `Seyahatten dönerken "${s.item}" hediyesini getirdi.`,
+        date: s.date || 'Hatıra',
+        xp: '+75 XP'
+      });
+    });
+  }
+
+  if (activePet.relationship) {
+    milestones.push({
+      icon: '🔥',
+      title: `${activePet.relationship.streakDays} Günlük Sevgi Serisi`,
+      desc: 'Partnerinle her gün düzenli canavar bakımı yapıldı!',
+      date: 'Canlı Seri',
+      xp: `+${activePet.relationship.streakDays * 10} XP`
+    });
+  }
+
+  list.innerHTML = milestones.map(m => `
+    <div class="diary-milestone-card">
+      <div class="milestone-icon-bubble">${m.icon}</div>
+      <div class="milestone-content" style="flex:1">
+        <h4>${esc(m.title)}</h4>
+        <p>${esc(m.desc)}</p>
+        <div style="display:flex;justify-content:space-between">
+          <span class="milestone-meta">📅 ${esc(m.date)}</span>
+          <span style="font-size:10px;font-weight:800;color:var(--accent-mint)">${m.xp}</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function closePetDiaryModal() {
+  $('#petDiaryModal')?.classList.add('hidden');
+}
+
 function bindHomeEvents() {
   if ($('#btnMissYouHeart')) $('#btnMissYouHeart').onclick = () => sendMissAction();
   if ($('#missYouHeart3DBox')) $('#missYouHeart3DBox').onclick = () => sendMissAction();
@@ -1311,6 +1427,20 @@ function bindHomeEvents() {
       if (window.PawlyAudio) window.PawlyAudio.soundPop(700);
       loadHomeBento();
       toast('Pano yenilendi 🔄');
+    };
+  }
+
+  // Plant Sulama Eylemi
+  if ($('#btnWaterPlant')) {
+    $('#btnWaterPlant').onclick = async () => {
+      if (window.PawlyAudio) window.PawlyAudio.soundBubble();
+      spawnHeart(null, null, '💧');
+      try {
+        const res = await api('/api/widgets/plant/water', { method: 'POST' });
+        toast(res.toast || 'Çiçek sulandı! 💧');
+        if (res.bloomed && window.PawlyAudio) window.PawlyAudio.soundFanfare();
+        loadHomeBento();
+      } catch (e) { toast(e.message); }
     };
   }
 }
@@ -1571,6 +1701,34 @@ function renderPhoneSimulator() {
       setTimeout(() => el.classList.remove('squish-anim'), 300);
     };
   });
+
+  // Dynamic Island Etkileşimi
+  const island = $('#iphoneIsland');
+  if (island) {
+    island.onclick = (e) => {
+      if (e.target.closest('#btnIslandClose')) {
+        e.stopPropagation();
+        island.classList.remove('expanded');
+        return;
+      }
+      if (e.target.closest('#btnIslandPetLove')) {
+        e.stopPropagation();
+        if (window.PawlyAudio) window.PawlyAudio.soundHappy();
+        spawnHeart(null, null, '💖');
+        toast(`${activePet ? activePet.name : 'Mochi'} sevgini hissetti! 🥰`);
+        return;
+      }
+      if (e.target.closest('#btnIslandPetFeed')) {
+        e.stopPropagation();
+        if (window.PawlyAudio) window.PawlyAudio.soundEat();
+        spawnHeart(null, null, '🍓');
+        toast(`${activePet ? activePet.name : 'Mochi'}'ye lezzetli çilek verdin! 😋`);
+        return;
+      }
+      island.classList.toggle('expanded');
+      if (window.PawlyAudio) window.PawlyAudio.soundBounce();
+    };
+  }
 }
 
 // ==========================================================================
@@ -1856,6 +2014,31 @@ async function init() {
       btn.classList.add('active');
       currentWallpaperTheme = btn.dataset.wpTheme || 'sakura';
       updateWallpaperPreview();
+    };
+  });
+
+  // Büyüme Günlüğü Butonları
+  if ($('#btnOpenPetDiary')) $('#btnOpenPetDiary').onclick = openPetDiaryModal;
+  if ($('#btnClosePetDiary')) $('#btnClosePetDiary').onclick = closePetDiaryModal;
+
+  // Rahatlatıcı Ortam Sesleri (Ambience) Butonları
+  if ($('#btnAmbienceToggle')) $('#btnAmbienceToggle').onclick = openAmbienceModal;
+  if ($('#btnCloseAmbience')) $('#btnCloseAmbience').onclick = closeAmbienceModal;
+
+  $$('.ambience-card-btn').forEach(btn => {
+    btn.onclick = () => {
+      const type = btn.dataset.ambience;
+      if (window.PawlyAudio) {
+        if (type === 'off') {
+          window.PawlyAudio.stopAmbience();
+          toast('Ortam sesi kapatıldı 🔇');
+        } else {
+          window.PawlyAudio.startAmbience(type);
+          const label = type === 'rain' ? 'Yumuşak Yağmur 🌧️' : type === 'fire' ? 'Sıcak Şömine 🔥' : 'Lofi Müzik Kutusu 🎶';
+          toast(`${label} çalıyor...`);
+        }
+      }
+      updateAmbienceUI();
     };
   });
 

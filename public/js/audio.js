@@ -432,6 +432,150 @@ function soundAdventureStart() {
   } catch {}
 }
 
+// ==========================================================================
+// RAHATLATICI ORTAM SESLERİ (PROCEDURAL LO-FI AMBIENCE) & ANIMALESE SESLERİ
+// ==========================================================================
+
+let activeAmbienceType = null;
+let ambienceGain = null;
+let ambienceSource = null;
+let musicBoxTimer = null;
+
+// Sevimli Konuşma Cıvıltısı (Animalese Cute Chatter)
+function soundAnimalese(len = 5) {
+  if (!soundEnabled) return;
+  const ctx = getAudioCtx();
+  if (!ctx) return;
+
+  try {
+    const count = Math.min(len || 5, 8);
+    const now = ctx.currentTime;
+    for (let i = 0; i < count; i++) {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'triangle';
+      const f = 650 + Math.random() * 450;
+      osc.frequency.setValueAtTime(f, now + i * 0.055);
+      gain.gain.setValueAtTime(0.12, now + i * 0.055);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.055 + 0.05);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now + i * 0.055);
+      osc.stop(now + i * 0.055 + 0.05);
+    }
+  } catch {}
+}
+
+function startAmbience(type = 'rain') {
+  if (!soundEnabled) return;
+  const ctx = getAudioCtx();
+  if (!ctx) return;
+
+  stopAmbience();
+  activeAmbienceType = type;
+
+  try {
+    ambienceGain = ctx.createGain();
+    ambienceGain.gain.setValueAtTime(0.001, ctx.currentTime);
+    ambienceGain.gain.exponentialRampToValueAtTime(0.12, ctx.currentTime + 1.2);
+    ambienceGain.connect(ctx.destination);
+
+    if (type === 'rain') {
+      // 1. Yumuşak Yağmur Sesi (Procedural Rain)
+      const bufferSize = ctx.sampleRate * 2;
+      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const data = buffer.getChannelData(0);
+      let lastOut = 0.0;
+      for (let i = 0; i < bufferSize; i++) {
+        const white = Math.random() * 2 - 1;
+        data[i] = (lastOut + (0.02 * white)) / 1.02;
+        lastOut = data[i];
+        data[i] *= 3.5;
+      }
+      const noise = ctx.createBufferSource();
+      noise.buffer = buffer;
+      noise.loop = true;
+
+      const filter = ctx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(950, ctx.currentTime);
+
+      noise.connect(filter);
+      filter.connect(ambienceGain);
+      noise.start();
+      ambienceSource = noise;
+
+    } else if (type === 'musicbox') {
+      // 2. Lofi Müzik Kutusu Arpeji (Lofi Music Box)
+      const notes = [523.25, 659.25, 783.99, 1046.50, 880.00, 659.25];
+      let step = 0;
+      const playStep = () => {
+        if (!activeAmbienceType) return;
+        const now = ctx.currentTime;
+        const osc = ctx.createOscillator();
+        const noteGain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(notes[step % notes.length], now);
+        noteGain.gain.setValueAtTime(0.1, now);
+        noteGain.gain.exponentialRampToValueAtTime(0.001, now + 1.4);
+        osc.connect(noteGain);
+        noteGain.connect(ambienceGain);
+        osc.start(now);
+        osc.stop(now + 1.4);
+        step++;
+        musicBoxTimer = setTimeout(playStep, 580);
+      };
+      playStep();
+
+    } else if (type === 'fire') {
+      // 3. Şömine & Çıtırtı (Cozy Fireplace)
+      const bufferSize = ctx.sampleRate * 2;
+      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        data[i] = Math.random() > 0.994 ? (Math.random() * 2 - 1) * 0.9 : (Math.random() * 2 - 1) * 0.03;
+      }
+      const crackle = ctx.createBufferSource();
+      crackle.buffer = buffer;
+      crackle.loop = true;
+
+      const filter = ctx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(1400, ctx.currentTime);
+
+      crackle.connect(filter);
+      filter.connect(ambienceGain);
+      crackle.start();
+      ambienceSource = crackle;
+    }
+  } catch (err) {
+    console.warn('Ambience başlatılamadı:', err);
+  }
+}
+
+function stopAmbience() {
+  if (musicBoxTimer) {
+    clearTimeout(musicBoxTimer);
+    musicBoxTimer = null;
+  }
+  if (ambienceGain && audioCtx) {
+    try {
+      ambienceGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
+    } catch {}
+  }
+  setTimeout(() => {
+    if (ambienceSource) {
+      try { ambienceSource.stop(); } catch {}
+      ambienceSource = null;
+    }
+  }, 600);
+  activeAmbienceType = null;
+}
+
+function getActiveAmbience() {
+  return activeAmbienceType;
+}
+
 window.PawlyAudio = {
   toggleSound,
   isSoundEnabled,
@@ -449,5 +593,9 @@ window.PawlyAudio = {
   soundBounce,
   soundCameraShutter,
   soundDoorbell,
-  soundAdventureStart
+  soundAdventureStart,
+  soundAnimalese,
+  startAmbience,
+  stopAmbience,
+  getActiveAmbience
 };

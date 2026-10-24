@@ -30,6 +30,7 @@
   </div>
 
   <div style="display:flex;align-items:center;gap:8px">
+    <button id="btnAmbienceToggle" class="btn-sound-toggle" title="Rahatlatıcı Ortam Sesleri">🎵</button>
     <button id="btnSoundToggle" class="btn-sound-toggle" title="Ses Aç/Kapat">🔊</button>
     <div class="who" id="whoami">
       <div class="who-avatar" id="myAvatar" style="background:var(--accent-pink)">🐾</div>
@@ -126,6 +127,10 @@
           <span class="icon">📸</span>
           <span>Albüm</span>
         </button>
+        <button class="pet-care-btn" id="btnOpenPetDiary" style="background:linear-gradient(135deg,#FFF2EB,#FFE0D1);border-color:#FFC4A8">
+          <span class="icon">📖</span>
+          <span>Günlük</span>
+        </button>
       </div>
     </div>
 
@@ -182,7 +187,34 @@
 
       <!-- iPhone Çerçevesi -->
       <div class="iphone-frame">
-        <div class="iphone-island"></div>
+        <div class="iphone-island" id="iphoneIsland" title="Canlı Etkinlik için tıkla!">
+          <div class="island-compact-view" id="islandCompactView">
+            <span style="font-size:13px" id="islandMiniIcon">🐱</span>
+            <span style="font-size:9px;color:#38C793;font-weight:700" id="islandLivePulse">● Canlı</span>
+            <span style="font-size:11px">💤</span>
+          </div>
+          <div class="island-expanded-view" id="islandExpandedView">
+            <div class="island-exp-header">
+              <div style="display:flex;align-items:center;gap:8px">
+                <span style="font-size:22px" id="islandExpAvatar">🐱</span>
+                <div>
+                  <b style="font-size:12px;color:#fff" id="islandExpName">Mochi</b>
+                  <div style="font-size:10px;color:#a0a0a0" id="islandExpMood">İyi · Canlı Etkinlik</div>
+                </div>
+              </div>
+              <span style="background:#FFEBD9;color:#D9480F;font-size:9px;font-weight:800;padding:2px 8px;border-radius:12px">🔥 Canlı</span>
+            </div>
+            <div style="font-size:10px;color:#ddd;margin:4px 0 2px;display:flex;justify-content:space-between">
+              <span>🍽 Doygunluk: %80</span>
+              <span>📍 Mesafe: 0 km 💕</span>
+            </div>
+            <div class="island-exp-actions">
+              <button class="btn-island-act" id="btnIslandPetLove">❤️ Sev</button>
+              <button class="btn-island-act" id="btnIslandPetFeed">🍓 Yedir</button>
+              <button class="btn-island-act" id="btnIslandClose">✕ Kapat</button>
+            </div>
+          </div>
+        </div>
         <div class="iphone-screen" id="iphoneScreenContent">
           <!-- Dinamik içerik JS tarafından doldurulur -->
         </div>
@@ -658,6 +690,67 @@
     <button class="btn peach wide" id="btnDownloadWallpaper" style="font-size:14px;padding:12px">
       📥 HD Duvar Kâğıdını İndir (.png)
     </button>
+  </div>
+</div>
+
+<!-- ======================================================================
+     LO-FI RAHATLATICI ORTAM SESLERİ MODALI
+     ====================================================================== -->
+<div class="modal hidden" id="ambienceModal">
+  <div class="modal-box" style="max-width:380px;text-align:center">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <h3 style="font-size:18px;margin:0;display:flex;align-items:center;gap:6px">
+        <span>🎵</span>
+        <span>Rahatlatıcı Ortam Sesleri</span>
+      </h3>
+      <button class="btn ghost btn-sm" id="btnCloseAmbience">✕</button>
+    </div>
+
+    <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px">
+      Canavarınla ilgilenirken veya dinlenirken huzurlu lo-fi ortam sesleri dinle:
+    </p>
+
+    <div class="ambience-options-grid" id="ambienceOptionsGrid">
+      <div class="ambience-card-btn" data-ambience="rain">
+        <div style="font-size:32px;margin-bottom:4px">🌧️</div>
+        <b style="font-size:13px;display:block">Yumuşak Yağmur</b>
+        <span style="font-size:11px;color:var(--text-dim)">Huzurlu damlalar</span>
+      </div>
+      <div class="ambience-card-btn" data-ambience="fire">
+        <div style="font-size:32px;margin-bottom:4px">🔥</div>
+        <b style="font-size:13px;display:block">Sıcak Şömine</b>
+        <span style="font-size:11px;color:var(--text-dim)">Köz çıtırtıları</span>
+      </div>
+      <div class="ambience-card-btn" data-ambience="musicbox">
+        <div style="font-size:32px;margin-bottom:4px">🎶</div>
+        <b style="font-size:13px;display:block">Müzik Kutusu</b>
+        <span style="font-size:11px;color:var(--text-dim)">Lo-fi ninni</span>
+      </div>
+      <div class="ambience-card-btn" data-ambience="off">
+        <div style="font-size:32px;margin-bottom:4px">🔇</div>
+        <b style="font-size:13px;display:block">Sesi Kapat</b>
+        <span style="font-size:11px;color:var(--text-dim)">Sessizlik</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================================================================
+     BÜYÜME VE SEVGİ GÜNLÜĞÜ MODALI (PET GROWTH DIARY)
+     ====================================================================== -->
+<div class="modal hidden" id="petDiaryModal">
+  <div class="modal-box" style="max-width:440px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <h3 style="font-size:18px;margin:0;display:flex;align-items:center;gap:6px">
+        <span>📖</span>
+        <span>Canavar Büyüme & Sevgi Günlüğü</span>
+      </h3>
+      <button class="btn ghost btn-sm" id="btnClosePetDiary">✕</button>
+    </div>
+
+    <div class="diary-timeline-list" id="diaryTimelineList">
+      <!-- JS tarafından dinamik doldurulur -->
+    </div>
   </div>
 </div>
 

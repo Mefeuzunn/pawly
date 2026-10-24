@@ -15,6 +15,13 @@ function getActivePartner(user) {
   return db.users.find(u => u.username === partnerUsername) || null;
 }
 
+function getActiveRelationship(user) {
+  const db = get();
+  return (db.relationships || []).find(r => 
+    (r.a === user.username || r.b === user.username) && r.status === 'active'
+  ) || null;
+}
+
 const MOODS = ['😀', '🥰', '😐', '😢', '😡', '😴', '🤩', '🤒'];
 const STAMPS = [
   { id: 'paris', label: 'Paris', flag: '🇫🇷' }, { id: 'tokyo', label: 'Tokyo', flag: '🇯🇵' },
@@ -457,6 +464,137 @@ router.get('/doodle', requireAuth, (req, res) => {
   res.json({
     doodle,
     partner: partner ? publicUser(partner) : null
+  });
+});
+
+// ==========================================================================
+// ORTAK AŞK VE DOSTLUK ÇİÇEĞİ (PLANT & GARDEN WIDGET)
+// ==========================================================================
+
+const PLANT_TYPES = [
+  { id: 'rose', name: 'Aşk Gülü 🌹', emoji: '🌹', color: '#FF4D6D', desc: 'Büyüdükçe tutkuyla açan kırmızı gül' },
+  { id: 'sunflower', name: 'Güneş Çiçeği 🌻', emoji: '🌻', color: '#FFB703', desc: 'Neşe saçan altın ayçiçeği' },
+  { id: 'tulip', name: 'Zarif Lale 🌷', emoji: '🌷', color: '#FF70A6', desc: 'Zarafet ve şefkat çiçeği' },
+  { id: 'sakura', name: 'Kiraz Çiçeği 🌸', emoji: '🌸', color: '#FFCAD4', desc: 'Huzur ve bahar müjdecisi' }
+];
+
+const PLANT_STAGES = [
+  { stage: 0, label: 'Tohum', emoji: '🌱', reqGrowth: 0 },
+  { stage: 1, label: 'Filiz', emoji: '🌿', reqGrowth: 30 },
+  { stage: 2, label: 'Tomurcuk', emoji: '🪻', reqGrowth: 70 },
+  { stage: 3, label: 'Açmış Çiçek', emoji: '🌸', reqGrowth: 100 }
+];
+
+router.get('/plant', requireAuth, (req, res) => {
+  const rel = getActiveRelationship(req.user);
+  const partner = getActivePartner(req.user);
+  
+  let plant = rel ? rel.plant : req.user.widget.plant;
+  if (!plant) {
+    plant = {
+      type: 'rose',
+      growth: 35,
+      stage: 1,
+      waterCount: 3,
+      lastWateredAt: null,
+      lastWateredBy: null,
+      bloomedLetters: []
+    };
+  }
+
+  const plantInfo = PLANT_TYPES.find(p => p.id === plant.type) || PLANT_TYPES[0];
+  const stageInfo = PLANT_STAGES[plant.stage] || PLANT_STAGES[0];
+
+  res.json({
+    plant: {
+      ...plant,
+      info: plantInfo,
+      stageLabel: stageInfo.label,
+      stageEmoji: plant.stage === 3 ? plantInfo.emoji : stageInfo.emoji
+    },
+    plantTypes: PLANT_TYPES,
+    partner: partner ? publicUser(partner) : null
+  });
+});
+
+router.post('/plant/water', requireAuth, (req, res) => {
+  const rel = getActiveRelationship(req.user);
+  const partner = getActivePartner(req.user);
+  const db = get();
+
+  let targetHolder = rel ? rel : req.user.widget;
+  if (!targetHolder.plant) {
+    targetHolder.plant = {
+      type: 'rose',
+      growth: 0,
+      stage: 0,
+      waterCount: 0,
+      lastWateredAt: null,
+      lastWateredBy: null,
+      bloomedLetters: []
+    };
+  }
+
+  const plant = targetHolder.plant;
+  plant.waterCount = (plant.waterCount || 0) + 1;
+  plant.growth = Math.min(100, (plant.growth || 0) + 25);
+  plant.lastWateredAt = new Date().toISOString();
+  plant.lastWateredBy = req.user.name;
+
+  let toast = `${req.user.name} ortak çiçeği suladı! 💧 (+25 Büyüme)`;
+  let bloomed = false;
+
+  // Aşama hesapla
+  if (plant.growth >= 100 && plant.stage < 3) {
+    plant.stage = 3;
+    bloomed = true;
+    const curType = PLANT_TYPES.find(p => p.id === plant.type) || PLANT_TYPES[0];
+    const letter = {
+      id: nid('flower'),
+      flower: curType.name,
+      bloomedAt: new Date().toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' }),
+      note: `Birlikte büyüttüğünüz ${curType.name} sevginizle tam çiçek açtı! 💖`
+    };
+    plant.bloomedLetters = plant.bloomedLetters || [];
+    plant.bloomedLetters.unshift(letter);
+    toast = `🎉 TEBRİKLER! Birlikte büyüttüğünüz ${curType.name} çiçek açtı! 🌸✨`;
+
+    // Pet XP ödülü
+    if (rel && rel.sharedPetId) {
+      const pet = (db.pets || []).find(p => p.id === rel.sharedPetId);
+      if (pet) {
+        pet.xp = (pet.xp || 0) + 50;
+      }
+    }
+  } else if (plant.growth >= 70 && plant.stage < 2) {
+    plant.stage = 2;
+  } else if (plant.growth >= 30 && plant.stage < 1) {
+    plant.stage = 1;
+  }
+
+  save();
+
+  if (partner) {
+    sendToUser(partner.username, 'widget:plant_watered', {
+      plant,
+      wateredBy: publicUser(req.user),
+      toast: `${req.user.name} çiçeğinizi suladı! 💧`
+    });
+  }
+
+  const plantInfo = PLANT_TYPES.find(p => p.id === plant.type) || PLANT_TYPES[0];
+  const stageInfo = PLANT_STAGES[plant.stage] || PLANT_STAGES[0];
+
+  res.json({
+    ok: true,
+    plant: {
+      ...plant,
+      info: plantInfo,
+      stageLabel: stageInfo.label,
+      stageEmoji: plant.stage === 3 ? plantInfo.emoji : stageInfo.emoji
+    },
+    toast,
+    bloomed
   });
 });
 
