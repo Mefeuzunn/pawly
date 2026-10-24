@@ -224,6 +224,16 @@ function connectEvents() {
       loadHomeBento();
     });
 
+    sse.addEventListener('widget:daily_qa', (e) => {
+      const data = JSON.parse(e.data);
+      if (window.PawlyAudio) {
+        if (data.revealed) window.PawlyAudio.soundFanfare();
+        else window.PawlyAudio.soundHeart();
+      }
+      toast(data.toast || 'Günün sorusu güncellendi! 💌');
+      loadHomeBento();
+    });
+
     sseConnection = sse;
   } catch (err) {
     console.error('SSE bağlantı hatası:', err);
@@ -270,7 +280,7 @@ async function loadHomeBento() {
   if (!container) return;
 
   try {
-    const [boardData, missData, sleepData, distData, jarData, statusData, doodleData, plantData] = await Promise.all([
+    const [boardData, missData, sleepData, distData, jarData, statusData, doodleData, plantData, dailyQaData] = await Promise.all([
       api('/api/widgets'),
       api('/api/widgets/miss-you').catch(() => ({ sent: 999, received: 420 })),
       api('/api/widgets/sleep').catch(() => ({
@@ -283,7 +293,8 @@ async function loadHomeBento() {
       api('/api/widgets/jar').catch(() => ({ candies: [] })),
       api('/api/widgets/status').catch(() => ({ me: { status: 'Mutlu 🥰' } })),
       api('/api/widgets/doodle').catch(() => ({ doodle: null })),
-      api('/api/widgets/plant').catch(() => ({ plant: { stageLabel: 'Filiz', stageEmoji: '🌿', growth: 35, info: { name: 'Aşk Gülü 🌹' } } }))
+      api('/api/widgets/plant').catch(() => ({ plant: { stageLabel: 'Filiz', stageEmoji: '🌿', growth: 35, info: { name: 'Aşk Gülü 🌹' } } })),
+      api('/api/widgets/daily-qa').catch(() => ({ question: 'Günün sorusu', revealed: false }))
     ]);
 
     const currentPet = pets[0] || null;
@@ -554,6 +565,50 @@ async function loadHomeBento() {
       </div>
     `;
 
+    // 9. GÜNÜN ÇİFT SORUSU (DAILY COUPLE Q&A WIDGET)
+    const qa = dailyQaData || { question: 'Günün sorusu', revealed: false };
+    const myAns = qa.myAnswer;
+    const partnerAns = qa.partnerAnswer;
+    const isRevealed = qa.revealed;
+
+    const qaCard = `
+      <div class="bento-card bento-span-2 widget-qa">
+        <div class="bento-header">
+          <span class="bento-label">💌 Günün Çift Sorusu</span>
+          <span class="badge" style="background:#FFF0F5;color:#E91E63">${isRevealed ? '✨ Cevaplar Açıldı' : (myAns ? '🔒 Partner Bekleniyor' : 'Cevapla')}</span>
+        </div>
+        <div class="qa-question-box">${esc(qa.question || 'Günün sorusu yükleniyor...')}</div>
+
+        ${isRevealed ? `
+          <div class="qa-answers-revealed-grid">
+            <div class="qa-answer-bubble me">
+              <div style="font-size:10px;font-weight:700;margin-bottom:2px">● Sen</div>
+              <div>"${esc(myAns)}"</div>
+            </div>
+            <div class="qa-answer-bubble partner">
+              <div style="font-size:10px;font-weight:700;margin-bottom:2px">● ${partnerUser ? esc(partnerUser.name) : 'Partner'}</div>
+              <div>"${esc(partnerAns)}"</div>
+            </div>
+            <div style="text-align:center;font-size:11px;font-weight:800;color:#FF6584;margin-top:4px">
+              ✨ %100 Kalp Uyumu! +40 XP Kazanıldı 💕
+            </div>
+          </div>
+        ` : myAns ? `
+          <div class="qa-locked-secret-card">
+            <span style="font-size:22px">💌 🔒</span>
+            <b>Cevabın mühürlendi!</b>
+            <span>"${esc(myAns)}"</span>
+            <span style="font-size:10px;color:var(--text-dim);margin-top:4px">${partnerUser ? esc(partnerUser.name) : 'Partnerin'} de cevaplayınca ikinizin cevabı aynı anda açılacak!</span>
+          </div>
+        ` : `
+          <div style="display:flex;gap:6px">
+            <input id="inputDailyQAAnswer" placeholder="Gizli cevabını yaz... 💌" maxlength="240" style="flex:1;font-size:12px">
+            <button class="btn peach btn-sm" id="btnSubmitDailyQA">Gönder 💌</button>
+          </div>
+        `}
+      </div>
+    `;
+
     container.innerHTML = `
       ${missCard}
       ${sleepCard}
@@ -562,6 +617,7 @@ async function loadHomeBento() {
       ${doodleCard}
       ${statusCard}
       ${plantCard}
+      ${qaCard}
       ${petSummaryCard}
     `;
 
@@ -1439,6 +1495,28 @@ function bindHomeEvents() {
         const res = await api('/api/widgets/plant/water', { method: 'POST' });
         toast(res.toast || 'Çiçek sulandı! 💧');
         if (res.bloomed && window.PawlyAudio) window.PawlyAudio.soundFanfare();
+        loadHomeBento();
+      } catch (e) { toast(e.message); }
+    };
+  }
+
+  // Günün Çift Sorusu Gönderimi
+  if ($('#btnSubmitDailyQA')) {
+    $('#btnSubmitDailyQA').onclick = async () => {
+      const input = $('#inputDailyQAAnswer');
+      const answer = input ? input.value.trim() : '';
+      if (!answer) return toast('Lütfen bir cevap yazın! 💌');
+      if (window.PawlyAudio) window.PawlyAudio.soundPop(600);
+      try {
+        const res = await api('/api/widgets/daily-qa', {
+          method: 'POST',
+          body: JSON.stringify({ answer })
+        });
+        if (window.PawlyAudio) {
+          if (res.revealed) window.PawlyAudio.soundFanfare();
+          else window.PawlyAudio.soundHeart();
+        }
+        toast(res.toast || 'Cevabın kaydedildi! 💌');
         loadHomeBento();
       } catch (e) { toast(e.message); }
     };

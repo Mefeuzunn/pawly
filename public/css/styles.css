@@ -3761,3 +3761,72 @@ input:focus, textarea:focus, select:focus {
   background: linear-gradient(135deg, #FFF9FA, #FFF0F3);
   box-shadow: 0 0 0 2px var(--accent-pink);
 }
+
+/* ==========================================================================
+   GÜNÜN ÇİFT SORUSU (COUPLES DAILY Q&A WIDGET)
+   ========================================================================== */
+.widget-qa {
+  background: linear-gradient(145deg, #FFFDF8 0%, #FFF5EC 100%);
+  border-color: #FFDEBF !important;
+}
+
+.qa-question-box {
+  background: #FFFFFF;
+  border: 1.5px solid #FFE0C2;
+  border-radius: var(--r-md);
+  padding: 10px 12px;
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-pure);
+  line-height: 1.4;
+  margin-bottom: 10px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.qa-answers-revealed-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.qa-answer-bubble {
+  padding: 8px 12px;
+  border-radius: 14px;
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.qa-answer-bubble.me {
+  background: #FFF0F5;
+  border: 1.5px solid #FFD4DF;
+  color: #C2185B;
+  align-self: flex-end;
+  text-align: right;
+  border-bottom-right-radius: 4px;
+}
+
+.qa-answer-bubble.partner {
+  background: #E8F5E9;
+  border: 1.5px solid #C8E6C9;
+  color: #2E7D32;
+  align-self: flex-start;
+  text-align: left;
+  border-bottom-left-radius: 4px;
+}
+
+.qa-locked-secret-card {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(8px);
+  border: 1.5px dashed #FFD4DF;
+  border-radius: var(--r-md);
+  padding: 12px;
+  text-align: center;
+  font-size: 11px;
+  color: var(--text-muted);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}

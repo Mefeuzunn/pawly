@@ -598,4 +598,101 @@ router.post('/plant/water', requireAuth, (req, res) => {
   });
 });
 
+// ==========================================================================
+// GÜNÜN ÇİFT SORUSU VE UYUMLULUK TESTİ (DAILY COUPLE Q&A)
+// ==========================================================================
+
+const DAILY_QUESTIONS = [
+  'İlk tanıştığımızda veya konuştuğumuzda hakkımda ilk düşündüğün şey neydi? 💕',
+  'Birlikte gitmek istediğin en heyecan verici rüya tatil rotası neresi? ✈️',
+  'Benim en sevdiğin ve seni en çok güldüren huyum hangisi? 🥰',
+  'Sence ikimizi en iyi anlatan ortak şarkımız veya filmimiz hangisi? 🎬',
+  'Birlikte geçirdiğimiz en unutulmaz, en tatlı anımız sence hangisiydi? ✨',
+  'Eğer bugün sadece ikimiz için sihirli bir gün olsaydı ne yapmak isterdin? 🌈',
+  'Beni düşündüğünde aklına gelen ilk renk veya mevsim hangisi? 🌸'
+];
+
+function getTodayQuestion() {
+  const dayIndex = Math.floor(Date.now() / 86400000) % DAILY_QUESTIONS.length;
+  return {
+    id: `q_${dayIndex}`,
+    text: DAILY_QUESTIONS[dayIndex],
+    date: new Date().toISOString().slice(0, 10)
+  };
+}
+
+router.get('/daily-qa', requireAuth, (req, res) => {
+  const today = getTodayQuestion();
+  const rel = getActiveRelationship(req.user);
+  const partner = getActivePartner(req.user);
+
+  let qaHolder = rel ? rel : req.user.widget;
+  qaHolder.dailyQA = qaHolder.dailyQA || {};
+  const todayEntry = qaHolder.dailyQA[today.date] || { answers: {} };
+
+  const myAns = todayEntry.answers[req.user.username] || null;
+  const partnerUsername = partner ? partner.username : null;
+  const rawPartnerAns = partnerUsername ? todayEntry.answers[partnerUsername] : null;
+
+  const bothAnswered = !!(myAns && rawPartnerAns);
+
+  res.json({
+    question: today.text,
+    date: today.date,
+    myAnswer: myAns,
+    partnerAnswer: bothAnswered ? rawPartnerAns : (rawPartnerAns ? { answered: true, text: '*** Gizli Cevap ***' } : null),
+    revealed: bothAnswered,
+    partner: partner ? publicUser(partner) : null
+  });
+});
+
+router.post('/daily-qa', requireAuth, (req, res) => {
+  const today = getTodayQuestion();
+  const rel = getActiveRelationship(req.user);
+  const partner = getActivePartner(req.user);
+  const db = get();
+
+  const ansText = String(req.body.answer || '').trim().slice(0, 300);
+  if (!ansText) return res.status(400).json({ error: 'Cevap metni boş olamaz' });
+
+  let qaHolder = rel ? rel : req.user.widget;
+  qaHolder.dailyQA = qaHolder.dailyQA || {};
+  if (!qaHolder.dailyQA[today.date]) {
+    qaHolder.dailyQA[today.date] = { question: today.text, answers: {} };
+  }
+
+  qaHolder.dailyQA[today.date].answers[req.user.username] = ansText;
+  
+  const partnerUsername = partner ? partner.username : null;
+  const rawPartnerAns = partnerUsername ? qaHolder.dailyQA[today.date].answers[partnerUsername] : null;
+  const bothAnswered = !!(ansText && rawPartnerAns);
+
+  if (bothAnswered) {
+    if (rel && rel.sharedPetId) {
+      const pet = (db.pets || []).find(p => p.id === rel.sharedPetId);
+      if (pet) pet.xp = (pet.xp || 0) + 40;
+    }
+  }
+
+  save();
+
+  if (partner) {
+    sendToUser(partner.username, 'widget:daily_qa', {
+      from: publicUser(req.user),
+      revealed: bothAnswered,
+      toast: bothAnswered ? '🎉 İkiniz de cevapladınız! Cevaplar açıldı! 💕' : `${req.user.name} günün sorusunu cevapladı! Sıra sende 💌`
+    });
+  }
+
+  res.json({
+    ok: true,
+    question: today.text,
+    date: today.date,
+    myAnswer: ansText,
+    partnerAnswer: bothAnswered ? rawPartnerAns : (rawPartnerAns ? { answered: true, text: '*** Gizli Cevap ***' } : null),
+    revealed: bothAnswered,
+    toast: bothAnswered ? '✨ Cevaplar açıldı! Kalpleriniz birbiriyle uyum içinde! 💕' : 'Cevabın gizlice kaydedildi! Partnerin cevaplayınca açılacak 💌'
+  });
+});
+
 module.exports = router;
