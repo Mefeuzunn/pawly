@@ -17,6 +17,72 @@ const SPECIES = {
 const STAGES = ['Yumurta', 'Yeni Doğan', 'Bebek', 'Çocuk', 'Genç', 'Yetişkin', 'Efsane'];
 const STAGE_XP = [0, 20, 100, 250, 500, 900, 1500];
 
+// ==========================================================================
+// FAZ 5: MACERA & KEŞİF DESTİNASYONLARI
+// ==========================================================================
+const ADVENTURE_DESTINATIONS = [
+  {
+    id: 'tokyo',
+    name: 'Kiraz Çiçeği Bahçesi 🌸',
+    city: 'Tokyo, Japonya',
+    durationSec: 120,
+    displayDuration: '2 dk',
+    xpReward: 50,
+    stamp: 'tokyo',
+    item: '🌸 Sakura Dalı',
+    bgGradient: 'linear-gradient(135deg, #FFCAD4, #FFE5EC)',
+    caption: 'Kiraz çiçekleri rüzgarda uçuşurken sadece seni düşündüm... 💕'
+  },
+  {
+    id: 'paris',
+    name: 'Eyfel Kulesi & Seine 🗼',
+    city: 'Paris, Fransa',
+    durationSec: 240,
+    displayDuration: '4 dk',
+    xpReward: 75,
+    stamp: 'paris',
+    item: '🥐 Taze Sıcak Kruvasan',
+    bgGradient: 'linear-gradient(135deg, #DCE2FF, #EBF0FF)',
+    caption: 'Aşk şehrinde minik patilerimle senin için bir hatıra getirdim 🥐✨'
+  },
+  {
+    id: 'istanbul',
+    name: 'Boğaz Köprüsü & Martılar 🌉',
+    city: 'İstanbul, Türkiye',
+    durationSec: 180,
+    displayDuration: '3 dk',
+    xpReward: 60,
+    stamp: 'istanbul',
+    item: '🥯 Çıtır Susamlı Simit',
+    bgGradient: 'linear-gradient(135deg, #FFE5D9, #FFF1E6)',
+    caption: 'Vapurdan martılara simit attım, rüzgar senin kokunu getirdi 🌊'
+  },
+  {
+    id: 'antalya',
+    name: 'Güneşli Sahil & Kafe 🏖️',
+    city: 'Antalya, Türkiye',
+    durationSec: 60,
+    displayDuration: '1 dk',
+    xpReward: 40,
+    stamp: 'antalya',
+    item: '🐚 Sedef Deniz Kabuğu',
+    bgGradient: 'linear-gradient(135deg, #D8F3DC, #B7E4C7)',
+    caption: 'Kumsalda güneşlendim ve senin için sedefli bir deniz kabuğu topladım 🐚☀️'
+  },
+  {
+    id: 'nyc',
+    name: 'Central Park & Sarı Taksi 🗽',
+    city: 'New York, ABD',
+    durationSec: 300,
+    displayDuration: '5 dk',
+    xpReward: 90,
+    stamp: 'nyc',
+    item: '🍁 Kızıl Çınar Yaprağı',
+    bgGradient: 'linear-gradient(135deg, #FFF3B0, #FFE6A7)',
+    caption: 'Kocaman binalar arasında kalbim hep sendeydi... 🗽💕'
+  }
+];
+
 const clamp = n => Math.max(0, Math.min(100, Math.round(n)));
 
 // Deterministik zaman farkı (Delta-t) simülatörü
@@ -168,6 +234,23 @@ function viewPet(pet, me) {
     }
   }
 
+  // Aktif Macera Durumu
+  let adventureStatus = null;
+  if (pet.adventure) {
+    const dest = ADVENTURE_DESTINATIONS.find(d => d.id === pet.adventure.destinationId) || ADVENTURE_DESTINATIONS[0];
+    const now = Date.now();
+    const remainingSec = Math.max(0, Math.round((pet.adventure.endTime - now) / 1000));
+    adventureStatus = {
+      destination: dest,
+      startTime: pet.adventure.startTime,
+      endTime: pet.adventure.endTime,
+      durationSec: pet.adventure.durationSec,
+      remainingSec,
+      isFinished: remainingSec === 0,
+      startedBy: pet.adventure.startedBy
+    };
+  }
+
   return {
     id: pet.id,
     name: pet.name,
@@ -189,6 +272,8 @@ function viewPet(pet, me) {
     hatchProgress: pet.hatchTaps ? pet.hatchTaps.length : 1,
     hatchNeeded: pet.owners.length,
     mood: pet.mood,
+    adventure: adventureStatus,
+    souvenirs: (pet.souvenirs || []).slice(0, 30),
     logs: (pet.logs || []).slice(0, 15),
     relationship,
     remainingCooldowns,
@@ -469,6 +554,146 @@ router.post('/:id/sleep', requireAuth, (req, res) => {
     pet: viewPet(pet, req.user),
     pets: myPets(req.user),
     toast: stateMsg
+  });
+});
+
+// ==========================================================================
+// FAZ 5: MACERA & KEŞİF ENDPOINTLERİ
+// ==========================================================================
+
+// --- Macera Destinasyonları ve Durum ---
+router.get('/:id/adventure', requireAuth, (req, res) => {
+  const db = get();
+  const pet = db.pets.find(p => p.id === req.params.id);
+  if (!pet) return res.status(404).json({ error: 'Canavar bulunamadı' });
+  if (!pet.owners.includes(req.user.username)) return res.status(403).json({ error: 'Senin canavarın değil' });
+
+  const pView = viewPet(pet, req.user);
+  res.json({
+    ok: true,
+    destinations: ADVENTURE_DESTINATIONS,
+    currentAdventure: pView.adventure,
+    souvenirs: pView.souvenirs
+  });
+});
+
+// --- Maceraya Başla ---
+router.post('/:id/adventure/start', requireAuth, (req, res) => {
+  const db = get();
+  const pet = db.pets.find(p => p.id === req.params.id);
+  if (!pet) return res.status(404).json({ error: 'Canavar bulunamadı' });
+  if (!pet.owners.includes(req.user.username)) return res.status(403).json({ error: 'Senin canavarın değil' });
+  if (!pet.hatched) return res.status(400).json({ error: 'Yumurta henüz çatlamadı!' });
+  if (pet.sleeping) return res.status(400).json({ error: 'Canavar uyurken seyahate çıkamaz!' });
+  
+  if (pet.adventure && pet.adventure.endTime > Date.now()) {
+    return res.status(400).json({ error: 'Canavar zaten bir macerada!' });
+  }
+
+  const { destinationId, testFast } = req.body;
+  const dest = ADVENTURE_DESTINATIONS.find(d => d.id === destinationId) || ADVENTURE_DESTINATIONS[0];
+  const durationSec = testFast ? 2 : dest.durationSec;
+  const now = Date.now();
+
+  pet.adventure = {
+    destinationId: dest.id,
+    startTime: now,
+    durationSec,
+    endTime: now + durationSec * 1000,
+    startedBy: req.user.username
+  };
+
+  addLog(pet, req.user, 'adventure-start', `${req.user.name}, ${pet.name}'yi ${dest.name} macerasına uğurladı! 🎒`, 10);
+  touchRelationshipStreak(pet);
+  save();
+
+  const pView = viewPet(pet, req.user);
+  sendToPetOwners(pet, 'pet:adventure_started', {
+    pet: pView,
+    destination: dest,
+    toast: `${pet.name} ${dest.name} yolculuğuna çıktı! 🎒`
+  });
+
+  res.json({
+    ok: true,
+    pet: pView,
+    adventure: pView.adventure,
+    toast: `${pet.name} çantayı takıp yola koyuldu! 🎒`
+  });
+});
+
+// --- Macerayı Hızlandır (Beklemek istemeyenler veya test için) ---
+router.post('/:id/adventure/speedup', requireAuth, (req, res) => {
+  const db = get();
+  const pet = db.pets.find(p => p.id === req.params.id);
+  if (!pet) return res.status(404).json({ error: 'Canavar bulunamadı' });
+  if (!pet.owners.includes(req.user.username)) return res.status(403).json({ error: 'Senin canavarın değil' });
+  if (!pet.adventure) return res.status(400).json({ error: 'Aktif bir macera yok' });
+
+  pet.adventure.endTime = Date.now();
+  save();
+
+  const pView = viewPet(pet, req.user);
+  sendToPetOwners(pet, 'pet:updated', {
+    pet: pView,
+    toast: `${pet.name} seyahatten döndü bile! 🎈`
+  });
+
+  res.json({ ok: true, pet: pView });
+});
+
+// --- Macerayı Tamamla ve Hatıra Polaroid'ini Al ---
+router.post('/:id/adventure/claim', requireAuth, (req, res) => {
+  const db = get();
+  const pet = db.pets.find(p => p.id === req.params.id);
+  if (!pet) return res.status(404).json({ error: 'Canavar bulunamadı' });
+  if (!pet.owners.includes(req.user.username)) return res.status(403).json({ error: 'Senin canavarın değil' });
+  if (!pet.adventure) return res.status(400).json({ error: 'Aktif bir macera yok' });
+
+  if (pet.adventure.endTime > Date.now()) {
+    return res.status(400).json({ error: 'Macera henüz tamamlanmadı!' });
+  }
+
+  const dest = ADVENTURE_DESTINATIONS.find(d => d.id === pet.adventure.destinationId) || ADVENTURE_DESTINATIONS[0];
+  
+  const souvenir = {
+    id: nid('polaroid'),
+    destinationId: dest.id,
+    destinationName: dest.name,
+    city: dest.city,
+    item: dest.item,
+    bgGradient: dest.bgGradient,
+    caption: dest.caption,
+    stamp: dest.stamp,
+    petName: pet.name,
+    petSpecies: pet.species,
+    date: new Date().toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' }),
+    createdAt: new Date().toISOString(),
+    broughtBy: pet.name,
+    welcomedBy: req.user.name
+  };
+
+  pet.souvenirs = pet.souvenirs || [];
+  pet.souvenirs.unshift(souvenir);
+  pet.xp = (pet.xp || 0) + dest.xpReward;
+  pet.adventure = null;
+
+  addLog(pet, req.user, 'adventure-return', `${pet.name} ${dest.name} seyahatinden döndü ve ${dest.item} getirdi! 📸`, dest.xpReward);
+  touchRelationshipStreak(pet);
+  save();
+
+  const pView = viewPet(pet, req.user);
+  sendToPetOwners(pet, 'pet:adventure_returned', {
+    pet: pView,
+    souvenir,
+    toast: `🎉 ${pet.name} ${dest.name} seyahatinden döndü! Yeni bir fotoğraf albüme eklendi 📸`
+  });
+
+  res.json({
+    ok: true,
+    souvenir,
+    pet: pView,
+    toast: `📸 Hatıra fotoğrafı ve ${dest.item} albüme kaydedildi!`
   });
 });
 

@@ -8,6 +8,7 @@
   let activePetState = 'idle'; // idle, happy, hungry, eating, sleeping
   let ballAnimFrame = null;
   let dreamInterval = null;
+  let adventureInterval = null;
 
   // 1. Odayı Başlat ve Mini-Oyunları Kur
   function setupRoomStage(container, pet, room, onAction) {
@@ -20,6 +21,10 @@
     if (dreamInterval) {
       clearInterval(dreamInterval);
       dreamInterval = null;
+    }
+    if (adventureInterval) {
+      clearInterval(adventureInterval);
+      adventureInterval = null;
     }
 
     const mascotRenderer = window.PawlyMascot;
@@ -208,8 +213,43 @@
     if (room === 'bed') defaultSpeech = isNightMode ? 'Zzz... Tatlı rüyalar aşkım 💕' : 'Yumuşacık yatak! Uykum gelince lambayı söndür 🛏️';
     if (room === 'living') defaultSpeech = 'Topu fırlat, hemen yakalayıp getireyim! 🎾';
 
+    // Aktif Macera Başlığı (Banner)
+    let advBannerHtml = '';
+    if (pet && pet.adventure) {
+      const adv = pet.adventure;
+      const dest = adv.destination || { name: 'Dünya Turu 🎒', city: 'Keşif', item: 'Hatıra' };
+      const isFin = adv.isFinished || adv.remainingSec <= 0;
+      const mins = Math.floor((adv.remainingSec || 0) / 60);
+      const secs = (adv.remainingSec || 0) % 60;
+      const timeStr = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+
+      defaultSpeech = `Şu an ${dest.city} sokaklarındayım! Sana harika bir hediye arıyorum... 🎒✨`;
+
+      advBannerHtml = `
+        <div class="pet-adventure-banner" id="petAdvBanner">
+          <div class="pet-adv-left">
+            <div class="pet-adv-icon-badge">🎒</div>
+            <div class="pet-adv-info">
+              <h4><span>✈️</span> <span>${dest.name}</span></h4>
+              <div class="adv-countdown" id="petAdvCountdown">
+                ${isFin ? '🎉 Seyahat Tamamlandı!' : `Kalan Süre: <span id="advTimerSpan">${timeStr}</span>`}
+              </div>
+            </div>
+          </div>
+          <div class="pet-adv-actions">
+            ${isFin ? `
+              <button class="btn-adv-claim" id="btnClaimAdvInsideRoom">🎁 Karşıla & Al 📸</button>
+            ` : `
+              <button class="btn-adv-speedup" id="btnSpeedupAdvInsideRoom">⚡ Hızlandır</button>
+            `}
+          </div>
+        </div>
+      `;
+    }
+
     container.innerHTML = `
       ${statsHud}
+      ${advBannerHtml}
       ${stageProps}
       <div class="pet-stage-character" id="petInteractiveWrap">
         <div class="pet-speech-bubble" id="petSpeechBubble">${defaultSpeech}</div>
@@ -249,6 +289,47 @@
     const audio = window.PawlyAudio;
     const pet3DBox = container.querySelector('#pet3DBox');
     const bubble = container.querySelector('#petSpeechBubble');
+
+    // Macera Eylemleri (Oda İçi Banner)
+    const btnSpeedup = container.querySelector('#btnSpeedupAdvInsideRoom');
+    if (btnSpeedup) {
+      btnSpeedup.onclick = async () => {
+        if (audio) audio.soundPop(600);
+        if (onAction) onAction('adventure_speedup');
+      };
+    }
+
+    const btnClaim = container.querySelector('#btnClaimAdvInsideRoom');
+    if (btnClaim) {
+      btnClaim.onclick = async () => {
+        if (audio) audio.soundFanfare();
+        if (onAction) onAction('adventure_claim');
+      };
+    }
+
+    // Canlı Geri Sayım Sayacı
+    if (adventureInterval) {
+      clearInterval(adventureInterval);
+      adventureInterval = null;
+    }
+    if (pet && pet.adventure && pet.adventure.remainingSec > 0) {
+      let rem = pet.adventure.remainingSec;
+      adventureInterval = setInterval(() => {
+        rem--;
+        const span = container.querySelector('#advTimerSpan');
+        if (span) {
+          const m = Math.floor(Math.max(0, rem) / 60);
+          const s = Math.max(0, rem) % 60;
+          span.textContent = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        }
+        if (rem <= 0) {
+          clearInterval(adventureInterval);
+          adventureInterval = null;
+          if (audio) audio.soundDoorbell();
+          if (onAction) onAction('adventure_finished');
+        }
+      }, 1000);
+    }
 
     // A. Pet'e Dokunma / Okşama (Pet Loving)
     if (pet3DBox) {

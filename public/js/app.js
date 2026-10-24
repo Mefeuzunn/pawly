@@ -194,6 +194,28 @@ function connectEvents() {
       loadPets();
     });
 
+    sse.addEventListener('pet:adventure_started', (e) => {
+      const data = JSON.parse(e.data);
+      if (window.PawlyAudio) window.PawlyAudio.soundAdventureStart();
+      toast(data.toast || 'Canavar maceraya çıktı! 🎒');
+      loadPets();
+      loadHomeBento();
+    });
+
+    sse.addEventListener('pet:adventure_returned', (e) => {
+      const data = JSON.parse(e.data);
+      if (window.PawlyAudio) {
+        window.PawlyAudio.soundDoorbell();
+        setTimeout(() => window.PawlyAudio.soundCameraShutter(), 700);
+      }
+      toast(data.toast || 'Canavar seyahatten döndü! 📸');
+      if (data.souvenir) {
+        showPolaroidModal(data.souvenir);
+      }
+      loadPets();
+      loadHomeBento();
+    });
+
     sseConnection = sse;
   } catch (err) {
     console.error('SSE bağlantı hatası:', err);
@@ -481,6 +503,11 @@ async function loadHomeBento() {
               <div style="font-size:12px;color:var(--text-muted);margin:2px 0 6px">
                 Ruh Hali: <b>${esc(currentPet.mood)}</b> · ${currentPet.relationship ? `🔥 ${currentPet.relationship.streakDays} Gün Seri` : ''}
               </div>
+              ${currentPet.adventure ? `
+                <div style="display:inline-flex;align-items:center;gap:4px;background:#FFF2E5;color:#D9480F;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:700;margin-bottom:6px">
+                  <span>🎒</span> <span>${currentPet.adventure.destination?.name || 'Macerada'}</span>
+                </div>
+              ` : ''}
               <div style="display:flex;gap:10px">
                 <div style="font-size:11px;font-weight:700;color:#2EB080">🍽 Açlık: %${currentPet.stats.food}</div>
                 <div style="font-size:11px;font-weight:700;color:#7B55E8">⚡ Enerji: %${currentPet.stats.energy}</div>
@@ -883,6 +910,213 @@ function closeDoodleModal() {
   if (modal) modal.classList.add('hidden');
 }
 
+// ==========================================================================
+// FAZ 5: MACERA & KEŞİF, POLAROID & SEYAHAT ALBÜMÜ
+// ==========================================================================
+
+let availableDestinations = [];
+let selectedDestinationId = 'tokyo';
+
+async function openAdventureModal() {
+  if (!activePet) return toast('Önce bir canavar seçmelisin!');
+  if (!activePet.hatched) return toast('Yumurta henüz çatlamadı!');
+  if (activePet.sleeping) return toast('Canavar uyurken seyahate çıkamaz!');
+  if (activePet.adventure && !activePet.adventure.isFinished) {
+    return toast('Canavar şu an zaten bir macerada!');
+  }
+
+  const modal = $('#adventureModal');
+  if (!modal) return;
+  modal.classList.remove('hidden');
+
+  try {
+    const data = await api(`/api/pets/${activePet.id}/adventure`);
+    availableDestinations = data.destinations || [];
+    renderAdventureDestinations();
+  } catch (err) {
+    toast(err.message);
+  }
+}
+
+function closeAdventureModal() {
+  const modal = $('#adventureModal');
+  if (modal) modal.classList.add('hidden');
+}
+
+function renderAdventureDestinations() {
+  const list = $('#adventureDestList');
+  if (!list) return;
+
+  list.innerHTML = availableDestinations.map(d => `
+    <div class="dest-choice-card ${d.id === selectedDestinationId ? 'selected' : ''}" data-dest-id="${d.id}">
+      <div class="dest-card-main">
+        <div class="dest-card-avatar">${d.stamp === 'tokyo' ? '🌸' : d.stamp === 'paris' ? '🗼' : d.stamp === 'istanbul' ? '🌉' : d.stamp === 'antalya' ? '🏖️' : '🗽'}</div>
+        <div>
+          <div class="dest-card-title">${esc(d.name)}</div>
+          <div class="dest-card-city">📍 ${esc(d.city)}</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:2px">🎁 Getireceği hediye: <b>${esc(d.item)}</b></div>
+        </div>
+      </div>
+      <div class="dest-card-badge">
+        <div class="dest-duration-pill">⏱️ ${d.displayDuration}</div>
+        <div class="dest-xp-reward">+${d.xpReward} XP</div>
+      </div>
+    </div>
+  `).join('');
+
+  $$('.dest-choice-card').forEach(card => {
+    card.onclick = () => {
+      if (window.PawlyAudio) window.PawlyAudio.soundPop(600);
+      $$('.dest-choice-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      selectedDestinationId = card.dataset.destId;
+    };
+  });
+}
+
+async function startAdventure() {
+  if (!activePet) return;
+  const isFast = $('#checkFastAdventure')?.checked || false;
+
+  try {
+    if (window.PawlyAudio) window.PawlyAudio.soundAdventureStart();
+    const res = await api(`/api/pets/${activePet.id}/adventure/start`, {
+      method: 'POST',
+      body: JSON.stringify({
+        destinationId: selectedDestinationId,
+        testFast: isFast
+      })
+    });
+    closeAdventureModal();
+    toast(res.toast || 'Canavar yola çıktı! 🎒');
+    await loadPets();
+    loadHomeBento();
+  } catch (err) {
+    toast(err.message);
+  }
+}
+
+function showPolaroidModal(souvenir) {
+  if (!souvenir) return;
+  const modal = $('#souvenirPolaroidModal');
+  if (!modal) return;
+
+  const photoBg = $('#polaroidPhotoBg');
+  if (photoBg) photoBg.style.background = souvenir.bgGradient || 'linear-gradient(135deg, #FFE5D9, #FFF1E6)';
+
+  const stamp = $('#polaroidStamp');
+  if (stamp) {
+    stamp.innerHTML = `<span>${(souvenir.stamp || 'pawly').toUpperCase()}</span><span>★ 2026 ★</span>`;
+  }
+
+  const mascotWrap = $('#polaroidMascotWrap');
+  if (mascotWrap && window.PawlyMascot) {
+    mascotWrap.innerHTML = window.PawlyMascot.renderMascotSVG(souvenir.petSpecies || 'cat', 'happy', {
+      hat: '👒',
+      clothes: '👗'
+    });
+  }
+
+  const itemBadge = $('#polaroidItemBadge');
+  if (itemBadge) itemBadge.textContent = souvenir.item || '🎁 Hatıra';
+
+  const locDate = $('#polaroidLocDate');
+  if (locDate) locDate.textContent = `${souvenir.city || ''} • ${souvenir.date || ''}`;
+
+  const caption = $('#polaroidCaptionText');
+  if (caption) caption.textContent = `"${souvenir.caption || ''}"`;
+
+  const footer = $('#polaroidFooterDetails');
+  if (footer) footer.textContent = `Getiren: ${souvenir.broughtBy || souvenir.petName || 'Pawly'} 🐾 • Karşılayan: ${souvenir.welcomedBy || (typeof me !== 'undefined' && me ? me.name : 'Sen')} 💕`;
+
+  modal.classList.remove('hidden');
+}
+
+function closePolaroidModal() {
+  const modal = $('#souvenirPolaroidModal');
+  if (modal) modal.classList.add('hidden');
+}
+
+async function openTravelAlbumModal() {
+  if (!activePet) return toast('Önce bir canavar seçmelisin!');
+  const modal = $('#travelAlbumModal');
+  if (!modal) return;
+  modal.classList.remove('hidden');
+
+  try {
+    const data = await api(`/api/pets/${activePet.id}/adventure`);
+    const souvenirs = data.souvenirs || [];
+    const allDests = data.destinations || [
+      { id: 'tokyo', name: 'Tokyo 🌸', stamp: 'tokyo' },
+      { id: 'paris', name: 'Paris 🗼', stamp: 'paris' },
+      { id: 'istanbul', name: 'İstanbul 🌉', stamp: 'istanbul' },
+      { id: 'antalya', name: 'Antalya 🏖️', stamp: 'antalya' },
+      { id: 'nyc', name: 'New York 🗽', stamp: 'nyc' }
+    ];
+
+    // Pasaport Damgalarını Göster
+    const stampsRow = $('#passportStampsRow');
+    const unlockedStamps = new Set(souvenirs.map(s => s.destinationId || s.stamp));
+    if (stampsRow) {
+      stampsRow.innerHTML = allDests.map(d => {
+        const isUnlocked = unlockedStamps.has(d.id);
+        const icon = d.id === 'tokyo' ? '🌸' : d.id === 'paris' ? '🗼' : d.id === 'istanbul' ? '🌉' : d.id === 'antalya' ? '🏖️' : '🗽';
+        return `
+          <div class="passport-stamp-badge ${isUnlocked ? 'unlocked' : 'locked'}" title="${d.name}">
+            <span style="font-size:20px">${icon}</span>
+            <span style="font-size:8px;font-weight:800">${d.id.toUpperCase()}</span>
+          </div>
+        `;
+      }).join('');
+    }
+
+    const countSpan = $('#passportStampCount');
+    if (countSpan) countSpan.textContent = `${unlockedStamps.size} / ${allDests.length} Damga`;
+
+    // Polaroid Galeri Grid
+    const grid = $('#travelAlbumGrid');
+    if (grid) {
+      if (souvenirs.length === 0) {
+        grid.innerHTML = `
+          <div style="grid-column:1/-1;text-align:center;padding:30px 10px;color:var(--text-muted)">
+            <div style="font-size:36px;margin-bottom:8px">🎒📸</div>
+            <div style="font-weight:700;font-size:14px;color:var(--text-pure)">Henüz Hiç Seyahat Fotoğrafı Yok</div>
+            <div style="font-size:12px;margin-top:4px">Canavarını ilk macerasına gönder, sana özel Polaroid fotoğraflar getirsin!</div>
+          </div>
+        `;
+      } else {
+        grid.innerHTML = souvenirs.map((s, idx) => `
+          <div class="album-polaroid-mini" data-album-idx="${idx}" style="transform:rotate(${idx % 2 === 0 ? '-1.5deg' : '1.5deg'})">
+            <div class="album-mini-thumb" style="background:${s.bgGradient || '#FFF3E6'}">
+              <span>${s.item ? s.item.split(' ')[0] : '📸'}</span>
+            </div>
+            <div class="album-mini-title">${esc(s.destinationName || s.city || 'Hatıra')}</div>
+            <div class="album-mini-date">${esc(s.date || '')}</div>
+          </div>
+        `).join('');
+
+        $$('.album-polaroid-mini').forEach(item => {
+          item.onclick = () => {
+            const idx = Number(item.dataset.albumIdx);
+            const s = souvenirs[idx];
+            if (s) {
+              if (window.PawlyAudio) window.PawlyAudio.soundCameraShutter();
+              showPolaroidModal(s);
+            }
+          };
+        });
+      }
+    }
+  } catch (err) {
+    toast(err.message);
+  }
+}
+
+function closeTravelAlbumModal() {
+  const modal = $('#travelAlbumModal');
+  if (modal) modal.classList.add('hidden');
+}
+
 function bindHomeEvents() {
   if ($('#btnMissYouHeart')) $('#btnMissYouHeart').onclick = () => sendMissAction();
   if ($('#missYouHeart3DBox')) $('#missYouHeart3DBox').onclick = () => sendMissAction();
@@ -1122,6 +1356,24 @@ async function petCare(id, action) {
       res = await api(`/api/pets/${id}/sleep`, { method: 'POST' });
     } else if (action === 'hatch') {
       res = await api(`/api/pets/${id}/hatch`, { method: 'POST' });
+    } else if (action === 'adventure_speedup') {
+      res = await api(`/api/pets/${id}/adventure/speedup`, { method: 'POST' });
+      toast('Seyahat hızlandırıldı! ⚡');
+      await loadPets();
+      return;
+    } else if (action === 'adventure_claim') {
+      res = await api(`/api/pets/${id}/adventure/claim`, { method: 'POST' });
+      if (window.PawlyAudio) {
+        window.PawlyAudio.soundDoorbell();
+        setTimeout(() => window.PawlyAudio.soundCameraShutter(), 700);
+      }
+      if (res.souvenir) showPolaroidModal(res.souvenir);
+      toast(res.toast || 'Hatıra fotoğrafı ve hediye albüme kaydedildi! 📸');
+      await loadPets();
+      return;
+    } else if (action === 'adventure_finished') {
+      await loadPets();
+      return;
     } else {
       res = await api(`/api/pets/${id}/care`, {
         method: 'POST',
@@ -1529,10 +1781,25 @@ async function init() {
   $$('#petCareActionsGrid .pet-care-btn').forEach(b => {
     b.onclick = async () => {
       if (!activePet) return;
+      if (!b.dataset.petCare) return;
       if (window.PawlyAudio) window.PawlyAudio.soundPop(600);
       await petCare(activePet.id, b.dataset.petCare);
     };
   });
+
+  // Faz 5: Macera & Polaroid & Seyahat Albümü Butonları
+  if ($('#btnOpenAdventure')) $('#btnOpenAdventure').onclick = openAdventureModal;
+  if ($('#btnCloseAdventure')) $('#btnCloseAdventure').onclick = closeAdventureModal;
+  if ($('#btnStartAdventure')) $('#btnStartAdventure').onclick = startAdventure;
+  if ($('#btnOpenTravelAlbum')) $('#btnOpenTravelAlbum').onclick = openTravelAlbumModal;
+  if ($('#btnCloseTravelAlbum')) $('#btnCloseTravelAlbum').onclick = closeTravelAlbumModal;
+  if ($('#btnClosePolaroid')) $('#btnClosePolaroid').onclick = closePolaroidModal;
+  if ($('#btnViewAlbumFromPolaroid')) {
+    $('#btnViewAlbumFromPolaroid').onclick = () => {
+      closePolaroidModal();
+      openTravelAlbumModal();
+    };
+  }
 
   // Yeni Yumurta Al
   if ($('#createPet')) {

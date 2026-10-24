@@ -4318,7 +4318,30 @@
             "sender": "test_u1_mvm5iokqozwz",
             "at": "2026-10-24T08:43:08.364Z"
           }
-        ]
+        ],
+        "missYou": 0,
+        "statusBubble": {
+          "status": "Mutlu 🥰",
+          "emoji": "🥰",
+          "text": "Seni düşünüyorum!"
+        },
+        "sleep": {
+          "hours": 7.5,
+          "quality": "Excellent",
+          "weekly": [
+            7,
+            8,
+            6.5,
+            7.5,
+            8,
+            7.5,
+            8
+          ]
+        },
+        "location": {
+          "label": "home",
+          "name": "Evde 🏠"
+        }
       },
       "createdAt": "2026-10-24T08:43:08.352Z"
     },
@@ -4352,9 +4375,1199 @@
         "location": {
           "label": "home",
           "name": "Evde 🏠"
-        }
+        },
+        "statusBubble": {
+          "status": "Mutlu 🥰",
+          "emoji": "🥰",
+          "text": "Seni düşünüyorum!"
+        },
+        "jarCandies": [
+          {
+            "id": "c1",
+            "mood": "love",
+            "color": "#FF7B90",
+            "emoji": "💖"
+          },
+          {
+            "id": "c2",
+            "mood": "happy",
+            "color": "#FFD166",
+            "emoji": "✨"
+          },
+          {
+            "id": "c3",
+            "mood": "calm",
+            "color": "#70D6BB",
+            "emoji": "🌿"
+          }
+        ]
       },
       "createdAt": "2026-10-24T08:43:08.391Z"
+    },
+    {
+      "username": "adv_user_1792833476576",
+      "name": "Zeynep",
+      "color": "#4cc9f0",
+      "passHash": "$2a$10$lgjtW80UXQP65dl06oihNevFmfshu.6YicV2cNqNYWxHCQak96qGq",
+      "pairCode": "D8VR5S",
+      "isGuest": false,
+      "widget": {
+        "mood": null,
+        "todos": [],
+        "note": "",
+        "countdowns": [],
+        "stamps": [],
+        "missYou": 0,
+        "statusBubble": {
+          "status": "Mutlu 🥰",
+          "emoji": "🥰",
+          "text": "Seni düşünüyorum!"
+        },
+        "sleep": {
+          "hours": 7.5,
+          "quality": "Excellent",
+          "weekly": [
+            7,
+            8,
+            6.5,
+            7.5,
+            8,
+            7.5,
+            8
+          ]
+        },
+        "location": {
+          "label": "home",
+          "name": "Evde 🏠"
+        },
+        "jarCandies": [
+          {
+            "id": "c1",
+            "mood": "love",
+            "color": "#FF7B90",
+            "emoji": "💖"
+          },
+          {
+            "id": "c2",
+            "mood": "happy",
+            "color": "#FFD166",
+            "emoji": "✨"
+          },
+          {
+            "id": "c3",
+            "mood": "calm",
+            "color": "#70D6BB",
+            "emoji": "🌿"
+          }
+        ]
+      },
+      "createdAt": "2026-10-24T09:17:56.686Z"
+    },
+    {
+      "username": "adv_user_1792833497734",
+      "name": "Zeynep",
+      "color": "#4cc9f0",
+      "passHash": "$2a$10$CNlpaE96EhIU4s7Pj20pFOgx6bv1hRI/mTeoNu8O8uXqPW4WMZBoW",
+      "pairCode": "67MC6H",
+      "isGuest": false,
+      "widget": {
+        "mood": null,
+        "todos": [],
+        "note": "",
+        "countdowns": [],
+        "stamps": [],
+        "missYou": 0,
+        "statusBubble": {
+          "status": "Mutlu 🥰",
+          "emoji": "🥰",
+          "text": "Seni düşünüyorum!"
+        },
+        "sleep": {
+          "hours": 7.5,
+          "quality": "Excellent",
+          "weekly": [
+            7,
+            8,
+            6.5,
+            7.5,
+            8,
+            7.5,
+            8
+          ]
+        },
+        "location": {
+          "label": "home",
+          "name": "Evde 🏠"
+        },
+        "jarCandies": [
+          {
+            "id": "c1",
+            "mood": "love",
+            "color": "#FF7B90",
+            "emoji": "💖"
+          },
+          {
+            "id": "c2",
+            "mood": "happy",
+            "color": "#FFD166",
+            "emoji": "✨"
+          },
+          {
+            "id": "c3",
+            "mood": "calm",
+            "color": "#70D6BB",
+            "emoji": "🌿"
+          }
+        ]
+      },
+      "createdAt": "2026-10-24T09:18:17.847Z"
+    },
+    {
+      "username": "adv_partner_1792833497734",
+      "name": "Barış",
+      "color": "#7c5cff",
+      "passHash": "$2a$10$KUd9PlK2ydtRSG3k7.5m9e8rF7YyFh9Ol3eDXIb2EOhKunpeBbAFK",
+      "pairCode": "YS8LYZ",
+      "isGuest": false,
+      "widget": {
+        "mood": null,
+        "todos": [],
+        "note": "",
+        "countdowns": [],
+        "stamps": [],
+        "missYou": 0,
+        "statusBubble": {
+          "status": "Mutlu 🥰",
+          "emoji": "🥰",
+          "text": "Seni düşünüyorum!"
+        },
+        "sleep": {
+          "hours": 7.5,
+          "quality": "Excellent",
+          "weekly": [
+            7,
+            8,
+            6.5,
+            7.5,
+            8,
+            7.5,
+            8
+          ]
+        },
+        "location": {
+          "label": "home",
+          "name": "Evde 🏠"
+        },
+        "jarCandies": [
+          {
+            "id": "c1",
+            "mood": "love",
+            "color": "#FF7B90",
+            "emoji": "💖"
+          },
+          {
+            "id": "c2",
+            "mood": "happy",
+            "color": "#FFD166",
+            "emoji": "✨"
+          },
+          {
+            "id": "c3",
+            "mood": "calm",
+            "color": "#70D6BB",
+            "emoji": "🌿"
+          }
+        ]
+      },
+      "createdAt": "2026-10-24T09:18:17.952Z"
+    },
+    {
+      "username": "user_a_1792833502371",
+      "name": "Alice",
+      "color": "#3ddc97",
+      "passHash": "$2a$10$Ix2VUr8zLZ7.I353TW5qmeSy0duzKrpWxKb2j8FfLv3Y9RV9ILiq.",
+      "pairCode": "CLYSSH",
+      "isGuest": false,
+      "widget": {
+        "mood": null,
+        "todos": [],
+        "note": "",
+        "countdowns": [],
+        "stamps": [],
+        "missYou": 0,
+        "statusBubble": {
+          "status": "Mutlu 🥰",
+          "emoji": "🥰",
+          "text": "Seni düşünüyorum!"
+        },
+        "sleep": {
+          "hours": 7.5,
+          "quality": "Excellent",
+          "weekly": [
+            7,
+            8,
+            6.5,
+            7.5,
+            8,
+            7.5,
+            8
+          ]
+        },
+        "location": {
+          "label": "home",
+          "name": "Evde 🏠"
+        },
+        "jarCandies": [
+          {
+            "id": "c1",
+            "mood": "love",
+            "color": "#FF7B90",
+            "emoji": "💖"
+          },
+          {
+            "id": "c2",
+            "mood": "happy",
+            "color": "#FFD166",
+            "emoji": "✨"
+          },
+          {
+            "id": "c3",
+            "mood": "calm",
+            "color": "#70D6BB",
+            "emoji": "🌿"
+          }
+        ]
+      },
+      "createdAt": "2026-10-24T09:18:22.482Z"
+    },
+    {
+      "username": "user_b_1792833502514",
+      "name": "Bob",
+      "color": "#ff9f1c",
+      "passHash": "$2a$10$XryuWJinK0H.pIgtnkKUjumSA0DC4/ARpUf2du9ZPPEN.GAiNx2SW",
+      "pairCode": "D7EC9C",
+      "isGuest": false,
+      "widget": {
+        "mood": null,
+        "todos": [],
+        "note": "",
+        "countdowns": [],
+        "stamps": [],
+        "missYou": 0,
+        "statusBubble": {
+          "status": "Mutlu 🥰",
+          "emoji": "🥰",
+          "text": "Seni düşünüyorum!"
+        },
+        "sleep": {
+          "hours": 7.5,
+          "quality": "Excellent",
+          "weekly": [
+            7,
+            8,
+            6.5,
+            7.5,
+            8,
+            7.5,
+            8
+          ]
+        },
+        "location": {
+          "label": "home",
+          "name": "Evde 🏠"
+        },
+        "jarCandies": [
+          {
+            "id": "c1",
+            "mood": "love",
+            "color": "#FF7B90",
+            "emoji": "💖"
+          },
+          {
+            "id": "c2",
+            "mood": "happy",
+            "color": "#FFD166",
+            "emoji": "✨"
+          },
+          {
+            "id": "c3",
+            "mood": "calm",
+            "color": "#70D6BB",
+            "emoji": "🌿"
+          }
+        ]
+      },
+      "createdAt": "2026-10-24T09:18:22.512Z"
+    },
+    {
+      "username": "parent_a_1792833502717",
+      "name": "Aslı",
+      "color": "#4cc9f0",
+      "passHash": "$2a$10$wD56uYpVXUBKWEQuAq3JueGDkzD9oB1ohPASqDt/BLGpd7XJrozqO",
+      "pairCode": "GD6PPC",
+      "isGuest": false,
+      "widget": {
+        "mood": null,
+        "todos": [],
+        "note": "",
+        "countdowns": [],
+        "stamps": [],
+        "missYou": 0,
+        "statusBubble": {
+          "status": "Mutlu 🥰",
+          "emoji": "🥰",
+          "text": "Seni düşünüyorum!"
+        },
+        "sleep": {
+          "hours": 7.5,
+          "quality": "Excellent",
+          "weekly": [
+            7,
+            8,
+            6.5,
+            7.5,
+            8,
+            7.5,
+            8
+          ]
+        },
+        "location": {
+          "label": "home",
+          "name": "Evde 🏠"
+        },
+        "jarCandies": [
+          {
+            "id": "c1",
+            "mood": "love",
+            "color": "#FF7B90",
+            "emoji": "💖"
+          },
+          {
+            "id": "c2",
+            "mood": "happy",
+            "color": "#FFD166",
+            "emoji": "✨"
+          },
+          {
+            "id": "c3",
+            "mood": "calm",
+            "color": "#70D6BB",
+            "emoji": "🌿"
+          }
+        ]
+      },
+      "createdAt": "2026-10-24T09:18:22.826Z"
+    },
+    {
+      "username": "parent_b_1792833502717",
+      "name": "Burak",
+      "color": "#4cc9f0",
+      "passHash": "$2a$10$Wes1QTlQeyu/.Uz49YhXZe91Fg5K4nOhjlV6eutouTjNuF.F/YBTm",
+      "pairCode": "QQJEBM",
+      "isGuest": false,
+      "widget": {
+        "mood": null,
+        "todos": [],
+        "note": "",
+        "countdowns": [],
+        "stamps": [],
+        "missYou": 0,
+        "statusBubble": {
+          "status": "Mutlu 🥰",
+          "emoji": "🥰",
+          "text": "Seni düşünüyorum!"
+        },
+        "sleep": {
+          "hours": 7.5,
+          "quality": "Excellent",
+          "weekly": [
+            7,
+            8,
+            6.5,
+            7.5,
+            8,
+            7.5,
+            8
+          ]
+        },
+        "location": {
+          "label": "home",
+          "name": "Evde 🏠"
+        },
+        "jarCandies": [
+          {
+            "id": "c1",
+            "mood": "love",
+            "color": "#FF7B90",
+            "emoji": "💖"
+          },
+          {
+            "id": "c2",
+            "mood": "happy",
+            "color": "#FFD166",
+            "emoji": "✨"
+          },
+          {
+            "id": "c3",
+            "mood": "calm",
+            "color": "#70D6BB",
+            "emoji": "🌿"
+          }
+        ]
+      },
+      "createdAt": "2026-10-24T09:18:22.931Z"
+    },
+    {
+      "username": "bento_user_1792833503042",
+      "name": "Can",
+      "color": "#ff7aa2",
+      "passHash": "$2a$10$oK7bR9is18TyDiSFfPDBm.8obJsgivaPaW5sM9ttwqMoclSeLKr6e",
+      "pairCode": "J28XAR",
+      "isGuest": false,
+      "widget": {
+        "mood": "🥰",
+        "todos": [
+          {
+            "id": "t_4lmvm6s0jf",
+            "text": "Canavara çilek al 🍓",
+            "done": true,
+            "createdAt": "2026-10-24T09:18:23.163Z"
+          }
+        ],
+        "note": "Bento sticky note notu!",
+        "countdowns": [
+          {
+            "id": "c_4mmvm6s0jh",
+            "title": "Doğum Günü Partisi 🎂",
+            "date": "2026-11-15",
+            "createdAt": "2026-10-24T09:18:23.165Z"
+          }
+        ],
+        "stamps": [
+          {
+            "id": "tokyo",
+            "at": "2026-10-24T09:18:23.166Z"
+          }
+        ],
+        "layout": [
+          "streak",
+          "pet",
+          "todos",
+          "mood",
+          "note",
+          "countdown",
+          "stamps"
+        ],
+        "moodDate": "2026-10-24",
+        "missYou": 0,
+        "statusBubble": {
+          "status": "Mutlu 🥰",
+          "emoji": "🥰",
+          "text": "Seni düşünüyorum!"
+        },
+        "sleep": {
+          "hours": 7.5,
+          "quality": "Excellent",
+          "weekly": [
+            7,
+            8,
+            6.5,
+            7.5,
+            8,
+            7.5,
+            8
+          ]
+        },
+        "location": {
+          "label": "home",
+          "name": "Evde 🏠"
+        },
+        "jarCandies": [
+          {
+            "id": "c1",
+            "mood": "love",
+            "color": "#FF7B90",
+            "emoji": "💖"
+          },
+          {
+            "id": "c2",
+            "mood": "happy",
+            "color": "#FFD166",
+            "emoji": "✨"
+          },
+          {
+            "id": "c3",
+            "mood": "calm",
+            "color": "#70D6BB",
+            "emoji": "🌿"
+          }
+        ]
+      },
+      "createdAt": "2026-10-24T09:18:23.152Z"
+    },
+    {
+      "username": "test_u1_mvm6s0matcnf",
+      "name": "Selin 💕",
+      "color": "#3ddc97",
+      "passHash": "$2a$10$gv7STNtZJvvlXXfF.Io2OeKSsSgn.wi1df23G3vzR6D4EztSiFcxK",
+      "pairCode": "8MDEBP",
+      "isGuest": false,
+      "widget": {
+        "mood": null,
+        "todos": [],
+        "note": "",
+        "countdowns": [],
+        "stamps": [],
+        "missYou": 1,
+        "missHistory": [
+          {
+            "id": "m_4omvm6s0sf",
+            "from": "test_u1_mvm6s0matcnf",
+            "fromName": "Selin 💕",
+            "to": "test_u2_mvm6s0matcnf",
+            "combo": 1,
+            "isBomb": false,
+            "note": "",
+            "at": "2026-10-24T09:18:23.487Z",
+            "hour": 12
+          }
+        ],
+        "missHeatmap": {
+          "12": 1
+        },
+        "location": {
+          "label": "cafe",
+          "name": "Kafede ☕"
+        },
+        "sleep": {
+          "hours": 8.5,
+          "quality": "Excellent",
+          "weekly": [
+            7.2,
+            7.5,
+            8,
+            6.5,
+            7.5,
+            8.2,
+            8.5
+          ],
+          "updatedAt": "2026-10-24T09:18:23.491Z"
+        },
+        "jarCandies": [
+          {
+            "id": "j_4pmvm6s0sl",
+            "mood": "love",
+            "color": "#FF7B90",
+            "emoji": "💖",
+            "sender": "test_u1_mvm6s0matcnf",
+            "senderName": "Selin 💕",
+            "at": "2026-10-24T09:18:23.493Z"
+          }
+        ],
+        "statusBubble": {
+          "status": "Kahve Molası ☕",
+          "emoji": "☕",
+          "text": "Bir kahve içip geliyorum canım!",
+          "at": "2026-10-24T09:18:23.495Z"
+        }
+      },
+      "createdAt": "2026-10-24T09:18:23.377Z"
+    },
+    {
+      "username": "test_u2_mvm6s0matcnf",
+      "name": "Kaan 🌟",
+      "color": "#3ddc97",
+      "passHash": "$2a$10$/8dGLKC6wfwe1MNKFP7psuLcYTJ1GYNs74p4ELYzE8UBkFAjAVbLy",
+      "pairCode": "2G9MXQ",
+      "isGuest": false,
+      "widget": {
+        "mood": null,
+        "todos": [],
+        "note": "",
+        "countdowns": [],
+        "stamps": [],
+        "missYouReceived": 1,
+        "missHistory": [
+          {
+            "id": "m_4omvm6s0sf",
+            "from": "test_u1_mvm6s0matcnf",
+            "fromName": "Selin 💕",
+            "to": "test_u2_mvm6s0matcnf",
+            "combo": 1,
+            "isBomb": false,
+            "note": "",
+            "at": "2026-10-24T09:18:23.487Z",
+            "hour": 12
+          }
+        ],
+        "missHeatmap": {
+          "12": 1
+        },
+        "jarCandies": [
+          {
+            "id": "j_4pmvm6s0sl",
+            "mood": "love",
+            "color": "#FF7B90",
+            "emoji": "💖",
+            "sender": "test_u1_mvm6s0matcnf",
+            "senderName": "Selin 💕",
+            "at": "2026-10-24T09:18:23.493Z"
+          }
+        ],
+        "missYou": 0,
+        "statusBubble": {
+          "status": "Mutlu 🥰",
+          "emoji": "🥰",
+          "text": "Seni düşünüyorum!"
+        },
+        "sleep": {
+          "hours": 7.5,
+          "quality": "Excellent",
+          "weekly": [
+            7,
+            8,
+            6.5,
+            7.5,
+            8,
+            7.5,
+            8
+          ]
+        },
+        "location": {
+          "label": "home",
+          "name": "Evde 🏠"
+        }
+      },
+      "createdAt": "2026-10-24T09:18:23.482Z"
+    },
+    {
+      "username": "guest_v0p4i",
+      "name": "Misafir #HF47",
+      "color": "#4cc9f0",
+      "passHash": "$2a$08$OqzsuCEFvfhArUt/0EiEdO1jPAxPqNfaVYpyiF92gEaQDnL3XlYoe",
+      "pairCode": "HF477S",
+      "isGuest": true,
+      "widget": {
+        "mood": null,
+        "todos": [],
+        "note": "",
+        "countdowns": [],
+        "stamps": [],
+        "missYou": 999,
+        "sleep": {
+          "hours": 7.5,
+          "quality": "Excellent",
+          "weekly": [
+            7,
+            7.5,
+            8,
+            6.5,
+            7.5,
+            8,
+            7.5
+          ]
+        },
+        "location": {
+          "label": "home",
+          "name": "Evde 🏠"
+        },
+        "statusBubble": {
+          "status": "Mutlu 🥰",
+          "emoji": "🥰",
+          "text": "Seni düşünüyorum!"
+        },
+        "jarCandies": [
+          {
+            "id": "c1",
+            "mood": "love",
+            "color": "#FF7B90",
+            "emoji": "💖"
+          },
+          {
+            "id": "c2",
+            "mood": "happy",
+            "color": "#FFD166",
+            "emoji": "✨"
+          },
+          {
+            "id": "c3",
+            "mood": "calm",
+            "color": "#70D6BB",
+            "emoji": "🌿"
+          }
+        ]
+      },
+      "createdAt": "2026-10-24T09:18:23.521Z"
+    },
+    {
+      "username": "hearta_1792833503652",
+      "name": "Can",
+      "color": "#3ddc97",
+      "passHash": "$2a$10$hh3hCNhHq2K1V8.Gfh0V/evO03E0EUsd1Gdo.3c231HiBt.CSETg2",
+      "pairCode": "ZX5KNH",
+      "isGuest": false,
+      "widget": {
+        "mood": null,
+        "todos": [],
+        "note": "",
+        "countdowns": [],
+        "stamps": [],
+        "missYou": 2,
+        "missHistory": [
+          {
+            "id": "m_4vmvm6s134",
+            "from": "hearta_1792833503652",
+            "fromName": "Can",
+            "to": "heartb_1792833503652",
+            "combo": 5,
+            "isBomb": false,
+            "note": "Kokunu çok özledim 🌸",
+            "at": "2026-10-24T09:18:23.872Z",
+            "hour": 12
+          },
+          {
+            "id": "m_4wmvm6s136",
+            "from": "hearta_1792833503652",
+            "fromName": "Can",
+            "to": "heartb_1792833503652",
+            "combo": 50,
+            "isBomb": true,
+            "note": "Kocaman Aşk Bombası! 💣",
+            "at": "2026-10-24T09:18:23.874Z",
+            "hour": 12
+          }
+        ],
+        "missHeatmap": {
+          "12": 2
+        },
+        "statusBubble": {
+          "status": "Mutlu 🥰",
+          "emoji": "🥰",
+          "text": "Seni düşünüyorum!"
+        },
+        "sleep": {
+          "hours": 7.5,
+          "quality": "Excellent",
+          "weekly": [
+            7,
+            8,
+            6.5,
+            7.5,
+            8,
+            7.5,
+            8
+          ]
+        },
+        "location": {
+          "label": "home",
+          "name": "Evde 🏠"
+        },
+        "jarCandies": [
+          {
+            "id": "c1",
+            "mood": "love",
+            "color": "#FF7B90",
+            "emoji": "💖"
+          },
+          {
+            "id": "c2",
+            "mood": "happy",
+            "color": "#FFD166",
+            "emoji": "✨"
+          },
+          {
+            "id": "c3",
+            "mood": "calm",
+            "color": "#70D6BB",
+            "emoji": "🌿"
+          }
+        ]
+      },
+      "createdAt": "2026-10-24T09:18:23.762Z"
+    },
+    {
+      "username": "heartb_1792833503652",
+      "name": "Ece",
+      "color": "#3ddc97",
+      "passHash": "$2a$10$dLOZ43ZpDjCsgboI9ZQYT.wPduSVVEKjBUQ14CQD8f/Rx6GlRiusi",
+      "pairCode": "QLHP92",
+      "isGuest": false,
+      "widget": {
+        "mood": null,
+        "todos": [],
+        "note": "",
+        "countdowns": [],
+        "stamps": [],
+        "missYouReceived": 2,
+        "missHistory": [
+          {
+            "id": "m_4vmvm6s134",
+            "from": "hearta_1792833503652",
+            "fromName": "Can",
+            "to": "heartb_1792833503652",
+            "combo": 5,
+            "isBomb": false,
+            "note": "Kokunu çok özledim 🌸",
+            "at": "2026-10-24T09:18:23.872Z",
+            "hour": 12
+          },
+          {
+            "id": "m_4wmvm6s136",
+            "from": "hearta_1792833503652",
+            "fromName": "Can",
+            "to": "heartb_1792833503652",
+            "combo": 50,
+            "isBomb": true,
+            "note": "Kocaman Aşk Bombası! 💣",
+            "at": "2026-10-24T09:18:23.874Z",
+            "hour": 12
+          }
+        ],
+        "missHeatmap": {
+          "12": 2
+        },
+        "missYou": 0,
+        "statusBubble": {
+          "status": "Mutlu 🥰",
+          "emoji": "🥰",
+          "text": "Seni düşünüyorum!"
+        },
+        "sleep": {
+          "hours": 7.5,
+          "quality": "Excellent",
+          "weekly": [
+            7,
+            8,
+            6.5,
+            7.5,
+            8,
+            7.5,
+            8
+          ]
+        },
+        "location": {
+          "label": "home",
+          "name": "Evde 🏠"
+        },
+        "jarCandies": [
+          {
+            "id": "c1",
+            "mood": "love",
+            "color": "#FF7B90",
+            "emoji": "💖"
+          },
+          {
+            "id": "c2",
+            "mood": "happy",
+            "color": "#FFD166",
+            "emoji": "✨"
+          },
+          {
+            "id": "c3",
+            "mood": "calm",
+            "color": "#70D6BB",
+            "emoji": "🌿"
+          }
+        ]
+      },
+      "createdAt": "2026-10-24T09:18:23.867Z"
+    },
+    {
+      "username": "gamer_a_1792833503974",
+      "name": "Zeynep",
+      "color": "#ffc93c",
+      "passHash": "$2a$10$JYXqLECBmoLpCMFO1s4Ci.BQMpU2SywcWUby0Gr74UvEP3PPREKvG",
+      "pairCode": "DYY5RC",
+      "isGuest": false,
+      "widget": {
+        "mood": null,
+        "todos": [],
+        "note": "",
+        "countdowns": [],
+        "stamps": [],
+        "missYou": 0,
+        "statusBubble": {
+          "status": "Mutlu 🥰",
+          "emoji": "🥰",
+          "text": "Seni düşünüyorum!"
+        },
+        "sleep": {
+          "hours": 7.5,
+          "quality": "Excellent",
+          "weekly": [
+            7,
+            8,
+            6.5,
+            7.5,
+            8,
+            7.5,
+            8
+          ]
+        },
+        "location": {
+          "label": "home",
+          "name": "Evde 🏠"
+        },
+        "jarCandies": [
+          {
+            "id": "c1",
+            "mood": "love",
+            "color": "#FF7B90",
+            "emoji": "💖"
+          },
+          {
+            "id": "c2",
+            "mood": "happy",
+            "color": "#FFD166",
+            "emoji": "✨"
+          },
+          {
+            "id": "c3",
+            "mood": "calm",
+            "color": "#70D6BB",
+            "emoji": "🌿"
+          }
+        ]
+      },
+      "createdAt": "2026-10-24T09:18:24.084Z"
+    },
+    {
+      "username": "gamer_b_1792833503974",
+      "name": "Kerem",
+      "color": "#ffc93c",
+      "passHash": "$2a$10$t4E7tUUQ6K7ulTtOH7ZEC.5bvplOEGVNJT8CaE2I042..uZzhj9F2",
+      "pairCode": "WN8U9T",
+      "isGuest": false,
+      "widget": {
+        "mood": null,
+        "todos": [],
+        "note": "",
+        "countdowns": [],
+        "stamps": [],
+        "missYou": 0,
+        "statusBubble": {
+          "status": "Mutlu 🥰",
+          "emoji": "🥰",
+          "text": "Seni düşünüyorum!"
+        },
+        "sleep": {
+          "hours": 7.5,
+          "quality": "Excellent",
+          "weekly": [
+            7,
+            8,
+            6.5,
+            7.5,
+            8,
+            7.5,
+            8
+          ]
+        },
+        "location": {
+          "label": "home",
+          "name": "Evde 🏠"
+        },
+        "jarCandies": [
+          {
+            "id": "c1",
+            "mood": "love",
+            "color": "#FF7B90",
+            "emoji": "💖"
+          },
+          {
+            "id": "c2",
+            "mood": "happy",
+            "color": "#FFD166",
+            "emoji": "✨"
+          },
+          {
+            "id": "c3",
+            "mood": "calm",
+            "color": "#70D6BB",
+            "emoji": "🌿"
+          }
+        ]
+      },
+      "createdAt": "2026-10-24T09:18:24.189Z"
+    },
+    {
+      "username": "social_a_1792833504309",
+      "name": "Selin",
+      "color": "#4cc9f0",
+      "passHash": "$2a$10$3CuOF8Vk/nsI8yWlzmwH8eNzrGIMfjfMXpxnUDea5fX4SD9tkOkWq",
+      "pairCode": "8UPMAJ",
+      "isGuest": false,
+      "widget": {
+        "mood": null,
+        "todos": [],
+        "note": "",
+        "countdowns": [],
+        "stamps": [],
+        "doodle": {
+          "id": "d_58mvm6s1le",
+          "from": "social_a_1792833504309",
+          "fromName": "Selin",
+          "strokes": [
+            {
+              "color": "#FF6584",
+              "width": 4,
+              "points": [
+                {
+                  "x": 10,
+                  "y": 10
+                },
+                {
+                  "x": 50,
+                  "y": 50
+                }
+              ]
+            }
+          ],
+          "previewDataUrl": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==",
+          "at": "2026-10-24T09:18:24.530Z"
+        },
+        "sleep": {
+          "hours": 8.5,
+          "quality": "Excellent",
+          "weekly": [
+            8,
+            8.5,
+            9,
+            8,
+            8.5,
+            9,
+            8.5
+          ],
+          "updatedAt": "2026-10-24T09:18:24.534Z"
+        },
+        "jarCandies": [
+          {
+            "id": "j_59mvm6s1lk",
+            "mood": "love",
+            "color": "#FF6584",
+            "emoji": "💖",
+            "sender": "social_a_1792833504309",
+            "senderName": "Selin",
+            "at": "2026-10-24T09:18:24.536Z"
+          }
+        ],
+        "missYou": 0,
+        "statusBubble": {
+          "status": "Mutlu 🥰",
+          "emoji": "🥰",
+          "text": "Seni düşünüyorum!"
+        },
+        "location": {
+          "label": "home",
+          "name": "Evde 🏠"
+        }
+      },
+      "createdAt": "2026-10-24T09:18:24.420Z"
+    },
+    {
+      "username": "social_b_1792833504309",
+      "name": "Barış",
+      "color": "#4cc9f0",
+      "passHash": "$2a$10$N2YnFsotoF3AZu/p0rt9L.6r5w/5InI.DcTEcaOFyog8if6t9tZCS",
+      "pairCode": "CWK4Y3",
+      "isGuest": false,
+      "widget": {
+        "mood": null,
+        "todos": [],
+        "note": "",
+        "countdowns": [],
+        "stamps": [],
+        "doodle": {
+          "id": "d_58mvm6s1le",
+          "from": "social_a_1792833504309",
+          "fromName": "Selin",
+          "strokes": [
+            {
+              "color": "#FF6584",
+              "width": 4,
+              "points": [
+                {
+                  "x": 10,
+                  "y": 10
+                },
+                {
+                  "x": 50,
+                  "y": 50
+                }
+              ]
+            }
+          ],
+          "previewDataUrl": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==",
+          "at": "2026-10-24T09:18:24.530Z"
+        },
+        "jarCandies": [
+          {
+            "id": "j_59mvm6s1lk",
+            "mood": "love",
+            "color": "#FF6584",
+            "emoji": "💖",
+            "sender": "social_a_1792833504309",
+            "senderName": "Selin",
+            "at": "2026-10-24T09:18:24.536Z"
+          }
+        ],
+        "missYou": 0,
+        "statusBubble": {
+          "status": "Mutlu 🥰",
+          "emoji": "🥰",
+          "text": "Seni düşünüyorum!"
+        },
+        "sleep": {
+          "hours": 7.5,
+          "quality": "Excellent",
+          "weekly": [
+            7,
+            8,
+            6.5,
+            7.5,
+            8,
+            7.5,
+            8
+          ]
+        },
+        "location": {
+          "label": "home",
+          "name": "Evde 🏠"
+        }
+      },
+      "createdAt": "2026-10-24T09:18:24.524Z"
+    },
+    {
+      "username": "adv_user_1792833504635",
+      "name": "Zeynep",
+      "color": "#4cc9f0",
+      "passHash": "$2a$10$H9DPnaq6DoMSRe6fZJ4.X.LlewO3z4b1LtWtXvAEp8n2DQgVfiJbO",
+      "pairCode": "86A5A7",
+      "isGuest": false,
+      "widget": {
+        "mood": null,
+        "todos": [],
+        "note": "",
+        "countdowns": [],
+        "stamps": []
+      },
+      "createdAt": "2026-10-24T09:18:24.745Z"
+    },
+    {
+      "username": "adv_partner_1792833504635",
+      "name": "Barış",
+      "color": "#7c5cff",
+      "passHash": "$2a$10$7R8tolF.qiHv/7.8eZ6CPu0.90sNGEJqaFbIf2AkXoRkr/jOIIwkO",
+      "pairCode": "J8YJDW",
+      "isGuest": false,
+      "widget": {
+        "mood": null,
+        "todos": [],
+        "note": "",
+        "countdowns": [],
+        "stamps": []
+      },
+      "createdAt": "2026-10-24T09:18:24.850Z"
     }
   ],
   "friends": [
@@ -4517,6 +5730,41 @@
       "a": "alex_demo",
       "b": "guest_x68u6",
       "since": "2026-10-24T08:43:08.393Z"
+    },
+    {
+      "a": "user_a_1792833502371",
+      "b": "user_b_1792833502514",
+      "since": "2026-10-24T09:18:22.618Z"
+    },
+    {
+      "a": "parent_a_1792833502717",
+      "b": "parent_b_1792833502717",
+      "since": "2026-10-24T09:18:22.934Z"
+    },
+    {
+      "a": "test_u1_mvm6s0matcnf",
+      "b": "test_u2_mvm6s0matcnf",
+      "since": "2026-10-24T09:18:23.485Z"
+    },
+    {
+      "a": "alex_demo",
+      "b": "guest_v0p4i",
+      "since": "2026-10-24T09:18:23.522Z"
+    },
+    {
+      "a": "hearta_1792833503652",
+      "b": "heartb_1792833503652",
+      "since": "2026-10-24T09:18:23.870Z"
+    },
+    {
+      "a": "gamer_a_1792833503974",
+      "b": "gamer_b_1792833503974",
+      "since": "2026-10-24T09:18:24.194Z"
+    },
+    {
+      "a": "social_a_1792833504309",
+      "b": "social_b_1792833504309",
+      "since": "2026-10-24T09:18:24.528Z"
     }
   ],
   "requests": [],
@@ -5838,6 +7086,678 @@
       "lastTick": 1792831388393,
       "mood": "mutlu",
       "createdAt": "2026-10-24T08:43:08.393Z"
+    },
+    {
+      "id": "pet_3ymvm6rg44",
+      "name": "Mochi",
+      "species": "cat",
+      "owners": [
+        "adv_user_1792833476576"
+      ],
+      "relationshipId": null,
+      "stats": {
+        "food": 75,
+        "water": 75,
+        "clean": 75,
+        "energy": 80,
+        "happy": 80
+      },
+      "poops": [],
+      "sleeping": false,
+      "xp": 50,
+      "hatched": true,
+      "hatchTaps": [
+        "adv_user_1792833476576"
+      ],
+      "cooldowns": {},
+      "logs": [
+        {
+          "id": "log_40mvm6rg47",
+          "actor": {
+            "username": "adv_user_1792833476576",
+            "name": "Zeynep",
+            "color": "#4cc9f0"
+          },
+          "action": "adventure-start",
+          "label": "Zeynep, Mochi'yi Eyfel Kulesi & Seine 🗼 macerasına uğurladı! 🎒",
+          "xpGain": 10,
+          "at": "2026-10-24T09:17:56.695Z"
+        },
+        {
+          "id": "log_3zmvm6rg44",
+          "actor": {
+            "username": "adv_user_1792833476576",
+            "name": "Zeynep",
+            "color": "#4cc9f0"
+          },
+          "action": "hatch",
+          "label": "Mochi yumurtadan çıktı! 🐣",
+          "xpGain": 20,
+          "at": "2026-10-24T09:17:56.692Z"
+        }
+      ],
+      "lastTick": 1792833476694,
+      "mood": "mutlu",
+      "createdAt": "2026-10-24T09:17:56.692Z",
+      "adventure": {
+        "destinationId": "paris",
+        "startTime": 1792833476695,
+        "durationSec": 240,
+        "endTime": 1792833716695,
+        "startedBy": "adv_user_1792833476576"
+      }
+    },
+    {
+      "id": "pet_41mvm6rwir",
+      "name": "Mochi",
+      "species": "cat",
+      "owners": [
+        "adv_user_1792833497734",
+        "adv_partner_1792833497734"
+      ],
+      "relationshipId": null,
+      "stats": {
+        "food": 75,
+        "water": 75,
+        "clean": 75,
+        "energy": 80,
+        "happy": 80
+      },
+      "poops": [],
+      "sleeping": false,
+      "xp": 320,
+      "hatched": true,
+      "hatchTaps": [
+        "adv_user_1792833497734",
+        "adv_partner_1792833497734"
+      ],
+      "cooldowns": {},
+      "logs": [
+        {
+          "id": "log_4bmvm6rwjn",
+          "actor": {
+            "username": "adv_user_1792833497734",
+            "name": "Zeynep",
+            "color": "#4cc9f0"
+          },
+          "action": "adventure-return",
+          "label": "Mochi Kiraz Çiçeği Bahçesi 🌸 seyahatinden döndü ve 🌸 Sakura Dalı getirdi! 📸",
+          "xpGain": 50,
+          "at": "2026-10-24T09:18:17.987Z"
+        },
+        {
+          "id": "log_49mvm6rwjl",
+          "actor": {
+            "username": "adv_user_1792833497734",
+            "name": "Zeynep",
+            "color": "#4cc9f0"
+          },
+          "action": "adventure-start",
+          "label": "Zeynep, Mochi'yi Kiraz Çiçeği Bahçesi 🌸 macerasına uğurladı! 🎒",
+          "xpGain": 10,
+          "at": "2026-10-24T09:18:17.985Z"
+        },
+        {
+          "id": "log_48mvm6rwjj",
+          "actor": {
+            "username": "adv_user_1792833497734",
+            "name": "Zeynep",
+            "color": "#4cc9f0"
+          },
+          "action": "adventure-return",
+          "label": "Mochi Eyfel Kulesi & Seine 🗼 seyahatinden döndü ve 🥐 Taze Sıcak Kruvasan getirdi! 📸",
+          "xpGain": 75,
+          "at": "2026-10-24T09:18:17.983Z"
+        },
+        {
+          "id": "log_46mvm6rwj0",
+          "actor": {
+            "username": "adv_user_1792833497734",
+            "name": "Zeynep",
+            "color": "#4cc9f0"
+          },
+          "action": "adventure-start",
+          "label": "Zeynep, Mochi'yi Eyfel Kulesi & Seine 🗼 macerasına uğurladı! 🎒",
+          "xpGain": 10,
+          "at": "2026-10-24T09:18:17.964Z"
+        },
+        {
+          "id": "log_45mvm6rwiy",
+          "actor": {
+            "username": "adv_user_1792833497734",
+            "name": "Zeynep",
+            "color": "#4cc9f0"
+          },
+          "action": "wake",
+          "label": "Zeynep canavarı uyandırdı ☀️",
+          "xpGain": 5,
+          "at": "2026-10-24T09:18:17.963Z"
+        },
+        {
+          "id": "log_44mvm6rwix",
+          "actor": {
+            "username": "adv_user_1792833497734",
+            "name": "Zeynep",
+            "color": "#4cc9f0"
+          },
+          "action": "sleep",
+          "label": "Zeynep canavarı uyuttu 💤",
+          "xpGain": 5,
+          "at": "2026-10-24T09:18:17.961Z"
+        },
+        {
+          "id": "log_43mvm6rwiu",
+          "actor": {
+            "username": "adv_partner_1792833497734",
+            "name": "Barış",
+            "color": "#7c5cff"
+          },
+          "action": "hatch",
+          "label": "Mochi başarıyla çatladı ve dünyaya geldi! 🐣",
+          "xpGain": 20,
+          "at": "2026-10-24T09:18:17.958Z"
+        },
+        {
+          "id": "log_42mvm6rwir",
+          "actor": {
+            "username": "adv_user_1792833497734",
+            "name": "Zeynep",
+            "color": "#4cc9f0"
+          },
+          "action": "create",
+          "label": "Zeynep ortak bir yumurta bıraktı 🥚",
+          "xpGain": 0,
+          "at": "2026-10-24T09:18:17.955Z"
+        }
+      ],
+      "lastTick": 1792833497986,
+      "mood": "mutlu",
+      "createdAt": "2026-10-24T09:18:17.955Z",
+      "adventure": null,
+      "souvenirs": [
+        {
+          "id": "polaroid_4amvm6rwjm",
+          "destinationId": "tokyo",
+          "destinationName": "Kiraz Çiçeği Bahçesi 🌸",
+          "city": "Tokyo, Japonya",
+          "item": "🌸 Sakura Dalı",
+          "bgGradient": "linear-gradient(135deg, #FFCAD4, #FFE5EC)",
+          "caption": "Kiraz çiçekleri rüzgarda uçuşurken sadece seni düşündüm... 💕",
+          "stamp": "tokyo",
+          "petName": "Mochi",
+          "petSpecies": "cat",
+          "date": "24 Ekim 2026",
+          "createdAt": "2026-10-24T09:18:17.987Z",
+          "broughtBy": "Mochi",
+          "welcomedBy": "Zeynep"
+        },
+        {
+          "id": "polaroid_47mvm6rwj2",
+          "destinationId": "paris",
+          "destinationName": "Eyfel Kulesi & Seine 🗼",
+          "city": "Paris, Fransa",
+          "item": "🥐 Taze Sıcak Kruvasan",
+          "bgGradient": "linear-gradient(135deg, #DCE2FF, #EBF0FF)",
+          "caption": "Aşk şehrinde minik patilerimle senin için bir hatıra getirdim 🥐✨",
+          "stamp": "paris",
+          "petName": "Mochi",
+          "petSpecies": "cat",
+          "date": "24 Ekim 2026",
+          "createdAt": "2026-10-24T09:18:17.983Z",
+          "broughtBy": "Mochi",
+          "welcomedBy": "Zeynep"
+        }
+      ]
+    },
+    {
+      "id": "pet_4emvm6s0d3",
+      "name": "Pofuduk",
+      "species": "dino",
+      "owners": [
+        "parent_a_1792833502717",
+        "parent_b_1792833502717"
+      ],
+      "relationshipId": "rel_4dmvm6s0d2",
+      "stats": {
+        "food": 100,
+        "water": 75,
+        "clean": 100,
+        "energy": 80,
+        "happy": 92
+      },
+      "poops": [],
+      "sleeping": false,
+      "xp": 81,
+      "hatched": true,
+      "hatchTaps": [
+        "parent_a_1792833502717",
+        "parent_b_1792833502717"
+      ],
+      "cooldowns": {
+        "parent_a_1792833502717:feed": 1792833502939,
+        "parent_b_1792833502717:clean": 1792833502940
+      },
+      "logs": [
+        {
+          "id": "log_4kmvm6s0dc",
+          "actor": {
+            "username": "parent_a_1792833502717",
+            "name": "Aslı",
+            "color": "#4cc9f0"
+          },
+          "action": "wake",
+          "label": "Aslı canavarı uyandırdı ☀️",
+          "xpGain": 5,
+          "at": "2026-10-24T09:18:22.944Z"
+        },
+        {
+          "id": "log_4jmvm6s0da",
+          "actor": {
+            "username": "parent_b_1792833502717",
+            "name": "Burak",
+            "color": "#4cc9f0"
+          },
+          "action": "sleep",
+          "label": "Burak canavarı uyuttu 💤",
+          "xpGain": 5,
+          "at": "2026-10-24T09:18:22.942Z"
+        },
+        {
+          "id": "log_4imvm6s0d8",
+          "actor": {
+            "username": "parent_b_1792833502717",
+            "name": "Burak",
+            "color": "#4cc9f0"
+          },
+          "action": "clean",
+          "label": "Burak köpüklü banyo yaptırdı 🫧",
+          "xpGain": 15,
+          "at": "2026-10-24T09:18:22.940Z"
+        },
+        {
+          "id": "log_4hmvm6s0d7",
+          "actor": {
+            "username": "parent_a_1792833502717",
+            "name": "Aslı",
+            "color": "#4cc9f0"
+          },
+          "action": "feed",
+          "label": "Aslı lezzetli mama verdi 🍓",
+          "xpGain": 15,
+          "at": "2026-10-24T09:18:22.939Z"
+        },
+        {
+          "id": "log_4gmvm6s0d5",
+          "actor": {
+            "username": "parent_b_1792833502717",
+            "name": "Burak",
+            "color": "#4cc9f0"
+          },
+          "action": "hatch",
+          "label": "Pofuduk başarıyla çatladı ve dünyaya geldi! 🐣",
+          "xpGain": 20,
+          "at": "2026-10-24T09:18:22.937Z"
+        },
+        {
+          "id": "log_4fmvm6s0d3",
+          "actor": {
+            "username": "parent_a_1792833502717",
+            "name": "Aslı",
+            "color": "#4cc9f0"
+          },
+          "action": "create",
+          "label": "Aslı ortak bir yumurta bıraktı 🥚",
+          "xpGain": 0,
+          "at": "2026-10-24T09:18:22.935Z"
+        }
+      ],
+      "lastTick": 1792833502944,
+      "mood": "mutlu",
+      "createdAt": "2026-10-24T09:18:22.935Z"
+    },
+    {
+      "id": "pet_4rmvm6s0te",
+      "name": "Ponçik 🐱",
+      "species": "cat",
+      "owners": [
+        "guest_v0p4i",
+        "alex_demo"
+      ],
+      "relationshipId": "rel_4qmvm6s0te",
+      "stats": {
+        "food": 85,
+        "water": 80,
+        "clean": 90,
+        "energy": 85,
+        "happy": 95
+      },
+      "poops": [],
+      "sleeping": false,
+      "xp": 320,
+      "hatched": true,
+      "hatchTaps": [
+        "guest_v0p4i",
+        "alex_demo"
+      ],
+      "cooldowns": {},
+      "logs": [
+        {
+          "id": "log_4smvm6s0te",
+          "actor": {
+            "username": "alex_demo",
+            "name": "Alex 💕",
+            "color": "#FF6584"
+          },
+          "action": "feed",
+          "label": "Alex lezzetli mama verdi 🍓",
+          "at": "2026-10-24T08:18:23.522Z"
+        },
+        {
+          "id": "log_4tmvm6s0te",
+          "actor": {
+            "username": "guest_v0p4i",
+            "name": "Misafir #HF47",
+            "color": "#4cc9f0"
+          },
+          "action": "pet",
+          "label": "Misafir #HF47 canavarı sevip okşadı 🤗",
+          "at": "2026-10-24T09:18:23.522Z"
+        }
+      ],
+      "lastTick": 1792833503522,
+      "mood": "mutlu",
+      "createdAt": "2026-10-24T09:18:23.522Z"
+    },
+    {
+      "id": "pet_4ymvm6s1c3",
+      "name": "Mochi 🐾",
+      "species": "cat",
+      "owners": [
+        "gamer_a_1792833503974",
+        "gamer_b_1792833503974"
+      ],
+      "relationshipId": "rel_4xmvm6s1c2",
+      "stats": {
+        "food": 100,
+        "water": 75,
+        "clean": 100,
+        "energy": 70,
+        "happy": 100
+      },
+      "poops": [],
+      "sleeping": false,
+      "xp": 100,
+      "hatched": true,
+      "hatchTaps": [
+        "gamer_a_1792833503974",
+        "gamer_b_1792833503974"
+      ],
+      "cooldowns": {
+        "gamer_a_1792833503974:play": 1792833504205
+      },
+      "logs": [
+        {
+          "id": "log_56mvm6s1cg",
+          "actor": {
+            "username": "pawly",
+            "name": "Pawly",
+            "color": "#ff7aa2"
+          },
+          "action": "evolve",
+          "label": "🎉 Mochi 🐾 evrimleşti ve Bebek evresine ulaştı!",
+          "xpGain": 0,
+          "at": "2026-10-24T09:18:24.208Z"
+        },
+        {
+          "id": "log_55mvm6s1cg",
+          "actor": {
+            "username": "gamer_b_1792833503974",
+            "name": "Kerem",
+            "color": "#ffc93c"
+          },
+          "action": "wake",
+          "label": "Kerem canavarı uyandırdı ☀️",
+          "xpGain": 5,
+          "at": "2026-10-24T09:18:24.208Z"
+        },
+        {
+          "id": "log_54mvm6s1cf",
+          "actor": {
+            "username": "gamer_a_1792833503974",
+            "name": "Zeynep",
+            "color": "#ffc93c"
+          },
+          "action": "sleep",
+          "label": "Zeynep canavarı uyuttu 💤",
+          "xpGain": 5,
+          "at": "2026-10-24T09:18:24.207Z"
+        },
+        {
+          "id": "log_53mvm6s1cd",
+          "actor": {
+            "username": "gamer_a_1792833503974",
+            "name": "Zeynep",
+            "color": "#ffc93c"
+          },
+          "action": "play",
+          "label": "Zeynep eğlenceli oyun oynadı 🎾",
+          "xpGain": 20,
+          "at": "2026-10-24T09:18:24.205Z"
+        },
+        {
+          "id": "log_52mvm6s1ca",
+          "actor": {
+            "username": "gamer_b_1792833503974",
+            "name": "Kerem",
+            "color": "#ffc93c"
+          },
+          "action": "clean",
+          "label": "Kerem köpüklü banyo yaptırdı 🫧",
+          "xpGain": 15,
+          "at": "2026-10-24T09:18:24.202Z"
+        },
+        {
+          "id": "log_51mvm6s1c8",
+          "actor": {
+            "username": "gamer_a_1792833503974",
+            "name": "Zeynep",
+            "color": "#ffc93c"
+          },
+          "action": "feed",
+          "label": "Zeynep lezzetli mama verdi 🍓",
+          "xpGain": 15,
+          "at": "2026-10-24T09:18:24.200Z"
+        },
+        {
+          "id": "log_50mvm6s1c6",
+          "actor": {
+            "username": "gamer_b_1792833503974",
+            "name": "Kerem",
+            "color": "#ffc93c"
+          },
+          "action": "hatch",
+          "label": "Mochi 🐾 başarıyla çatladı ve dünyaya geldi! 🐣",
+          "xpGain": 20,
+          "at": "2026-10-24T09:18:24.198Z"
+        },
+        {
+          "id": "log_4zmvm6s1c4",
+          "actor": {
+            "username": "gamer_a_1792833503974",
+            "name": "Zeynep",
+            "color": "#ffc93c"
+          },
+          "action": "create",
+          "label": "Zeynep ortak bir yumurta bıraktı 🥚",
+          "xpGain": 0,
+          "at": "2026-10-24T09:18:24.196Z"
+        }
+      ],
+      "lastTick": 1792833504208,
+      "mood": "mutlu",
+      "createdAt": "2026-10-24T09:18:24.195Z"
+    },
+    {
+      "id": "pet_5amvm6s1ug",
+      "name": "Mochi",
+      "species": "cat",
+      "owners": [
+        "adv_user_1792833504635",
+        "adv_partner_1792833504635"
+      ],
+      "relationshipId": null,
+      "stats": {
+        "food": 75,
+        "water": 75,
+        "clean": 75,
+        "energy": 80,
+        "happy": 80
+      },
+      "poops": [],
+      "sleeping": false,
+      "xp": 320,
+      "hatched": true,
+      "hatchTaps": [
+        "adv_user_1792833504635",
+        "adv_partner_1792833504635"
+      ],
+      "cooldowns": {},
+      "logs": [
+        {
+          "id": "log_5kmvm6s1vb",
+          "actor": {
+            "username": "adv_user_1792833504635",
+            "name": "Zeynep",
+            "color": "#4cc9f0"
+          },
+          "action": "adventure-return",
+          "label": "Mochi Kiraz Çiçeği Bahçesi 🌸 seyahatinden döndü ve 🌸 Sakura Dalı getirdi! 📸",
+          "xpGain": 50,
+          "at": "2026-10-24T09:18:24.887Z"
+        },
+        {
+          "id": "log_5imvm6s1v7",
+          "actor": {
+            "username": "adv_user_1792833504635",
+            "name": "Zeynep",
+            "color": "#4cc9f0"
+          },
+          "action": "adventure-start",
+          "label": "Zeynep, Mochi'yi Kiraz Çiçeği Bahçesi 🌸 macerasına uğurladı! 🎒",
+          "xpGain": 10,
+          "at": "2026-10-24T09:18:24.883Z"
+        },
+        {
+          "id": "log_5hmvm6s1v6",
+          "actor": {
+            "username": "adv_user_1792833504635",
+            "name": "Zeynep",
+            "color": "#4cc9f0"
+          },
+          "action": "adventure-return",
+          "label": "Mochi Eyfel Kulesi & Seine 🗼 seyahatinden döndü ve 🥐 Taze Sıcak Kruvasan getirdi! 📸",
+          "xpGain": 75,
+          "at": "2026-10-24T09:18:24.882Z"
+        },
+        {
+          "id": "log_5fmvm6s1up",
+          "actor": {
+            "username": "adv_user_1792833504635",
+            "name": "Zeynep",
+            "color": "#4cc9f0"
+          },
+          "action": "adventure-start",
+          "label": "Zeynep, Mochi'yi Eyfel Kulesi & Seine 🗼 macerasına uğurladı! 🎒",
+          "xpGain": 10,
+          "at": "2026-10-24T09:18:24.865Z"
+        },
+        {
+          "id": "log_5emvm6s1un",
+          "actor": {
+            "username": "adv_user_1792833504635",
+            "name": "Zeynep",
+            "color": "#4cc9f0"
+          },
+          "action": "wake",
+          "label": "Zeynep canavarı uyandırdı ☀️",
+          "xpGain": 5,
+          "at": "2026-10-24T09:18:24.863Z"
+        },
+        {
+          "id": "log_5dmvm6s1ul",
+          "actor": {
+            "username": "adv_user_1792833504635",
+            "name": "Zeynep",
+            "color": "#4cc9f0"
+          },
+          "action": "sleep",
+          "label": "Zeynep canavarı uyuttu 💤",
+          "xpGain": 5,
+          "at": "2026-10-24T09:18:24.861Z"
+        },
+        {
+          "id": "log_5cmvm6s1uj",
+          "actor": {
+            "username": "adv_partner_1792833504635",
+            "name": "Barış",
+            "color": "#7c5cff"
+          },
+          "action": "hatch",
+          "label": "Mochi başarıyla çatladı ve dünyaya geldi! 🐣",
+          "xpGain": 20,
+          "at": "2026-10-24T09:18:24.859Z"
+        },
+        {
+          "id": "log_5bmvm6s1ug",
+          "actor": {
+            "username": "adv_user_1792833504635",
+            "name": "Zeynep",
+            "color": "#4cc9f0"
+          },
+          "action": "create",
+          "label": "Zeynep ortak bir yumurta bıraktı 🥚",
+          "xpGain": 0,
+          "at": "2026-10-24T09:18:24.856Z"
+        }
+      ],
+      "lastTick": 1792833504886,
+      "mood": "mutlu",
+      "createdAt": "2026-10-24T09:18:24.856Z",
+      "adventure": null,
+      "souvenirs": [
+        {
+          "id": "polaroid_5jmvm6s1vb",
+          "destinationId": "tokyo",
+          "destinationName": "Kiraz Çiçeği Bahçesi 🌸",
+          "city": "Tokyo, Japonya",
+          "item": "🌸 Sakura Dalı",
+          "bgGradient": "linear-gradient(135deg, #FFCAD4, #FFE5EC)",
+          "caption": "Kiraz çiçekleri rüzgarda uçuşurken sadece seni düşündüm... 💕",
+          "stamp": "tokyo",
+          "petName": "Mochi",
+          "petSpecies": "cat",
+          "date": "24 Ekim 2026",
+          "createdAt": "2026-10-24T09:18:24.887Z",
+          "broughtBy": "Mochi",
+          "welcomedBy": "Zeynep"
+        },
+        {
+          "id": "polaroid_5gmvm6s1us",
+          "destinationId": "paris",
+          "destinationName": "Eyfel Kulesi & Seine 🗼",
+          "city": "Paris, Fransa",
+          "item": "🥐 Taze Sıcak Kruvasan",
+          "bgGradient": "linear-gradient(135deg, #DCE2FF, #EBF0FF)",
+          "caption": "Aşk şehrinde minik patilerimle senin için bir hatıra getirdim 🥐✨",
+          "stamp": "paris",
+          "petName": "Mochi",
+          "petSpecies": "cat",
+          "date": "24 Ekim 2026",
+          "createdAt": "2026-10-24T09:18:24.882Z",
+          "broughtBy": "Mochi",
+          "welcomedBy": "Zeynep"
+        }
+      ]
     }
   ],
   "messages": [
@@ -5897,7 +7817,7 @@
     }
   ],
   "doodles": [],
-  "seq": 142,
+  "seq": 201,
   "relationships": [
     {
       "id": "rel_gmvm305ek",
@@ -6202,6 +8122,79 @@
       "lastInteractionAt": "2026-10-24T08:43:08.393Z",
       "createdAt": "2026-10-24T08:43:08.393Z",
       "sharedPetId": "pet_3vmvm5iort"
+    },
+    {
+      "id": "rel_4cmvm6s04a",
+      "a": "user_a_1792833502371",
+      "b": "user_b_1792833502514",
+      "type": "best_friend",
+      "status": "ended",
+      "streakDays": 1,
+      "lastInteractionAt": "2026-10-24T09:18:22.618Z",
+      "createdAt": "2026-10-24T09:18:22.618Z"
+    },
+    {
+      "id": "rel_4dmvm6s0d2",
+      "a": "parent_a_1792833502717",
+      "b": "parent_b_1792833502717",
+      "type": "couple",
+      "status": "active",
+      "streakDays": 1,
+      "lastInteractionAt": "2026-10-24T09:18:22.940Z",
+      "createdAt": "2026-10-24T09:18:22.934Z",
+      "sharedPetId": "pet_4emvm6s0d3"
+    },
+    {
+      "id": "rel_4nmvm6s0sd",
+      "a": "test_u1_mvm6s0matcnf",
+      "b": "test_u2_mvm6s0matcnf",
+      "type": "couple",
+      "status": "active",
+      "streakDays": 1,
+      "lastInteractionAt": "2026-10-24T09:18:23.485Z",
+      "createdAt": "2026-10-24T09:18:23.485Z"
+    },
+    {
+      "id": "rel_4qmvm6s0te",
+      "a": "alex_demo",
+      "b": "guest_v0p4i",
+      "type": "couple",
+      "status": "active",
+      "streakDays": 12,
+      "lastInteractionAt": "2026-10-24T09:18:23.522Z",
+      "createdAt": "2026-10-24T09:18:23.522Z",
+      "sharedPetId": "pet_4rmvm6s0te"
+    },
+    {
+      "id": "rel_4umvm6s132",
+      "a": "hearta_1792833503652",
+      "b": "heartb_1792833503652",
+      "type": "couple",
+      "status": "active",
+      "streakDays": 1,
+      "lastInteractionAt": "2026-10-24T09:18:23.870Z",
+      "createdAt": "2026-10-24T09:18:23.870Z"
+    },
+    {
+      "id": "rel_4xmvm6s1c2",
+      "a": "gamer_a_1792833503974",
+      "b": "gamer_b_1792833503974",
+      "type": "couple",
+      "status": "active",
+      "streakDays": 1,
+      "lastInteractionAt": "2026-10-24T09:18:24.205Z",
+      "createdAt": "2026-10-24T09:18:24.194Z",
+      "sharedPetId": "pet_4ymvm6s1c3"
+    },
+    {
+      "id": "rel_57mvm6s1lc",
+      "a": "social_a_1792833504309",
+      "b": "social_b_1792833504309",
+      "type": "couple",
+      "status": "active",
+      "streakDays": 1,
+      "lastInteractionAt": "2026-10-24T09:18:24.528Z",
+      "createdAt": "2026-10-24T09:18:24.528Z"
     }
   ],
   "interactions": []

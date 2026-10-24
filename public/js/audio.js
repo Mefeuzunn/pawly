@@ -338,6 +338,100 @@ function vibrateBomb() {
   }
 }
 
+// 12. Fotoğraf Makinesi Deklanşör Sesi (Camera Shutter Click)
+function soundCameraShutter() {
+  if (!soundEnabled) return;
+  const ctx = getAudioCtx();
+  if (!ctx) return;
+
+  try {
+    const now = ctx.currentTime;
+    // Tık 1 (ayna kalkışı)
+    const osc1 = ctx.createOscillator();
+    const gain1 = ctx.createGain();
+    osc1.type = 'triangle';
+    osc1.frequency.setValueAtTime(1200, now);
+    osc1.frequency.exponentialRampToValueAtTime(300, now + 0.03);
+    gain1.gain.setValueAtTime(0.2, now);
+    gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.03);
+    osc1.connect(gain1);
+    gain1.connect(ctx.destination);
+    osc1.start(now);
+    osc1.stop(now + 0.03);
+
+    // Tık 2 (perde kapanışı 60ms sonra)
+    const osc2 = ctx.createOscillator();
+    const gain2 = ctx.createGain();
+    osc2.type = 'sine';
+    osc2.frequency.setValueAtTime(800, now + 0.06);
+    osc2.frequency.exponentialRampToValueAtTime(150, now + 0.1);
+    gain2.gain.setValueAtTime(0.25, now + 0.06);
+    gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+    osc2.connect(gain2);
+    gain2.connect(ctx.destination);
+    osc2.start(now + 0.06);
+    osc2.stop(now + 0.1);
+  } catch {}
+}
+
+// 13. Kapı Zili / Eve Dönüş Çanı (Doorbell Ding-Dong)
+function soundDoorbell() {
+  if (!soundEnabled) return;
+  const ctx = getAudioCtx();
+  if (!ctx) return;
+
+  try {
+    const now = ctx.currentTime;
+    // Ding (F#5 - 739.99 Hz)
+    const osc1 = ctx.createOscillator();
+    const gain1 = ctx.createGain();
+    osc1.type = 'sine';
+    osc1.frequency.setValueAtTime(739.99, now);
+    gain1.gain.setValueAtTime(0.22, now);
+    gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
+    osc1.connect(gain1);
+    gain1.connect(ctx.destination);
+    osc1.start(now);
+    osc1.stop(now + 0.6);
+
+    // Dong (D5 - 587.33 Hz) 0.35s sonra
+    const osc2 = ctx.createOscillator();
+    const gain2 = ctx.createGain();
+    osc2.type = 'sine';
+    osc2.frequency.setValueAtTime(587.33, now + 0.35);
+    gain2.gain.setValueAtTime(0.25, now + 0.35);
+    gain2.gain.exponentialRampToValueAtTime(0.001, now + 1.1);
+    osc2.connect(gain2);
+    gain2.connect(ctx.destination);
+    osc2.start(now + 0.35);
+    osc2.stop(now + 1.1);
+  } catch {}
+}
+
+// 14. Maceraya Uğurlama Fanfarı (Adventure Departure)
+function soundAdventureStart() {
+  if (!soundEnabled) return;
+  const ctx = getAudioCtx();
+  if (!ctx) return;
+
+  try {
+    const now = ctx.currentTime;
+    const notes = [440, 554.37, 659.25, 880]; // A4, C#5, E5, A5
+    notes.forEach((f, idx) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(f, now + idx * 0.09);
+      gain.gain.setValueAtTime(0.18, now + idx * 0.09);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.09 + 0.25);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now + idx * 0.09);
+      osc.stop(now + idx * 0.09 + 0.25);
+    });
+  } catch {}
+}
+
 window.PawlyAudio = {
   toggleSound,
   isSoundEnabled,
@@ -352,5 +446,8 @@ window.PawlyAudio = {
   soundHappy,
   soundTamaBeep,
   soundFanfare,
-  soundBounce
+  soundBounce,
+  soundCameraShutter,
+  soundDoorbell,
+  soundAdventureStart
 };

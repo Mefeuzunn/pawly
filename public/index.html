@@ -112,6 +112,14 @@
           <span class="icon">💤</span>
           <span>Uyu</span>
         </button>
+        <button class="pet-care-btn" id="btnOpenAdventure" style="background:linear-gradient(135deg,#FFF5E5,#FFE4CC);border-color:#FFD29D">
+          <span class="icon">🎒</span>
+          <span>Macera</span>
+        </button>
+        <button class="pet-care-btn" id="btnOpenTravelAlbum" style="background:linear-gradient(135deg,#F5EFFF,#EBD9FF);border-color:#D8B4FE">
+          <span class="icon">📸</span>
+          <span>Albüm</span>
+        </button>
       </div>
     </div>
 
@@ -496,6 +504,112 @@
       Mesafe 0 km! Şu an aynı yerdesiniz, anın tadını çıkarın! ✨
     </p>
     <button class="btn peach wide" id="btnCloseTogether">Sarıl & Kapat 🥰</button>
+  </div>
+</div>
+
+<!-- ======================================================================
+     FAZ 5: PET ADVENTURE, POLAROID & TRAVEL ALBUM MODALS
+     ====================================================================== -->
+
+<!-- 1. MACERA SEÇİM MODALI (ADVENTURE PICKER) -->
+<div class="modal hidden" id="adventureModal">
+  <div class="modal-box" style="max-width:440px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <h3 style="font-size:18px;margin:0;display:flex;align-items:center;gap:6px">
+        <span>🎒</span>
+        <span>Canavarını Seyahate Gönder</span>
+      </h3>
+      <button class="btn ghost btn-sm" id="btnCloseAdventure">✕</button>
+    </div>
+
+    <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px">
+      Dostun dünyayı keşfe çıksın! Döndüğünde ikinize özel polaroid fotoğraf ve hatıra hediyesi getirecek.
+    </p>
+
+    <!-- Destinasyon Listesi -->
+    <div class="adventure-dest-grid" id="adventureDestList">
+      <!-- JS ile doldurulacak -->
+    </div>
+
+    <!-- Hızlı Demo Modu Seçeneği -->
+    <div style="display:flex;align-items:center;justify-content:space-between;background:var(--bg-surface-sunken);padding:8px 12px;border-radius:var(--r-md);margin-bottom:14px">
+      <span style="font-size:12px;font-weight:700;color:var(--text-pure)">⚡ Hızlı Keşif (Demo 2 sn)</span>
+      <input type="checkbox" id="checkFastAdventure" checked style="width:18px;height:18px;cursor:pointer">
+    </div>
+
+    <button class="btn peach wide" id="btnStartAdventure" style="font-size:15px;padding:12px">
+      Yola Çık 🎒✈️
+    </button>
+  </div>
+</div>
+
+<!-- 2. POLAROID HATIRA MODALI (WIDGETABLE SOUVENIR POLAROID) -->
+<div class="modal hidden" id="souvenirPolaroidModal">
+  <div class="modal-box" style="max-width:400px;background:linear-gradient(180deg,#FFFDF9,#FFF6EC);text-align:center">
+    <div style="font-size:13px;font-weight:700;color:var(--accent-pink);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">
+      🎉 Canavarın Seyahatten Döndü!
+    </div>
+
+    <!-- Otantik Polaroid Kartı -->
+    <div class="polaroid-card-frame" id="polaroidDisplayCard">
+      <div class="polaroid-photo-box" id="polaroidPhotoBg">
+        <div class="polaroid-landmark-stamp" id="polaroidStamp">
+          <span>PARIS</span>
+          <span>★ 2026 ★</span>
+        </div>
+        <div class="polaroid-mascot-scene" id="polaroidMascotWrap">
+          <!-- Pet SVG -->
+        </div>
+        <div class="polaroid-souvenir-item-badge" id="polaroidItemBadge">
+          🥐 Taze Sıcak Kruvasan
+        </div>
+      </div>
+
+      <div class="polaroid-handwriting-section">
+        <div class="polaroid-location-date" id="polaroidLocDate">Paris, Fransa • 24 Ekim 2026</div>
+        <div class="polaroid-caption" id="polaroidCaptionText">
+          "Aşk şehrinde minik patilerimle senin için bir hatıra getirdim 🥐✨"
+        </div>
+        <div class="polaroid-footer-details" id="polaroidFooterDetails">
+          Getiren: Mochi 🐾 • Karşılayan: Sen 💕
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:8px">
+      <button class="btn ghost btn-sm" id="btnViewAlbumFromPolaroid" style="flex:1">📸 Albümde Gör</button>
+      <button class="btn peach btn-sm" id="btnClosePolaroid" style="flex:1">Harika! 🥰</button>
+    </div>
+  </div>
+</div>
+
+<!-- 3. SEYAHAT VE HATIRA ALBÜMÜ MODALI (TRAVEL ALBUM & PASSPORT) -->
+<div class="modal hidden" id="travelAlbumModal">
+  <div class="modal-box" style="max-width:480px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <h3 style="font-size:18px;margin:0;display:flex;align-items:center;gap:6px">
+        <span>📸</span>
+        <span>Ortak Seyahat & Pasaport Albümü</span>
+      </h3>
+      <button class="btn ghost btn-sm" id="btnCloseTravelAlbum">✕</button>
+    </div>
+
+    <!-- Pasaport Damgaları -->
+    <div class="passport-stamps-bar">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <span style="font-size:12px;font-weight:700;color:var(--text-pure)">🌍 Pasaport Vize Damgaları</span>
+        <span style="font-size:11px;color:var(--text-dim)" id="passportStampCount">0 / 5 Damga</span>
+      </div>
+      <div class="passport-stamps-row" id="passportStampsRow">
+        <!-- JS ile 5 damga doldurulacak -->
+      </div>
+    </div>
+
+    <!-- Polaroid Galeri -->
+    <div style="font-size:12px;font-weight:700;color:var(--text-muted);margin-bottom:8px">Toplanan Polaroid Hatıraları:</div>
+    <div class="travel-album-grid" id="travelAlbumGrid">
+      <!-- Hatıra fotoğrafları -->
+    </div>
   </div>
 </div>
 

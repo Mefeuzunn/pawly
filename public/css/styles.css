@@ -3115,3 +3115,396 @@ input:focus, textarea:focus, select:focus {
   0% { box-shadow: 0 4px 14px rgba(255, 101, 132, 0.2); }
   100% { box-shadow: 0 8px 24px rgba(255, 101, 132, 0.5); }
 }
+
+/* ==========================================================================
+   FAZ 5: PET ADVENTURE, POLAROID SOUVENIRS & TRAVEL ALBUM
+   ========================================================================== */
+
+/* 1. Pet Room Adventure Active Banner */
+.pet-adventure-banner {
+  background: linear-gradient(135deg, #FFF9F2 0%, #FFEEDB 100%);
+  border: 2px solid #FFD4A3;
+  border-radius: var(--r-xl);
+  padding: 12px 16px;
+  margin: 10px 14px;
+  box-shadow: var(--shadow-clay-sm);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  position: relative;
+  z-index: 10;
+  animation: slideDown 0.3s ease;
+}
+
+.pet-adv-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pet-adv-icon-badge {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  box-shadow: var(--shadow-clay-xs);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  border: 2px solid #FFE0C2;
+}
+
+.pet-adv-info h4 {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-pure);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pet-adv-info .adv-countdown {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent-peach);
+  margin-top: 2px;
+}
+
+.pet-adv-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.btn-adv-speedup {
+  background: #FFFFFF;
+  border: 1.5px solid #FFD4A3;
+  border-radius: var(--r-md);
+  padding: 6px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-main);
+  cursor: pointer;
+  box-shadow: var(--shadow-clay-xs);
+  transition: all 0.15s ease;
+}
+
+.btn-adv-speedup:hover {
+  background: #FFF4E6;
+  transform: translateY(-1px);
+}
+
+.btn-adv-claim {
+  background: linear-gradient(135deg, #FF6584, #FF8DA1);
+  border: none;
+  border-radius: var(--r-md);
+  padding: 8px 14px;
+  font-size: 12px;
+  font-weight: 800;
+  color: #FFFFFF;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(255, 101, 132, 0.4);
+  animation: pulseButton 1.5s infinite;
+}
+
+@keyframes pulseButton {
+  0% { transform: scale(1); box-shadow: 0 4px 12px rgba(255, 101, 132, 0.4); }
+  50% { transform: scale(1.05); box-shadow: 0 6px 18px rgba(255, 101, 132, 0.6); }
+  100% { transform: scale(1); box-shadow: 0 4px 12px rgba(255, 101, 132, 0.4); }
+}
+
+/* 2. Destinasyon Seçim Kartları (Adventure Modal) */
+.adventure-dest-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 16px 0;
+  max-height: 380px;
+  overflow-y: auto;
+  padding: 2px;
+}
+
+.dest-choice-card {
+  background: var(--bg-surface);
+  border: 2px solid var(--border-card);
+  border-radius: var(--r-lg);
+  padding: 12px 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  box-shadow: var(--shadow-clay-xs);
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  text-align: left;
+}
+
+.dest-choice-card:hover {
+  transform: translateY(-2px);
+  border-color: #FFAA5A;
+  box-shadow: var(--shadow-clay-sm);
+}
+
+.dest-choice-card.selected {
+  border-color: var(--accent-pink);
+  background: linear-gradient(135deg, #FFF9FA 0%, #FFF0F3 100%);
+  box-shadow: 0 0 0 2px var(--accent-pink), var(--shadow-clay-sm);
+}
+
+.dest-card-main {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dest-card-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--r-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  flex-shrink: 0;
+  background: #FFF;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.06);
+}
+
+.dest-card-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-pure);
+  margin-bottom: 2px;
+}
+
+.dest-card-city {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.dest-card-badge {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.dest-duration-pill {
+  display: inline-block;
+  background: #FFF2E5;
+  color: #D9480F;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  margin-bottom: 4px;
+}
+
+.dest-xp-reward {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--accent-mint);
+}
+
+/* 3. Otantik Polaroid Hatıra Kartı (Widgetable Polaroid) */
+.polaroid-card-frame {
+  background: #FFFFFF;
+  border-radius: 18px;
+  padding: 16px 16px 22px 16px;
+  box-shadow: 0 20px 45px rgba(45, 30, 20, 0.18), 0 4px 14px rgba(45, 30, 20, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  max-width: 340px;
+  margin: 0 auto 16px;
+  position: relative;
+  text-align: center;
+  transform: rotate(-1deg);
+  transition: transform 0.25s ease;
+}
+
+.polaroid-card-frame:hover {
+  transform: rotate(0deg) scale(1.02);
+}
+
+.polaroid-photo-box {
+  width: 100%;
+  height: 240px;
+  border-radius: 10px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.polaroid-mascot-scene {
+  width: 140px;
+  height: 140px;
+  z-index: 2;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.15));
+}
+
+.polaroid-landmark-stamp {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 58px;
+  height: 58px;
+  border: 2px dashed #C9935B;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #8C5824;
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transform: rotate(14deg);
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(2px);
+  z-index: 3;
+}
+
+.polaroid-souvenir-item-badge {
+  position: absolute;
+  bottom: 10px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(8px);
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-pure);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  z-index: 3;
+}
+
+.polaroid-handwriting-section {
+  padding-top: 14px;
+}
+
+.polaroid-location-date {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+}
+
+.polaroid-caption {
+  font-family: var(--font-display);
+  font-size: 15px;
+  line-height: 1.35;
+  color: var(--text-pure);
+  font-style: italic;
+  margin: 6px 0 10px;
+}
+
+.polaroid-footer-details {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* 4. Seyahat Albümü & Pasaport Damgaları */
+.passport-stamps-bar {
+  background: var(--bg-surface-sunken);
+  border: 1.5px solid var(--border-card);
+  border-radius: var(--r-lg);
+  padding: 12px;
+  margin-bottom: 16px;
+}
+
+.passport-stamps-row {
+  display: flex;
+  justify-content: space-around;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.passport-stamp-badge {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed #D2BAA3;
+  background: #FFF;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+  position: relative;
+}
+
+.passport-stamp-badge.unlocked {
+  border-color: #E29578;
+  background: linear-gradient(135deg, #FFF3E6, #FFEADC);
+  color: #B55227;
+  box-shadow: 0 3px 8px rgba(181, 82, 39, 0.2);
+}
+
+.passport-stamp-badge.locked {
+  opacity: 0.45;
+  filter: grayscale(1);
+}
+
+.passport-stamp-badge:hover {
+  transform: scale(1.1);
+}
+
+.travel-album-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+  max-height: 380px;
+  overflow-y: auto;
+  padding: 4px;
+}
+
+.album-polaroid-mini {
+  background: #FFFFFF;
+  border-radius: 12px;
+  padding: 8px 8px 12px 8px;
+  box-shadow: 0 4px 12px rgba(45, 30, 20, 0.1);
+  border: 1px solid rgba(0,0,0,0.06);
+  cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  text-align: center;
+}
+
+.album-polaroid-mini:hover {
+  transform: translateY(-4px) scale(1.03);
+  box-shadow: 0 8px 20px rgba(45, 30, 20, 0.15);
+}
+
+.album-mini-thumb {
+  width: 100%;
+  height: 100px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  font-size: 32px;
+  overflow: hidden;
+}
+
+.album-mini-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-pure);
+  margin-top: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.album-mini-date {
+  font-size: 9px;
+  color: var(--text-dim);
+}
