@@ -10,6 +10,8 @@ import '../widgets/dynamic_island_pill.dart';
 import '../widgets/ios_widget_cards.dart';
 import '../widgets/status_meter.dart';
 import '../widgets/floating_hearts_burst.dart';
+import '../widgets/habit_tracker_widget.dart';
+import '../widgets/poop_clean_game.dart';
 import 'pet_selector_modal.dart';
 import 'pet_room_screen.dart';
 import 'miss_you_screen.dart';
@@ -17,6 +19,8 @@ import 'candy_jar_screen.dart';
 import 'love_garden_screen.dart';
 import 'adventure_screen.dart';
 import 'couple_status_screen.dart';
+import 'widget_simulator_screen.dart';
+import 'egg_hatching_screen.dart';
 import '../core/utils/haptics.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -27,7 +31,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final PetModel _pet = PetModel(
+  PetModel _pet = PetModel(
     id: 'pet_main',
     name: 'Mochi',
     species: PetSpecies.cat,
@@ -90,6 +94,39 @@ class _HomeScreenState extends State<HomeScreen> {
     final size = MediaQuery.of(context).size;
     _heartBurst.burstAt(Offset(size.width / 2, 100), count: 24);
     AppHaptics.heavyImpact();
+  }
+
+  void _openEggHatching() {
+    AppHaptics.mediumImpact();
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => EggHatchingScreen(
+          onPetHatched: (newPet) {
+            setState(() {
+              _pet = newPet;
+            });
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('${newPet.name} başarıyla aileye katıldı! 🐣💖'),
+                backgroundColor: const Color(0xFFFF6584),
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  void _openWidgetStudio() {
+    AppHaptics.mediumImpact();
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => WidgetSimulatorScreen(pet: _pet, couple: _couple),
+      ),
+    );
   }
 
   @override
@@ -191,6 +228,59 @@ class _HomeScreenState extends State<HomeScreen> {
                         ],
                       ),
 
+                      const SizedBox(height: 12),
+
+                      // Quick Feature Pill Buttons (Widget Stüdyosu & Kuluçka Töreni)
+                      Row(
+                        children: [
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: _openWidgetStudio,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFE8F1FF),
+                                  borderRadius: BorderRadius.circular(16),
+                                  border: Border.all(color: const Color(0xFF261914), width: 2),
+                                  boxShadow: const [BoxShadow(color: Color(0xFF261914), offset: Offset(0, 2))],
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const Text('📱', style: TextStyle(fontSize: 15)),
+                                    const SizedBox(width: 6),
+                                    Text('iOS Widget Stüdyosu', style: AppTypography.tag.copyWith(color: const Color(0xFF1E3A8A), fontWeight: FontWeight.bold)),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: _openEggHatching,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFFFF2D6),
+                                  borderRadius: BorderRadius.circular(16),
+                                  border: Border.all(color: const Color(0xFF261914), width: 2),
+                                  boxShadow: const [BoxShadow(color: Color(0xFF261914), offset: Offset(0, 2))],
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const Text('🥚', style: TextStyle(fontSize: 15)),
+                                    const SizedBox(width: 6),
+                                    Text('Kuluçka Töreni', style: AppTypography.tag.copyWith(color: const Color(0xFF8B5A2B), fontWeight: FontWeight.bold)),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+
                       const SizedBox(height: 14),
 
                       // 3. Featured Center Stage: Retro Tamagotchi or Pet Room Card
@@ -282,7 +372,19 @@ class _HomeScreenState extends State<HomeScreen> {
 
                       const SizedBox(height: 22),
 
-                      // 4. Authentic Widgetable iOS Widgets Header
+                      // 4. Poop Clean Hygiene Mini-Game
+                      PoopCleanGame(
+                        onCleaned: () {
+                          setState(() {
+                            _pet.wash(25);
+                          });
+                          _heartBurst.burstAt(Offset(MediaQuery.of(context).size.width / 2, 400), count: 20);
+                        },
+                      ),
+
+                      const SizedBox(height: 22),
+
+                      // 5. Authentic Widgetable iOS Widgets Header
                       Text('Canlı iOS Widgetları 📱', style: AppTypography.displaySmall),
                       Text('Kilit ve Ana ekran widget standartları', style: AppTypography.bodySmall),
                       const SizedBox(height: 12),
@@ -310,6 +412,11 @@ class _HomeScreenState extends State<HomeScreen> {
                           );
                         },
                       ),
+
+                      const SizedBox(height: 14),
+
+                      // 6. Habit & Mood Dot Tracker Grid (1:1 from Widgetable)
+                      const HabitTrackerWidget(),
 
                       const SizedBox(height: 14),
 
@@ -476,22 +583,17 @@ class _HomeScreenState extends State<HomeScreen> {
               MaterialPageRoute(builder: (_) => PetRoomScreen(pet: _pet, onStateChanged: () => setState(() {}))),
             );
           }),
-          _buildNavItem(2, 'Özledim', Icons.favorite_rounded, () {
+          _buildNavItem(2, 'Stüdyo', Icons.phone_iphone_rounded, _openWidgetStudio),
+          _buildNavItem(3, 'Özledim', Icons.favorite_rounded, () {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (_) => MissYouScreen(couple: _couple, onMissYouSent: () => setState(() {}))),
             );
           }),
-          _buildNavItem(3, 'Bahçe', Icons.local_florist_rounded, () {
+          _buildNavItem(4, 'Bahçe', Icons.local_florist_rounded, () {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (_) => LoveGardenScreen(garden: _garden, onStateChanged: () => setState(() {}))),
-            );
-          }),
-          _buildNavItem(4, 'Macera', Icons.flight_takeoff_rounded, () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => AdventureScreen(adventure: _adventure, onStateChanged: () => setState(() {}))),
             );
           }),
         ],
