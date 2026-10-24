@@ -123,20 +123,73 @@ router.post('/stamps', requireAuth, (req, res) => {
 // WIDGETABLE ÖZEL SOSYAL WIDGET'LARI
 // ==========================================================================
 
-// 1. Miss You Widget (Özlemini Gönder)
+// In-memory dual presence map for Heart Sync (username -> timestamp)
+const missYouPresences = new Map();
+
+// 1. Miss You Widget (Özlemini Gönder, Kombo, Aşk Bombası ve Fısıltı Notu)
 router.post('/miss-you', requireAuth, (req, res) => {
   req.user.widget.missYou = (req.user.widget.missYou || 0) + 1;
   const partner = getActivePartner(req.user);
+  const now = new Date();
+  const hour = now.getHours();
+
+  const combo = Math.max(1, Number(req.body && req.body.combo) || 1);
+  const isBomb = !!(req.body && req.body.isBomb) || (combo >= 10);
+  const note = String((req.body && req.body.note) || '').trim().slice(0, 100);
+
+  const entry = {
+    id: nid('m'),
+    from: req.user.username,
+    fromName: req.user.name,
+    to: partner ? partner.username : null,
+    combo,
+    isBomb,
+    note,
+    at: now.toISOString(),
+    hour
+  };
+
+  // Geçmişi kaydet (son 50 kayıt)
+  req.user.widget.missHistory = req.user.widget.missHistory || [];
+  req.user.widget.missHistory.push(entry);
+  if (req.user.widget.missHistory.length > 50) req.user.widget.missHistory = req.user.widget.missHistory.slice(-50);
+
+  // Saatlik ısı haritasını güncelle
+  req.user.widget.missHeatmap = req.user.widget.missHeatmap || {};
+  req.user.widget.missHeatmap[hour] = (req.user.widget.missHeatmap[hour] || 0) + 1;
+
   if (partner) {
     partner.widget.missYouReceived = (partner.widget.missYouReceived || 0) + 1;
+    partner.widget.missHistory = partner.widget.missHistory || [];
+    partner.widget.missHistory.push(entry);
+    if (partner.widget.missHistory.length > 50) partner.widget.missHistory = partner.widget.missHistory.slice(-50);
+
+    partner.widget.missHeatmap = partner.widget.missHeatmap || {};
+    partner.widget.missHeatmap[hour] = (partner.widget.missHeatmap[hour] || 0) + 1;
+
+    // Aşk Bombası SSE olayı
+    if (isBomb) {
+      sendToUser(partner.username, 'widget:love_bomb', {
+        from: publicUser(req.user),
+        combo,
+        note,
+        toast: `${req.user.name} sana ${combo}x Aşk Bombası fırlattı! 💣❤️`
+      });
+    }
+
+    // Normal Özlem Bildirimi
     sendToUser(partner.username, 'widget:miss_you', {
       from: publicUser(req.user),
       count: req.user.widget.missYou,
-      toast: `${req.user.name} sana kocaman bir özlem gönderdi! ❤️`
+      combo,
+      note,
+      isBomb,
+      toast: note ? `${req.user.name}: "${note}" ❤️` : `${req.user.name} sana kocaman bir özlem gönderdi! ❤️`
     });
   }
+
   save();
-  res.json({ ok: true, count: req.user.widget.missYou });
+  res.json({ ok: true, count: req.user.widget.missYou, entry });
 });
 
 router.get('/miss-you', requireAuth, (req, res) => {
@@ -144,6 +197,53 @@ router.get('/miss-you', requireAuth, (req, res) => {
   res.json({
     sent: req.user.widget.missYou || 0,
     received: req.user.widget.missYouReceived || 0,
+    partner: partner ? publicUser(partner) : null
+  });
+});
+
+// 1.B Miss You Geçmiş & Saatlik Isı Haritası
+router.get('/miss-you/history', requireAuth, (req, res) => {
+  const partner = getActivePartner(req.user);
+  const history = req.user.widget.missHistory || [];
+  const heatmap = req.user.widget.missHeatmap || {};
+
+  // Partnerin son fısıltı notunu bul
+  const partnerNotes = (partner && partner.widget.missHistory ? partner.widget.missHistory : [])
+    .filter(h => h.from === (partner ? partner.username : '') && h.note);
+  const latestPartnerNote = partnerNotes.length ? partnerNotes[partnerNotes.length - 1] : null;
+
+  // Çift kalp senkronu kontrolü (son 18 saniyede partner aktif mi?)
+  const partnerLastSeen = partner ? (missYouPresences.get(partner.username) || 0) : 0;
+  const synced = partner ? (Date.now() - partnerLastSeen < 18000) : false;
+
+  res.json({
+    sent: req.user.widget.missYou || 0,
+    received: req.user.widget.missYouReceived || 0,
+    history: history.slice(-20),
+    heatmap,
+    latestPartnerNote,
+    synced,
+    partner: partner ? publicUser(partner) : null
+  });
+});
+
+// 1.C Miss You Çift Varlık Kalp Atışı (Realtime Dual Heart Sync)
+router.post('/miss-you/heartbeat', requireAuth, (req, res) => {
+  missYouPresences.set(req.user.username, Date.now());
+  const partner = getActivePartner(req.user);
+  const partnerLastSeen = partner ? (missYouPresences.get(partner.username) || 0) : 0;
+  const synced = partner ? (Date.now() - partnerLastSeen < 18000) : false;
+
+  if (synced && partner) {
+    sendToUser(partner.username, 'widget:heart_sync', {
+      synced: true,
+      partner: publicUser(req.user)
+    });
+  }
+
+  res.json({
+    ok: true,
+    synced: !!synced,
     partner: partner ? publicUser(partner) : null
   });
 });

@@ -242,6 +242,102 @@ function soundBounce() {
   } catch {}
 }
 
+// 9. Kombo İlerlemeli Melodik Arp Notası (Pentatonic Harp Scale)
+function soundHarpScale(step = 1) {
+  if (!soundEnabled) return;
+  const ctx = getAudioCtx();
+  if (!ctx) return;
+
+  try {
+    // Pentatonic Gam: C5, D5, E5, G5, A5, C6, D6, E6
+    const pentatonic = [523.25, 587.33, 659.25, 783.99, 880.00, 1046.50, 1174.66, 1318.51];
+    const index = Math.min((step - 1) % pentatonic.length, pentatonic.length - 1);
+    const freq = pentatonic[index];
+
+    const osc = ctx.createOscillator();
+    const oscHarmonic = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(freq, ctx.currentTime);
+
+    // Tatlı bir armonik ekle
+    oscHarmonic.type = 'triangle';
+    oscHarmonic.frequency.setValueAtTime(freq * 2, ctx.currentTime);
+
+    const dur = 0.38 + Math.min(step * 0.04, 0.4);
+    gain.gain.setValueAtTime(0.22, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
+
+    osc.connect(gain);
+    oscHarmonic.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc.start();
+    oscHarmonic.start();
+    osc.stop(ctx.currentTime + dur);
+    oscHarmonic.stop(ctx.currentTime + dur);
+  } catch {}
+}
+
+// 10. Aşk Bombası Patlama Sesi (Love Bomb Audio FX)
+function soundLoveBomb() {
+  if (!soundEnabled) return;
+  const ctx = getAudioCtx();
+  if (!ctx) return;
+
+  try {
+    const now = ctx.currentTime;
+
+    // Derin bas vuruşu
+    const subOsc = ctx.createOscillator();
+    const subGain = ctx.createGain();
+    subOsc.type = 'sine';
+    subOsc.frequency.setValueAtTime(140, now);
+    subOsc.frequency.exponentialRampToValueAtTime(35, now + 0.4);
+    subGain.gain.setValueAtTime(0.35, now);
+    subGain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+    subOsc.connect(subGain);
+    subGain.connect(ctx.destination);
+    subOsc.start(now);
+    subOsc.stop(now + 0.5);
+
+    // Pırıltılı arp akoru
+    const sparkleNotes = [659.25, 783.99, 1046.50, 1318.51, 1567.98];
+    sparkleNotes.forEach((f, idx) => {
+      const spOsc = ctx.createOscillator();
+      const spGain = ctx.createGain();
+      spOsc.type = 'triangle';
+      spOsc.frequency.setValueAtTime(f, now + 0.05 + idx * 0.06);
+      spGain.gain.setValueAtTime(0.18, now + 0.05 + idx * 0.06);
+      spGain.gain.exponentialRampToValueAtTime(0.001, now + 0.05 + idx * 0.06 + 0.4);
+      spOsc.connect(spGain);
+      spGain.connect(ctx.destination);
+      spOsc.start(now + 0.05 + idx * 0.06);
+      spOsc.stop(now + 0.05 + idx * 0.06 + 0.4);
+    });
+  } catch {}
+}
+
+// 11. Haptik Titreşim Motoru (Web Vibration API)
+function vibrateHeartbeat() {
+  if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+    try {
+      // Kalp atışı: tık - kısa bekleme - tık
+      navigator.vibrate([60, 90, 60]);
+    } catch {}
+  }
+}
+
+function vibrateBomb() {
+  if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+    try {
+      // Bomba patlaması: artan titreşim
+      navigator.vibrate([70, 40, 110, 40, 220]);
+    } catch {}
+  }
+}
+
 window.PawlyAudio = {
   toggleSound,
   isSoundEnabled,
@@ -249,6 +345,10 @@ window.PawlyAudio = {
   soundEat,
   soundBubble,
   soundHeart,
+  soundHarpScale,
+  soundLoveBomb,
+  vibrateHeartbeat,
+  vibrateBomb,
   soundHappy,
   soundTamaBeep,
   soundFanfare,

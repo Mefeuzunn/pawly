@@ -2223,3 +2223,385 @@ input:focus, textarea:focus, select:focus {
   display: block;
   outline: none;
 }
+
+/* ==========================================================================
+   FAZ 2: 3D MISS YOU HUB & LOVE BOMB FX STYLING
+   ========================================================================== */
+
+/* 3D Heart Container in Bento Card */
+.miss-you-heart-3d-wrap {
+  width: 140px;
+  height: 120px;
+  margin: 0 auto;
+  position: relative;
+  cursor: pointer;
+  touch-action: none;
+}
+
+.miss-you-heart-3d-wrap canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+  outline: none;
+}
+
+/* Love Rain FX Fullscreen Canvas */
+.love-rain-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 99999;
+  pointer-events: none;
+}
+
+/* Love Bomb Partner Alert Modal */
+.love-bomb-modal .modal-box {
+  background: linear-gradient(135deg, #FFF0F5 0%, #FFE4E9 100%);
+  border: 3px solid #FF85A1;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(255, 77, 121, 0.45);
+  animation: popBounce 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+  padding: 30px 24px;
+}
+
+.love-bomb-icon {
+  font-size: 64px;
+  animation: bombWiggle 0.6s infinite alternate ease-in-out;
+  display: inline-block;
+  margin-bottom: 8px;
+}
+
+@keyframes bombWiggle {
+  0% { transform: scale(1) rotate(-6deg); }
+  100% { transform: scale(1.15) rotate(6deg); }
+}
+
+.love-bomb-title {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 800;
+  color: #D81B60;
+  margin-bottom: 8px;
+}
+
+.love-bomb-sub {
+  font-size: 15px;
+  color: var(--text-main);
+  margin-bottom: 16px;
+  line-height: 1.4;
+}
+
+.love-bomb-note {
+  background: rgba(255, 255, 255, 0.85);
+  border: 2px dashed #FF85A1;
+  border-radius: var(--r-md);
+  padding: 10px 14px;
+  font-weight: 700;
+  color: #C2185B;
+  margin-bottom: 18px;
+  display: inline-block;
+}
+
+/* Miss You Hub Modal (Dedicated Center) */
+.miss-you-modal .modal-box {
+  max-width: 520px;
+  width: 92%;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: var(--bg-surface);
+  border: 2px solid var(--accent-pink-border);
+  border-radius: var(--r-xl);
+  padding: 24px;
+  position: relative;
+}
+
+.miss-you-hub-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.miss-you-hub-title {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text-pure);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Sync Beacon Status Pill */
+.heart-sync-beacon {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  background: #FFF5F7;
+  border: 1.5px solid #FF85A1;
+  border-radius: var(--r-pill);
+  font-size: 12px;
+  font-weight: 700;
+  color: #E91E63;
+  transition: all 0.3s ease;
+}
+
+.heart-sync-beacon.synced {
+  background: linear-gradient(135deg, #FF6584, #FFA34E);
+  color: #FFFFFF;
+  border-color: transparent;
+  box-shadow: 0 4px 14px rgba(255, 101, 132, 0.4);
+  animation: pulseCombo 0.8s infinite alternate ease-in-out;
+}
+
+.heart-sync-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #FF6584;
+}
+
+.heart-sync-beacon.synced .heart-sync-dot {
+  background: #FFFFFF;
+  box-shadow: 0 0 6px #FFFFFF;
+}
+
+/* 3D Heart Hero Stage */
+.miss-you-hub-stage {
+  position: relative;
+  background: radial-gradient(circle, #FFF0F3 0%, #FFFDF9 70%);
+  border-radius: var(--r-lg);
+  padding: 12px;
+  margin-bottom: 18px;
+  text-align: center;
+  border: 1.5px solid var(--border-card);
+}
+
+.miss-you-hub-3d-box {
+  width: 220px;
+  height: 180px;
+  margin: 0 auto;
+  cursor: pointer;
+  touch-action: none;
+}
+
+.miss-you-hub-3d-box canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}
+
+.miss-you-hub-tap-hint {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent-pink);
+  margin-top: 4px;
+}
+
+/* Miss You Count & Action Bar */
+.miss-you-stats-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.miss-stat-card {
+  background: var(--bg-surface-sunken);
+  border: 1.5px solid var(--border-card);
+  border-radius: var(--r-md);
+  padding: 12px;
+  text-align: center;
+}
+
+.miss-stat-val {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--accent-pink);
+}
+
+.miss-stat-lbl {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+/* Love Bomb Multipliers Buttons */
+.love-bomb-actions {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.btn-bomb-burst {
+  flex: 1;
+  padding: 10px 8px;
+  background: linear-gradient(135deg, #FFE4E9, #FFD2DC);
+  border: 1.5px solid #FF85A1;
+  border-radius: var(--r-md);
+  font-weight: 800;
+  font-size: 13px;
+  color: #D81B60;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.btn-bomb-burst:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 77, 121, 0.25);
+}
+
+.btn-bomb-burst:active {
+  transform: translateY(2px);
+}
+
+.btn-bomb-burst.epic {
+  background: linear-gradient(135deg, #FF6584, #FF8E53);
+  color: #FFFFFF;
+  border-color: transparent;
+  box-shadow: 0 4px 14px rgba(255, 101, 132, 0.35);
+}
+
+/* Whisper Notes Panel */
+.whisper-section {
+  background: var(--bg-surface-sunken);
+  border: 1.5px solid var(--border-card);
+  border-radius: var(--r-lg);
+  padding: 14px;
+  margin-bottom: 18px;
+}
+
+.whisper-section-title {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text-pure);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.whisper-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.whisper-chip {
+  padding: 5px 10px;
+  background: #FFFFFF;
+  border: 1.5px solid var(--border-card);
+  border-radius: var(--r-pill);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-main);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.whisper-chip:hover {
+  border-color: #FF85A1;
+  color: #E91E63;
+  background: #FFF5F7;
+}
+
+.whisper-input-row {
+  display: flex;
+  gap: 6px;
+}
+
+.whisper-input {
+  flex: 1;
+  border: 1.5px solid var(--border-card);
+  border-radius: var(--r-pill);
+  padding: 8px 14px;
+  font-size: 13px;
+  font-family: var(--font-body);
+  outline: none;
+  background: #FFFFFF;
+}
+
+.whisper-input:focus {
+  border-color: #FF85A1;
+}
+
+/* Hourly Heatmap Section */
+.heatmap-section {
+  background: var(--bg-surface-sunken);
+  border: 1.5px solid var(--border-card);
+  border-radius: var(--r-lg);
+  padding: 14px;
+  margin-bottom: 16px;
+}
+
+.heatmap-bars-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 60px;
+  margin-top: 10px;
+  padding: 0 4px;
+}
+
+.heatmap-bar-col {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.heatmap-bar {
+  width: 100%;
+  min-height: 4px;
+  background: #FFD2DC;
+  border-radius: 3px 3px 0 0;
+  transition: height 0.3s ease, background 0.3s;
+}
+
+.heatmap-bar.active {
+  background: linear-gradient(180deg, #FF6584, #FFA34E);
+  box-shadow: 0 0 6px rgba(255, 101, 132, 0.4);
+}
+
+.heatmap-label {
+  font-size: 8px;
+  color: var(--text-dim);
+  margin-top: 3px;
+}
+
+/* Recent Partner Whisper Card */
+.partner-whisper-card {
+  background: linear-gradient(135deg, #FFF0F5, #FFEBF0);
+  border: 1.5px dashed #FF85A1;
+  border-radius: var(--r-md);
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.partner-whisper-avatar {
+  font-size: 24px;
+}
+
+.partner-whisper-text {
+  font-size: 13px;
+  font-weight: 700;
+  color: #D81B60;
+}
+
+.partner-whisper-time {
+  font-size: 10px;
+  color: var(--text-dim);
+}

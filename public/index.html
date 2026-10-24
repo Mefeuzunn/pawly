@@ -343,12 +343,112 @@
   </div>
 </div>
 
+<!-- ======================================================================
+     FAZ 2: LOVE RAIN FX CANVAS & MODALS
+     ====================================================================== -->
+<canvas id="loveRainCanvas" class="love-rain-canvas hidden"></canvas>
+
+<!-- AŞK BOMBASI PARTNER KUTLAMA MODALI -->
+<div class="modal love-bomb-modal hidden" id="loveBombModal">
+  <div class="modal-box">
+    <div class="love-bomb-icon">💣❤️</div>
+    <div class="love-bomb-title" id="loveBombTitle">AŞK BOMBASI!</div>
+    <div class="love-bomb-sub" id="loveBombSub">Alex sana 50x Aşk Bombası fırlattı!</div>
+    <div class="love-bomb-note hidden" id="loveBombNote"></div>
+    <div>
+      <button class="btn peach wide" id="btnCloseLoveBomb">Ben de Seni Çok Özledim! 💕</button>
+    </div>
+  </div>
+</div>
+
+<!-- KAPSAMLI ÖZLEDİM (MISS YOU) DENEYİM MERKEZİ MODALI -->
+<div class="modal miss-you-modal hidden" id="missYouModal">
+  <div class="modal-box">
+    <div class="miss-you-hub-header">
+      <div class="miss-you-hub-title">
+        <span>❤️ Özledim Hub</span>
+        <div class="heart-sync-beacon" id="hubSyncBeacon">
+          <span class="heart-sync-dot"></span>
+          <span id="hubSyncText">Tekli Kalp</span>
+        </div>
+      </div>
+      <button class="btn ghost btn-sm" id="btnCloseMissYouHub" style="font-size:18px;padding:4px 8px">✕</button>
+    </div>
+
+    <!-- Partnerin Son Fısıltısı -->
+    <div class="partner-whisper-card" id="hubPartnerWhisperBox">
+      <div class="partner-whisper-avatar">💌</div>
+      <div style="flex:1">
+        <div class="partner-whisper-text" id="hubPartnerWhisperText">"Henüz bir fısıltı notu yok..."</div>
+        <div class="partner-whisper-time" id="hubPartnerWhisperTime">Partnerinden gelen aşk fısıltısı</div>
+      </div>
+    </div>
+
+    <!-- 3D Pofuduk Kil Kalp Sahnesi -->
+    <div class="miss-you-hub-stage">
+      <div class="miss-you-hub-3d-box" id="missYouHub3DBox" title="Kalbi pompalamak için tıkla!"></div>
+      <div class="miss-you-hub-tap-hint">👆 Dokun, kalbi sars ve aşkını gönder!</div>
+    </div>
+
+    <!-- İstatistik Sayacı & Kombo -->
+    <div class="miss-you-stats-row">
+      <div class="miss-stat-card">
+        <div class="miss-stat-val" id="hubSentCount">0</div>
+        <div class="miss-stat-lbl">Gönderdiğin Kalpler</div>
+      </div>
+      <div class="miss-stat-card">
+        <div class="miss-stat-val" id="hubReceivedCount">0</div>
+        <div class="miss-stat-lbl">Aldığın Kalpler</div>
+      </div>
+    </div>
+
+    <!-- Aşk Bombası Fırlatıcıları -->
+    <div style="font-size:12px;font-weight:700;color:var(--text-main);margin-bottom:6px">⚡ Hızlı Aşk Bombası Fırlat:</div>
+    <div class="love-bomb-actions">
+      <button class="btn-bomb-burst" data-bomb="5">🔥 5x Kalp</button>
+      <button class="btn-bomb-burst" data-bomb="10">💖 10x Fırtına</button>
+      <button class="btn-bomb-burst" data-bomb="25">⚡ 25x Süper</button>
+      <button class="btn-bomb-burst epic" data-bomb="50">💣 50x Mega</button>
+    </div>
+
+    <!-- Fısıltı Notu Ekle (Whisper Notes) -->
+    <div class="whisper-section">
+      <div class="whisper-section-title">
+        <span>💌 Özel Aşk Fısıltısı Ekle</span>
+      </div>
+      <div class="whisper-chips">
+        <span class="whisper-chip" data-whisper="Kokunu çok özledim 🌸">🌸 Kokunu özledim</span>
+        <span class="whisper-chip" data-whisper="Sıcak kahveni içmeyi unutma ☕">☕ Kahveni iç</span>
+        <span class="whisper-chip" data-whisper="Her saniye aklımdasın 💕">💕 Aklımdasın</span>
+        <span class="whisper-chip" data-whisper="Seni dünyalar kadar seviyorum 🥰">🥰 Çok seviyorum</span>
+        <span class="whisper-chip" data-whisper="Hemen eve gel, sarılalım 🏠">🏠 Hemen gel</span>
+      </div>
+      <div class="whisper-input-row">
+        <input type="text" class="whisper-input" id="inputWhisperNote" placeholder="Özel fısıltı notunu yaz..." maxlength="80">
+        <button class="btn peach btn-sm" id="btnSendWhisper">Fısılda 💌</button>
+      </div>
+    </div>
+
+    <!-- 24 Saatlik Özlem Zaman Tüneli & Isı Haritası -->
+    <div class="heatmap-section">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div style="font-size:12px;font-weight:700;color:var(--text-main)">🕒 24 Saatlik Özlem Isı Haritası</div>
+        <div style="font-size:11px;color:var(--text-dim)">Günün hangi saatinde özlendi?</div>
+      </div>
+      <div class="heatmap-bars-row" id="hubHeatmapBars">
+        <!-- 24 bar JS tarafından doldurulur -->
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- TOAST BİLDİRİM -->
 <div id="toast" class="toast hidden"></div>
 
 <script src="/js/audio.js"></script>
 <script src="/js/pet-mascot.js"></script>
 <script type="module" src="/js/pet-3d.js"></script>
+<script type="module" src="/js/miss-you-3d.js"></script>
 <script src="/js/room-game.js"></script>
 <script src="/js/app.js"></script>
 </body>

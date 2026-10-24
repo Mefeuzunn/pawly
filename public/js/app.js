@@ -21,6 +21,9 @@ let sseConnection = null;
 let toastTimer = null;
 let missCombo = 0;
 let comboTimer = null;
+let bentoHeart3D = null;
+let hubHeart3D = null;
+let hubHeartbeatTimer = null;
 
 // API Yardımcısı
 const api = async (p, o = {}) => {
@@ -87,10 +90,43 @@ function connectEvents() {
 
     sse.addEventListener('widget:miss_you', (e) => {
       const data = JSON.parse(e.data);
-      if (window.PawlyAudio) window.PawlyAudio.soundHeart();
-      spawnHeart(null, null, '❤️');
+      if (window.PawlyAudio) {
+        window.PawlyAudio.soundHarpScale(data.combo || 1);
+        window.PawlyAudio.vibrateHeartbeat();
+      }
+      spawnHeart(null, null, data.note ? '💌' : '❤️');
+      if (bentoHeart3D && typeof bentoHeart3D.triggerTapPulse === 'function') {
+        bentoHeart3D.triggerTapPulse(1.2);
+      }
+      if (hubHeart3D && typeof hubHeart3D.triggerTapPulse === 'function') {
+        hubHeart3D.triggerTapPulse(1.2);
+      }
       toast(data.toast || 'Partnerin seni çok özledi! ❤️');
       loadHomeBento();
+      if ($('#missYouModal') && !$('#missYouModal').classList.contains('hidden')) {
+        refreshMissYouHub();
+      }
+    });
+
+    sse.addEventListener('widget:love_bomb', (e) => {
+      const data = JSON.parse(e.data);
+      if (window.PawlyAudio) {
+        window.PawlyAudio.soundLoveBomb();
+        window.PawlyAudio.vibrateBomb();
+      }
+      triggerLoveRain(80);
+      showLoveBombAlert(data);
+      loadHomeBento();
+      if ($('#missYouModal') && !$('#missYouModal').classList.contains('hidden')) {
+        refreshMissYouHub();
+      }
+    });
+
+    sse.addEventListener('widget:heart_sync', (e) => {
+      const data = JSON.parse(e.data);
+      if (window.PawlyAudio) window.PawlyAudio.soundHappy();
+      toast(`✨ ${data.partner?.name || 'Partnerin'} ile aynı anda birbirinizi düşünüyorsunuz! ✨`);
+      updateHeartSyncUI(true);
     });
 
     sse.addEventListener('widget:distance', (e) => {
@@ -192,7 +228,7 @@ async function loadHomeBento() {
 
     const currentPet = pets[0] || null;
 
-    // 1. MISS YOU WIDGET (With 3D puffy heart & combo counter)
+    // 1. MISS YOU WIDGET (With 3D WebGL Puffy Clay Heart & Combo System)
     const missCount = (missData.sent || 0) + (missData.received || 0);
     const missCard = `
       <div class="bento-card widget-miss-you">
@@ -201,7 +237,7 @@ async function loadHomeBento() {
           <span class="badge badge-couple">+1 Özlem</span>
         </div>
         ${missCombo > 1 ? `<div class="miss-you-combo-badge">${missCombo}x COMBO! 🔥</div>` : ''}
-        <div class="miss-you-heart-wrap" id="btnMissYouHeart" title="Kalbi pompala!">
+        <div class="miss-you-heart-3d-wrap" id="missYouHeart3DBox" title="Kalbi pompala!">
           <svg class="miss-you-heart-svg" viewBox="0 0 100 90">
             <defs>
               <linearGradient id="heartGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -212,13 +248,18 @@ async function loadHomeBento() {
             <path fill="url(#heartGrad)" d="M50 85 C15 55 0 35 0 20 C0 8 10 0 23 0 C34 0 44 8 50 18 C56 8 66 0 77 0 C90 0 100 8 100 20 C100 35 85 55 50 85 Z"/>
           </svg>
         </div>
-        <div class="miss-you-count" id="missYouCount">${missCount || 999}</div>
+        <div class="miss-you-count" id="missYouCount">${missCount || 0}</div>
         <div class="miss-you-subtitle">Kocaman bir özlem gönder</div>
         <div class="miss-you-partner-note">${partnerUser ? `${partnerUser.name} ile senkronize` : 'Partnerinle canlı paylaş'}</div>
-        <button class="btn-miss-tap" id="btnSendMissYou">
-          <span>❤️</span>
-          <span>Özledim!</span>
-        </button>
+        <div style="display:flex;gap:6px;margin-top:10px">
+          <button class="btn-miss-tap" id="btnSendMissYou" style="flex:1">
+            <span>❤️</span>
+            <span>Özledim!</span>
+          </button>
+          <button class="btn ghost btn-sm" id="btnOpenMissYouHub" title="Detaylı Özledim Paneli" style="font-size:16px;padding:8px 12px;background:#FFF0F3;border:1.5px solid #FF85A1">
+            ✨
+          </button>
+        </div>
       </div>
     `;
 
@@ -387,40 +428,287 @@ async function loadHomeBento() {
     `;
 
     bindHomeEvents();
+    initBentoHeart3D();
 
   } catch (err) {
     console.error('Bento yükleme hatası:', err);
   }
 }
 
-function bindHomeEvents() {
-  // Miss you heart click with combo & sound
-  const sendMiss = async () => {
-    missCombo++;
-    clearTimeout(comboTimer);
-    comboTimer = setTimeout(() => { missCombo = 0; }, 2500);
+// ==========================================================================
+// FAZ 2: MISS YOU HUB, 3D PUFFY HEART & LOVE BOMB ENTEGRASYONU
+// ==========================================================================
 
-    if (window.PawlyAudio) window.PawlyAudio.soundHeart();
-    for (let i = 0; i < 3; i++) {
-      setTimeout(() => spawnHeart(null, null, '❤️'), i * 70);
+function triggerLoveRain(count = 60) {
+  const canvas = document.getElementById('loveRainCanvas');
+  if (!canvas) return;
+  canvas.classList.remove('hidden');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const emojis = ['❤️', '💖', '💕', '✨', '🌸', '🍓', '🍬', '🥰'];
+  const particles = [];
+  for (let i = 0; i < count; i++) {
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: -20 - Math.random() * 250,
+      vx: (Math.random() - 0.5) * 3,
+      vy: 3.5 + Math.random() * 5.5,
+      rot: Math.random() * Math.PI * 2,
+      vrot: (Math.random() - 0.5) * 0.1,
+      size: 18 + Math.random() * 18,
+      emoji: emojis[Math.floor(Math.random() * emojis.length)],
+      opacity: 1
+    });
+  }
+
+  let animId;
+  const start = performance.now();
+  function render(now) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    let alive = false;
+    particles.forEach(p => {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.rot += p.vrot;
+      if (p.y > canvas.height - 100) {
+        p.opacity -= 0.025;
+      }
+      if (p.opacity > 0) {
+        alive = true;
+        ctx.save();
+        ctx.globalAlpha = Math.max(0, p.opacity);
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rot);
+        ctx.font = `${p.size}px sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(p.emoji, 0, 0);
+        ctx.restore();
+      }
+    });
+
+    if (alive && (now - start < 4000)) {
+      animId = requestAnimationFrame(render);
+    } else {
+      cancelAnimationFrame(animId);
+      canvas.classList.add('hidden');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
-    triggerPetSquish();
+  }
+  animId = requestAnimationFrame(render);
+}
 
-    const cnt = $('#missYouCount');
-    if (cnt) cnt.textContent = parseInt(cnt.textContent || '999') + 1;
+function showLoveBombAlert(data) {
+  const modal = $('#loveBombModal');
+  if (!modal) return;
+  const title = $('#loveBombTitle');
+  const sub = $('#loveBombSub');
+  const note = $('#loveBombNote');
 
-    if (missCombo > 1) {
-      toast(`${missCombo}x AŞK KOMBOSU! ❤️‍🔥`);
+  if (title) title.textContent = `${data.combo || 10}x AŞK BOMBASI! 💣❤️`;
+  if (sub) sub.textContent = `${data.from?.name || 'Alex'} sana ${data.combo || 10}x Aşk Bombası fırlattı!`;
+  if (note) {
+    if (data.note) {
+      note.textContent = `"${data.note}"`;
+      note.classList.remove('hidden');
+    } else {
+      note.classList.add('hidden');
     }
+  }
+  modal.classList.remove('hidden');
+}
 
+function initBentoHeart3D() {
+  const box = $('#missYouHeart3DBox');
+  if (!box) return;
+  if (window.MissYou3DScene) {
     try {
-      const res = await api('/api/widgets/miss-you', { method: 'POST' });
-      if (cnt && res.count) cnt.textContent = res.count;
-    } catch {}
-  };
+      bentoHeart3D = new window.MissYou3DScene(box, { hero: false, scaleMultiplier: 0.95 });
+    } catch (e) {
+      console.warn('Bento 3D Heart init fallback:', e);
+    }
+  }
+}
 
-  if ($('#btnMissYouHeart')) $('#btnMissYouHeart').onclick = sendMiss;
-  if ($('#btnSendMissYou')) $('#btnSendMissYou').onclick = sendMiss;
+async function openMissYouHub() {
+  const modal = $('#missYouModal');
+  if (!modal) return;
+  modal.classList.remove('hidden');
+
+  const hubBox = $('#missYouHub3DBox');
+  if (hubBox && !hubHeart3D && window.MissYou3DScene) {
+    try {
+      hubHeart3D = new window.MissYou3DScene(hubBox, { hero: true, scaleMultiplier: 1.25 });
+    } catch (e) {
+      console.warn('Hub 3D Heart fallback:', e);
+    }
+  }
+
+  if (hubBox) {
+    hubBox.onclick = () => sendMissAction({ combo: missCombo + 1 });
+  }
+
+  await refreshMissYouHub();
+
+  clearInterval(hubHeartbeatTimer);
+  hubHeartbeatTimer = setInterval(async () => {
+    if (modal.classList.contains('hidden')) {
+      clearInterval(hubHeartbeatTimer);
+      return;
+    }
+    try {
+      const ping = await api('/api/widgets/miss-you/heartbeat', { method: 'POST' });
+      updateHeartSyncUI(ping.synced);
+    } catch {}
+  }, 8000);
+}
+
+function closeMissYouHub() {
+  const modal = $('#missYouModal');
+  if (modal) modal.classList.add('hidden');
+  clearInterval(hubHeartbeatTimer);
+}
+
+function updateHeartSyncUI(synced) {
+  const beacon = $('#hubSyncBeacon');
+  const txt = $('#hubSyncText');
+  if (!beacon || !txt) return;
+
+  if (synced) {
+    beacon.classList.add('synced');
+    txt.textContent = '✨ Canlı Çift Kalp ✨';
+    if (hubHeart3D && typeof hubHeart3D.setHeartSync === 'function') hubHeart3D.setHeartSync(true);
+    if (bentoHeart3D && typeof bentoHeart3D.setHeartSync === 'function') bentoHeart3D.setHeartSync(true);
+  } else {
+    beacon.classList.remove('synced');
+    txt.textContent = 'Tekli Kalp';
+    if (hubHeart3D && typeof hubHeart3D.setHeartSync === 'function') hubHeart3D.setHeartSync(false);
+    if (bentoHeart3D && typeof bentoHeart3D.setHeartSync === 'function') bentoHeart3D.setHeartSync(false);
+  }
+}
+
+async function refreshMissYouHub() {
+  try {
+    const data = await api('/api/widgets/miss-you/history');
+    if ($('#hubSentCount')) $('#hubSentCount').textContent = data.sent || 0;
+    if ($('#hubReceivedCount')) $('#hubReceivedCount').textContent = data.received || 0;
+
+    const whisperBox = $('#hubPartnerWhisperBox');
+    const whisperTxt = $('#hubPartnerWhisperText');
+    const whisperTime = $('#hubPartnerWhisperTime');
+    if (data.latestPartnerNote && whisperTxt) {
+      whisperTxt.textContent = `"${data.latestPartnerNote.note}"`;
+      const date = new Date(data.latestPartnerNote.at);
+      whisperTime.textContent = `${data.partner?.name || 'Partnerin'} • ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+      whisperBox?.classList.remove('hidden');
+    }
+
+    const heatmapContainer = $('#hubHeatmapBars');
+    if (heatmapContainer) {
+      heatmapContainer.innerHTML = '';
+      const heatmap = data.heatmap || {};
+      const counts = Object.values(heatmap).map(Number);
+      const maxCount = Math.max(1, ...counts);
+      const currentHour = new Date().getHours();
+
+      for (let h = 0; h < 24; h++) {
+        const count = Number(heatmap[h] || 0);
+        const col = document.createElement('div');
+        col.className = 'heatmap-bar-col';
+        col.title = `Saat ${h < 10 ? '0' + h : h}:00 — ${count} Özlem`;
+
+        const bar = document.createElement('div');
+        bar.className = 'heatmap-bar' + (count > 0 ? ' active' : '') + (h === currentHour ? ' now' : '');
+        const heightPct = count > 0 ? Math.max(15, Math.round((count / maxCount) * 100)) : 8;
+        bar.style.height = `${heightPct}%`;
+
+        const lbl = document.createElement('div');
+        lbl.className = 'heatmap-label';
+        lbl.textContent = (h % 4 === 0 || h === 23) ? `${h}` : '';
+
+        col.appendChild(bar);
+        col.appendChild(lbl);
+        heatmapContainer.appendChild(col);
+      }
+    }
+
+    updateHeartSyncUI(data.synced);
+  } catch (err) {
+    console.warn('Miss you hub yükleme hatası:', err);
+  }
+}
+
+async function sendMissAction(options = {}) {
+  const isBomb = !!options.isBomb || ((options.combo || 1) >= 10);
+  const combo = options.combo || (missCombo + 1);
+  const note = options.note || '';
+
+  missCombo = combo;
+  clearTimeout(comboTimer);
+  comboTimer = setTimeout(() => {
+    missCombo = 0;
+    const badge = $('.miss-you-combo-badge');
+    if (badge) badge.remove();
+  }, 2500);
+
+  // Prosedürel Ses & Titreşim
+  if (window.PawlyAudio) {
+    if (isBomb) {
+      window.PawlyAudio.soundLoveBomb();
+      window.PawlyAudio.vibrateBomb();
+    } else {
+      window.PawlyAudio.soundHarpScale(missCombo);
+      window.PawlyAudio.vibrateHeartbeat();
+    }
+  }
+
+  // 3D Kalp Yay Pompası
+  if (bentoHeart3D && typeof bentoHeart3D.triggerTapPulse === 'function') {
+    bentoHeart3D.triggerTapPulse(1 + Math.min(missCombo, 20) * 0.08);
+  }
+  if (hubHeart3D && typeof hubHeart3D.triggerTapPulse === 'function') {
+    hubHeart3D.triggerTapPulse(1 + Math.min(missCombo, 20) * 0.08);
+  }
+
+  // Yüzen Kalp Efektleri
+  for (let i = 0; i < (isBomb ? 8 : 3); i++) {
+    setTimeout(() => spawnHeart(null, null, note ? '💌' : (isBomb ? '💣' : '❤️')), i * 60);
+  }
+  triggerPetSquish();
+
+  // Aşk Yağmuru FX (Love Rain)
+  if (isBomb || [5, 10, 25, 50].includes(missCombo)) {
+    triggerLoveRain(isBomb ? 70 : 40);
+    toast(`${missCombo}x AŞK BOMBASI PATLADI! 💣❤️‍🔥`);
+  } else if (missCombo > 1) {
+    toast(`${missCombo}x AŞK KOMBOSU! 🔥`);
+  }
+
+  // Sayaçları güncelle
+  const cnt = $('#missYouCount');
+  if (cnt) cnt.textContent = parseInt(cnt.textContent || '0') + 1;
+  const hubSent = $('#hubSentCount');
+  if (hubSent) hubSent.textContent = parseInt(hubSent.textContent || '0') + 1;
+
+  try {
+    const res = await api('/api/widgets/miss-you', {
+      method: 'POST',
+      body: JSON.stringify({ combo: missCombo, note, isBomb })
+    });
+    if (cnt && res.count) cnt.textContent = res.count;
+    if (hubSent && res.count) hubSent.textContent = res.count;
+  } catch (e) {
+    console.warn('Miss you post hatası:', e);
+  }
+}
+
+function bindHomeEvents() {
+  if ($('#btnMissYouHeart')) $('#btnMissYouHeart').onclick = () => sendMissAction();
+  if ($('#missYouHeart3DBox')) $('#missYouHeart3DBox').onclick = () => sendMissAction();
+  if ($('#btnSendMissYou')) $('#btnSendMissYou').onclick = () => sendMissAction();
+  if ($('#btnOpenMissYouHub')) $('#btnOpenMissYouHub').onclick = openMissYouHub;
 
   // Candy Jar Drop with audio
   $$('.jar-mood-btn').forEach(btn => {
@@ -1040,6 +1328,46 @@ async function init() {
         loadTogetherHub();
         loadHomeBento();
       } catch (err) { toast(err.message); }
+    };
+  }
+
+  // Faz 2: Miss You Hub & Love Bomb Modal Butonları
+  if ($('#btnCloseMissYouHub')) {
+    $('#btnCloseMissYouHub').onclick = closeMissYouHub;
+  }
+  if ($('#btnCloseLoveBomb')) {
+    $('#btnCloseLoveBomb').onclick = () => {
+      $('#loveBombModal')?.classList.add('hidden');
+    };
+  }
+
+  // Aşk Bombası Hızlı Fırlatıcıları (5x, 10x, 25x, 50x)
+  $$('.btn-bomb-burst').forEach(btn => {
+    btn.onclick = () => {
+      const bombCount = Number(btn.dataset.bomb) || 10;
+      sendMissAction({ combo: bombCount, isBomb: true });
+    };
+  });
+
+  // Fısıltı Notu Çipleri
+  $$('.whisper-chip').forEach(chip => {
+    chip.onclick = () => {
+      const note = chip.dataset.whisper;
+      if ($('#inputWhisperNote')) $('#inputWhisperNote').value = note;
+      sendMissAction({ note });
+      toast(`"${note}" partnerine fısıldandı! 💌`);
+    };
+  });
+
+  // Fısıltı Notu Gönder
+  if ($('#btnSendWhisper')) {
+    $('#btnSendWhisper').onclick = () => {
+      const input = $('#inputWhisperNote');
+      const note = (input ? input.value : '').trim();
+      if (!note) return toast('Lütfen bir fısıltı notu yaz!');
+      sendMissAction({ note });
+      toast(`"${note}" partnerine fısıldandı! 💌`);
+      if (input) input.value = '';
     };
   }
 
