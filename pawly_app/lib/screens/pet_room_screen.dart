@@ -37,6 +37,16 @@ class _PetRoomScreenState extends State<PetRoomScreen>
   Offset _ballPos = const Offset(200, 180);
   bool _isBallThrown = false;
   double _squish = 0.0;
+  RoomWeather _weather = RoomWeather.sunny;
+  int _speechIndex = 0;
+  final List<String> _petPhrases = [
+    'Mefe seni çok seviyor! ❤️',
+    'Bugün çok tatlısın Müge! ✨',
+    'Karnım mırıldıyor, biraz somon balığı var mı? 🐟',
+    'Beni sevdikçe daha çok gülümsüyorum! 🌸',
+    'Hadi birlikte oyun oynayalım! 🎾',
+    'Seninle geçirdiğim her an çok huzurlu... 🥰',
+  ];
 
   @override
   void initState() {
@@ -198,6 +208,9 @@ class _PetRoomScreenState extends State<PetRoomScreen>
             // Room Selection Tabs (Mutfak, Banyo, Yatak, Salon)
             _buildRoomTabs(isNight),
 
+            // Weather Selector (Güneşli, Yağmurlu, Karlı, Yıldızlı)
+            _buildWeatherSelector(isNight),
+
             // Pet Status Pill Meters
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
@@ -226,8 +239,9 @@ class _PetRoomScreenState extends State<PetRoomScreen>
                     child: CustomPaint(
                       painter: CozyRoomPainter(
                         room: widget.pet.currentRoom,
-                        isNight: isNight,
+                        isNight: isNight || _weather == RoomWeather.starryNight,
                         animationTime: _elapsedTime,
+                        weather: _weather,
                       ),
                     ),
                   ),
@@ -254,7 +268,12 @@ class _PetRoomScreenState extends State<PetRoomScreen>
                           return GestureDetector(
                             onTap: () {
                               AppHaptics.mediumImpact();
-                              setState(() => _squish = 1.0);
+                              setState(() {
+                                _squish = 1.0;
+                                _speechIndex = (_speechIndex + 1) % _petPhrases.length;
+                                widget.pet.play(5.0);
+                              });
+                              widget.onStateChanged();
                             },
                             child: Stack(
                               alignment: Alignment.center,
@@ -262,23 +281,31 @@ class _PetRoomScreenState extends State<PetRoomScreen>
                                 // Speech Bubble above Pet
                                 Positioned(
                                   top: -24,
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(16),
-                                      border: Border.all(color: const Color(0xFF261914), width: 2),
-                                      boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 6, offset: Offset(0, 3))],
-                                    ),
-                                    child: Text(
-                                      widget.pet.isSleeping
-                                          ? 'Zzz... Tatlı rüyalar 🌙'
-                                          : widget.pet.action == PetAction.eating
-                                              ? 'Çok lezzetli! Ham ham 😋'
-                                              : widget.pet.hunger < 40
-                                                  ? 'Karnım gurulduyor! Acıktım 🥺'
-                                                  : 'Seni çok seviyorum! 🥰',
-                                      style: AppTypography.tag.copyWith(color: AppColors.textPrimary, fontWeight: FontWeight.bold),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      AppHaptics.selectionClick();
+                                      setState(() {
+                                        _speechIndex = (_speechIndex + 1) % _petPhrases.length;
+                                      });
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(16),
+                                        border: Border.all(color: const Color(0xFF261914), width: 2),
+                                        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 6, offset: Offset(0, 3))],
+                                      ),
+                                      child: Text(
+                                        widget.pet.isSleeping
+                                            ? 'Zzz... Tatlı rüyalar 🌙'
+                                            : widget.pet.action == PetAction.eating
+                                                ? 'Çok lezzetli! Ham ham 😋'
+                                                : widget.pet.hunger < 40
+                                                    ? 'Karnım gurulduyor! Acıktım 🥺'
+                                                    : _petPhrases[_speechIndex],
+                                        style: AppTypography.tag.copyWith(color: AppColors.textPrimary, fontWeight: FontWeight.bold),
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -406,6 +433,63 @@ class _PetRoomScreenState extends State<PetRoomScreen>
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildWeatherSelector(bool isNight) {
+    final weathers = [
+      {'weather': RoomWeather.sunny, 'label': 'Güneşli', 'icon': '☀️'},
+      {'weather': RoomWeather.rainy, 'label': 'Yağmurlu', 'icon': '🌧️'},
+      {'weather': RoomWeather.snowy, 'label': 'Karlı', 'icon': '❄️'},
+      {'weather': RoomWeather.starryNight, 'label': 'Yıldızlı', 'icon': '🌙'},
+    ];
+
+    return Container(
+      margin: const EdgeInsets.only(left: 20, right: 20, top: 4, bottom: 2),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: weathers.map((w) {
+          final isSel = _weather == w['weather'];
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            child: GestureDetector(
+              onTap: () {
+                AppHaptics.selectionClick();
+                setState(() => _weather = w['weather'] as RoomWeather);
+              },
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: isSel ? const Color(0xFFFFD166) : (isNight ? const Color(0xFF252646) : Colors.white),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: isSel ? const Color(0xFF261914) : const Color(0xFFDCD2C4),
+                    width: isSel ? 1.8 : 1.2,
+                  ),
+                  boxShadow: isSel
+                      ? const [BoxShadow(color: Color(0xFF261914), offset: Offset(0, 1.5))]
+                      : null,
+                ),
+                child: Row(
+                  children: [
+                    Text(w['icon'] as String, style: const TextStyle(fontSize: 13)),
+                    const SizedBox(width: 4),
+                    Text(
+                      w['label'] as String,
+                      style: AppTypography.tag.copyWith(
+                        color: isSel ? const Color(0xFF261914) : (isNight ? Colors.white70 : AppColors.textPrimary),
+                        fontSize: 10,
+                        fontWeight: isSel ? FontWeight.bold : FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        }).toList(),
       ),
     );
   }

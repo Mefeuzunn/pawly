@@ -2,16 +2,21 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../models/pet_model.dart';
 
-/// Professional Painter rendering the exact "kitty's home" aesthetic from Widgetable!
+enum RoomWeather { sunny, rainy, snowy, starryNight }
+
+/// Professional Painter rendering the exact "kitty's home" aesthetic from Widgetable
+/// with dynamic weather and atmospheric room lighting!
 class CozyRoomPainter extends CustomPainter {
   final PetRoom room;
   final bool isNight;
   final double animationTime;
+  final RoomWeather weather;
 
   CozyRoomPainter({
     required this.room,
     this.isNight = false,
     this.animationTime = 0.0,
+    this.weather = RoomWeather.sunny,
   });
 
   static const Color outline = Color(0xFF382319);
@@ -25,7 +30,10 @@ class CozyRoomPainter extends CustomPainter {
     // 1. Wall and Floor
     _drawWallAndFloor(canvas, w, h);
 
-    // 2. Room specific interior furnishings
+    // 2. Weather Window in Background (applicable to all rooms)
+    _drawWeatherWindow(canvas, w, h);
+
+    // 3. Room specific interior furnishings
     switch (room) {
       case PetRoom.kitchen:
         _drawDiningRoomInterior(canvas, w, h);
@@ -40,6 +48,9 @@ class CozyRoomPainter extends CustomPainter {
         _drawLivingRoomInterior(canvas, w, h);
         break;
     }
+
+    // 4. Atmospheric Light Overlay
+    _drawWeatherLighting(canvas, w, h);
   }
 
   void _drawWallAndFloor(Canvas canvas, double w, double h) {
@@ -50,16 +61,28 @@ class CozyRoomPainter extends CustomPainter {
 
     final wallH = h * 0.54;
 
-    // Wall Color (Warm cream or Night Indigo)
-    final wallColor = isNight ? const Color(0xFF1B1B3A) : const Color(0xFFFBF0DB);
+    // Wall Color (Warm cream, Rainy Gray-Cream, or Night Indigo)
+    Color wallColor;
+    if (isNight || weather == RoomWeather.starryNight) {
+      wallColor = const Color(0xFF1B1B3A);
+    } else if (weather == RoomWeather.rainy) {
+      wallColor = const Color(0xFFE8E5DD);
+    } else {
+      wallColor = const Color(0xFFFBF0DB);
+    }
+
     canvas.drawRect(Rect.fromLTWH(0, 0, w, wallH), Paint()..color = wallColor);
 
     // Floor Color (Honey oak parquet wood)
-    final floorColor = isNight ? const Color(0xFF2C243B) : const Color(0xFFE4AE7B);
+    final floorColor = (isNight || weather == RoomWeather.starryNight)
+        ? const Color(0xFF2C243B)
+        : const Color(0xFFE4AE7B);
     canvas.drawRect(Rect.fromLTWH(0, wallH, w, h - wallH), Paint()..color = floorColor);
 
     // Floor Baseboard line
-    final baseboardColor = isNight ? const Color(0xFF221A30) : const Color(0xFFD09660);
+    final baseboardColor = (isNight || weather == RoomWeather.starryNight)
+        ? const Color(0xFF221A30)
+        : const Color(0xFFD09660);
     canvas.drawRect(Rect.fromLTWH(0, wallH - 8, w, 14), Paint()..color = baseboardColor);
     canvas.drawLine(Offset(0, wallH - 8), Offset(w, wallH - 8), linePaint);
     canvas.drawLine(Offset(0, wallH + 6), Offset(w, wallH + 6), linePaint);
@@ -74,6 +97,104 @@ class CozyRoomPainter extends CustomPainter {
     }
     for (double x = 40; x < w; x += 75) {
       canvas.drawLine(Offset(x, wallH + 6), Offset(x, h), seamPaint);
+    }
+  }
+
+  // -------------------------------------------------------------
+  // DYNAMIC WEATHER WINDOW
+  // -------------------------------------------------------------
+  void _drawWeatherWindow(Canvas canvas, double w, double h) {
+    if (room == PetRoom.bath) return; // Bathroom has mirror instead
+
+    final linePaint = Paint()
+      ..color = outline
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = strokeW;
+    final fillPaint = Paint()..style = PaintingStyle.fill;
+
+    final winRect = Rect.fromCenter(center: Offset(w - 75, h * 0.22), width: 78, height: 85);
+
+    // Outside Sky depending on weather
+    Color skyColor;
+    switch (weather) {
+      case RoomWeather.sunny:
+        skyColor = const Color(0xFFBCE7FD);
+        break;
+      case RoomWeather.rainy:
+        skyColor = const Color(0xFF7B92A8);
+        break;
+      case RoomWeather.snowy:
+        skyColor = const Color(0xFFD6E5F3);
+        break;
+      case RoomWeather.starryNight:
+        skyColor = const Color(0xFF10142A);
+        break;
+    }
+
+    // Window arch
+    canvas.drawRRect(RRect.fromRectAndRadius(winRect, const Radius.circular(36)), fillPaint..color = skyColor);
+
+    // Weather particles outside the window
+    canvas.save();
+    canvas.clipRRect(RRect.fromRectAndRadius(winRect, const Radius.circular(36)));
+
+    if (weather == RoomWeather.sunny) {
+      // Golden Sun
+      canvas.drawCircle(Offset(winRect.left + 20, winRect.top + 20), 16, fillPaint..color = const Color(0xFFFFD166));
+    } else if (weather == RoomWeather.starryNight) {
+      // Golden Crescent Moon
+      canvas.drawCircle(Offset(winRect.left + 24, winRect.top + 24), 12, fillPaint..color = const Color(0xFFFFE082));
+      canvas.drawCircle(Offset(winRect.left + 28, winRect.top + 22), 10, fillPaint..color = skyColor);
+      // Stars
+      for (int i = 0; i < 5; i++) {
+        final sx = winRect.left + 15 + (i * 14) % 60;
+        final sy = winRect.top + 15 + (i * 17) % 55;
+        canvas.drawCircle(Offset(sx, sy), 1.8, fillPaint..color = Colors.white);
+      }
+    } else if (weather == RoomWeather.rainy) {
+      // Falling Rain Drops
+      final rainPaint = Paint()..color = const Color(0xCCFFFFFF)..strokeWidth = 2;
+      for (int i = 0; i < 8; i++) {
+        final rx = winRect.left + 10 + (i * 12 + animationTime * 40) % (winRect.width - 20);
+        final ry = winRect.top + 10 + (i * 18 + animationTime * 120) % (winRect.height - 20);
+        canvas.drawLine(Offset(rx, ry), Offset(rx - 3, ry + 10), rainPaint);
+      }
+    } else if (weather == RoomWeather.snowy) {
+      // Falling Snow Flakes
+      final snowPaint = Paint()..color = Colors.white;
+      for (int i = 0; i < 9; i++) {
+        final sx = winRect.left + 10 + (i * 11 + math.sin(animationTime * 2 + i) * 6) % (winRect.width - 20);
+        final sy = winRect.top + 10 + (i * 14 + animationTime * 30) % (winRect.height - 20);
+        canvas.drawCircle(Offset(sx, sy), 2.5, snowPaint);
+      }
+    }
+
+    canvas.restore();
+
+    // Window Frame Outlines
+    canvas.drawRRect(RRect.fromRectAndRadius(winRect, const Radius.circular(36)), linePaint);
+    canvas.drawLine(Offset(winRect.center.dx, winRect.top), Offset(winRect.center.dx, winRect.bottom), linePaint);
+    canvas.drawLine(Offset(winRect.left, winRect.center.dy), Offset(winRect.right, winRect.center.dy), linePaint);
+
+    // Window Sill
+    final sill = Rect.fromCenter(center: Offset(winRect.center.dx, winRect.bottom), width: winRect.width + 14, height: 8);
+    canvas.drawRRect(RRect.fromRectAndRadius(sill, const Radius.circular(4)), fillPaint..color = Colors.white);
+    canvas.drawRRect(RRect.fromRectAndRadius(sill, const Radius.circular(4)), linePaint);
+  }
+
+  void _drawWeatherLighting(Canvas canvas, double w, double h) {
+    if (weather == RoomWeather.sunny && !isNight) {
+      // Gentle sunbeam polygon on floor
+      final path = Path()
+        ..moveTo(w - 75, h * 0.30)
+        ..lineTo(w - 30, h * 0.30)
+        ..lineTo(w * 0.70, h)
+        ..lineTo(w * 0.20, h)
+        ..close();
+      canvas.drawPath(path, Paint()..color = const Color(0x18FFD166));
+    } else if (weather == RoomWeather.rainy) {
+      // Cool rainy tint
+      canvas.drawRect(Rect.fromLTWH(0, 0, w, h), Paint()..color = const Color(0x123A506B));
     }
   }
 
@@ -98,13 +219,6 @@ class CozyRoomPainter extends CustomPainter {
     // Pot with steam
     canvas.drawOval(Rect.fromCenter(center: Offset(130, h * 0.24), width: 32, height: 18), fillPaint..color = const Color(0xFF9E9E9E));
     canvas.drawOval(Rect.fromCenter(center: Offset(130, h * 0.24), width: 32, height: 18), linePaint);
-
-    // Wall Hanging Window with Blue Sky
-    final winRect = Rect.fromCenter(center: Offset(w - 70, h * 0.22), width: 68, height: 75);
-    canvas.drawRRect(RRect.fromRectAndRadius(winRect, const Radius.circular(30)), fillPaint..color = const Color(0xFFBCE7FD));
-    canvas.drawRRect(RRect.fromRectAndRadius(winRect, const Radius.circular(30)), linePaint);
-    canvas.drawLine(Offset(w - 70, winRect.top), Offset(w - 70, winRect.bottom), linePaint);
-    canvas.drawLine(Offset(winRect.left, h * 0.22), Offset(winRect.right, h * 0.22), linePaint);
 
     // Dining Table with Blue Checkered Gingham Tablecloth
     final tableTopY = h * 0.60;
@@ -217,10 +331,10 @@ class CozyRoomPainter extends CustomPainter {
       ..lineTo(lampCenter.dx + 12, lampCenter.dy - 16)
       ..lineTo(lampCenter.dx - 12, lampCenter.dy - 16)
       ..close();
-    canvas.drawPath(lampPath, fillPaint..color = isNight ? const Color(0xFFFFD166) : const Color(0xFFFFF8E7));
+    canvas.drawPath(lampPath, fillPaint..color = (isNight || weather == RoomWeather.starryNight) ? const Color(0xFFFFD166) : const Color(0xFFFFF8E7));
     canvas.drawPath(lampPath, linePaint);
     // Lamp glow halo if night
-    if (isNight) {
+    if (isNight || weather == RoomWeather.starryNight) {
       canvas.drawCircle(lampCenter, 60, Paint()..color = const Color(0x44FFD166)..maskFilter = const MaskFilter.blur(BlurStyle.normal, 24));
     }
 
@@ -285,5 +399,8 @@ class CozyRoomPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant CozyRoomPainter oldDelegate) =>
-      oldDelegate.room != room || oldDelegate.isNight != isNight;
+      oldDelegate.room != room ||
+      oldDelegate.isNight != isNight ||
+      oldDelegate.weather != weather ||
+      oldDelegate.animationTime != animationTime;
 }

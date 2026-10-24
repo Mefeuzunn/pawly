@@ -13,6 +13,7 @@ import '../widgets/floating_hearts_burst.dart';
 import '../widgets/habit_tracker_widget.dart';
 import '../widgets/poop_clean_game.dart';
 import '../widgets/lofi_sound_player.dart';
+import '../widgets/clay_button.dart';
 import 'pet_selector_modal.dart';
 import 'pet_room_screen.dart';
 import 'miss_you_screen.dart';
@@ -25,6 +26,7 @@ import 'egg_hatching_screen.dart';
 import 'wardrobe_screen.dart';
 import 'doodle_widget_screen.dart';
 import 'diary_screen.dart';
+import 'coparenting_hub_screen.dart';
 import '../core/utils/haptics.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -163,6 +165,86 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  void _openCoparentingHub() {
+    AppHaptics.mediumImpact();
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => CoparentingHubScreen(
+          pet: _pet,
+          couple: _couple,
+          onStateChanged: () => setState(() {}),
+        ),
+      ),
+    );
+  }
+
+  void _onPetActionWithEvolutionCheck(VoidCallback action) {
+    final oldStage = _pet.stage;
+    final oldLevel = _pet.level;
+    setState(action);
+    if (_pet.stage != oldStage || _pet.level > oldLevel) {
+      _showEvolutionCelebrationDialog(isStageEvolved: _pet.stage != oldStage);
+    }
+  }
+
+  void _showEvolutionCelebrationDialog({required bool isStageEvolved}) {
+    AppHaptics.heavyImpact();
+    final size = MediaQuery.of(context).size;
+    _heartBurst.burstAt(Offset(size.width / 2, 280), count: 30);
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+          backgroundColor: const Color(0xFFFFF9EE),
+          title: Text(
+            isStageEvolved ? '🎉 TEBRİKLER! EVRİMLEŞTİ! 🐣' : '⭐ SEVİYE ATLADI! ⭐',
+            style: AppTypography.displaySmall.copyWith(fontSize: 20),
+            textAlign: TextAlign.center,
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: const BoxDecoration(
+                  color: Color(0xFFFFF0D6),
+                  shape: BoxShape.circle,
+                ),
+                child: Text(
+                  _pet.stage == PetStage.adult ? '👑' : _pet.stage == PetStage.toddler ? '🎈' : '🍼',
+                  style: const TextStyle(fontSize: 48),
+                ),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                '${_pet.name} artık ${_pet.stageName}!',
+                style: AppTypography.bodyLarge.copyWith(fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Seviye ${_pet.level} • Yeni gardırop kıyafetleri ve aksesuarlarının kilidi açıldı!',
+                style: AppTypography.bodySmall,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16),
+              ClayButton(
+                text: 'Gardıroba Git 👗',
+                color: const Color(0xFFFF6584),
+                onTap: () {
+                  Navigator.pop(context);
+                  _openWardrobe();
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return FloatingHeartsBurstOverlay(
@@ -269,6 +351,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         scrollDirection: Axis.horizontal,
                         child: Row(
                           children: [
+                            _buildQuickFeatureChip('🐾 Ortak Bakım', const Color(0xFFFFDFBA), _openCoparentingHub),
+                            const SizedBox(width: 8),
                             _buildQuickFeatureChip('👗 Gardırop', const Color(0xFFFFD6E0), _openWardrobe),
                             const SizedBox(width: 8),
                             _buildQuickFeatureChip('🎨 Çizim', const Color(0xFFE8F8F0), _openDoodle),
@@ -290,15 +374,15 @@ class _HomeScreenState extends State<HomeScreen> {
                             ? TamagotchiPetWidget(
                                 pet: _pet,
                                 onFeed: () {
-                                  setState(() => _pet.feed(18));
+                                  _onPetActionWithEvolutionCheck(() => _pet.feed(18));
                                   _heartBurst.burstAt(Offset(MediaQuery.of(context).size.width / 2, 260), count: 12);
                                 },
                                 onWash: () {
-                                  setState(() => _pet.wash(20));
+                                  _onPetActionWithEvolutionCheck(() => _pet.wash(20));
                                   _heartBurst.burstAt(Offset(MediaQuery.of(context).size.width / 2, 260), count: 12);
                                 },
                                 onPlay: () {
-                                  setState(() => _pet.play(15));
+                                  _onPetActionWithEvolutionCheck(() => _pet.play(15));
                                   _heartBurst.burstAt(Offset(MediaQuery.of(context).size.width / 2, 260), count: 12);
                                 },
                               )
@@ -381,7 +465,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       // 4. Poop Clean Hygiene Mini-Game
                       PoopCleanGame(
                         onCleaned: () {
-                          setState(() {
+                          _onPetActionWithEvolutionCheck(() {
                             _pet.wash(25);
                           });
                           _heartBurst.burstAt(Offset(MediaQuery.of(context).size.width / 2, 400), count: 20);
@@ -401,7 +485,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         onTap: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (_) => CoupleStatusScreen(couple: _couple, onStateChanged: () => setState(() {}))),
+                            MaterialPageRoute(builder: (_) => CoupleStatusScreen(couple: _couple, pet: _pet, onStateChanged: () => setState(() {}))),
                           );
                         },
                       ),
@@ -414,9 +498,61 @@ class _HomeScreenState extends State<HomeScreen> {
                         onTap: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (_) => CoupleStatusScreen(couple: _couple, onStateChanged: () => setState(() {}))),
+                            MaterialPageRoute(builder: (_) => CoupleStatusScreen(couple: _couple, pet: _pet, onStateChanged: () => setState(() {}))),
                           );
                         },
+                      ),
+
+                      const SizedBox(height: 14),
+
+                      // Co-Parenting Shared Care Hub Card
+                      ClayCard(
+                        onTap: _openCoparentingHub,
+                        color: const Color(0xFFFFF5E6),
+                        borderColor: const Color(0xFFFF9F1C),
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFFFE0B2),
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(color: const Color(0xFF261914), width: 1.8),
+                              ),
+                              child: const Text('🐾', style: TextStyle(fontSize: 26)),
+                            ),
+                            const SizedBox(width: 14),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Text('Ortak Bakım & Görev Çarkı', style: AppTypography.bodyLarge.copyWith(fontWeight: FontWeight.bold)),
+                                      const SizedBox(width: 6),
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                        decoration: BoxDecoration(
+                                          color: const Color(0xFFFF6584),
+                                          borderRadius: BorderRadius.circular(8),
+                                        ),
+                                        child: Text('ÇİFT MODU', style: AppTypography.tag.copyWith(color: Colors.white, fontSize: 9, fontWeight: FontWeight.bold)),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    '${_couple.partnerName} ile birlikte ${_pet.name}\'ye bakın • ${_pet.careLogs.first.author} ${_pet.careLogs.first.timeAgo} besledi',
+                                    style: AppTypography.bodySmall,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const Icon(Icons.arrow_forward_ios_rounded, size: 16, color: Color(0xFF261914)),
+                          ],
+                        ),
                       ),
 
                       const SizedBox(height: 14),

@@ -1,8 +1,12 @@
+import 'package:flutter/material.dart';
+
 enum PetSpecies { cat, shiba, bear, bunny }
 
 enum PetRoom { kitchen, bath, bedroom, playroom }
 
 enum PetAction { idle, eating, bathing, sleeping, playing, happy, petted }
+
+enum PetStage { baby, toddler, adult }
 
 enum PetOutfit {
   none,
@@ -17,6 +21,22 @@ enum PetOutfit {
   greenTracksuit,
   bucketHat,
   heartGlasses,
+}
+
+class CareLogEntry {
+  final String author;
+  final String action;
+  final String emoji;
+  final String timeAgo;
+  final Color color;
+
+  const CareLogEntry({
+    required this.author,
+    required this.action,
+    required this.emoji,
+    required this.timeAgo,
+    this.color = const Color(0xFFFF6584),
+  });
 }
 
 class PetModel {
@@ -34,6 +54,7 @@ class PetModel {
   PetOutfit outfit;
   bool isSleeping;
   DateTime lastUpdated;
+  List<CareLogEntry> careLogs;
 
   PetModel({
     required this.id,
@@ -50,7 +71,61 @@ class PetModel {
     this.outfit = PetOutfit.bowTie,
     this.isSleeping = false,
     DateTime? lastUpdated,
-  }) : lastUpdated = lastUpdated ?? DateTime.now();
+    List<CareLogEntry>? careLogs,
+  })  : lastUpdated = lastUpdated ?? DateTime.now(),
+        careLogs = careLogs ?? [
+          const CareLogEntry(
+            author: 'Müge',
+            action: 'Izgara Somon Balığı yedirdi 🐟',
+            emoji: '🍲',
+            timeAgo: '15 dk önce',
+            color: Color(0xFFFFA34E),
+          ),
+          const CareLogEntry(
+            author: 'Efe',
+            action: 'Köpüklü küvette banyo yaptırdı 🫧',
+            emoji: '🛁',
+            timeAgo: '1 saat önce',
+            color: Color(0xFF38C793),
+          ),
+          const CareLogEntry(
+            author: 'Müge',
+            action: 'Salonda tenis topu oynattı 🎾',
+            emoji: '🎾',
+            timeAgo: '3 saat önce',
+            color: Color(0xFF4F8CFF),
+          ),
+          const CareLogEntry(
+            author: 'Efe',
+            action: 'Gece lambasını kapatıp uyuttu 🌙',
+            emoji: '🛏️',
+            timeAgo: 'Dün gece',
+            color: Color(0xFF8B5CF6),
+          ),
+        ];
+
+  PetStage get stage {
+    if (exp < 100) return PetStage.baby;
+    if (exp < 250) return PetStage.toddler;
+    return PetStage.adult;
+  }
+
+  String get stageName {
+    switch (stage) {
+      case PetStage.baby:
+        return 'Yavru Patili 🍼';
+      case PetStage.toddler:
+        return 'Küçük Kaşif 🎈';
+      case PetStage.adult:
+        return 'Yetişkin Dost 👑';
+    }
+  }
+
+  double get stageProgress {
+    if (stage == PetStage.baby) return (exp / 100.0).clamp(0.0, 1.0);
+    if (stage == PetStage.toddler) return ((exp - 100) / 150.0).clamp(0.0, 1.0);
+    return ((exp - 250) / 250.0).clamp(0.0, 1.0);
+  }
 
   String get speciesName {
     switch (species) {
@@ -73,33 +148,81 @@ class PetModel {
     return '😺';
   }
 
-  void feed(double amount) {
+  void addExp(int amount) {
+    exp += amount;
+    level = (exp ~/ 80) + 1;
+  }
+
+  void feed(double amount, {String author = 'Müge'}) {
     hunger = (hunger + amount).clamp(0.0, 100.0);
     happiness = (happiness + 5.0).clamp(0.0, 100.0);
     action = PetAction.eating;
+    addExp(15);
     lastUpdated = DateTime.now();
+    careLogs.insert(
+      0,
+      CareLogEntry(
+        author: author,
+        action: 'Lezzetli mama yedirdi (+15 XP)',
+        emoji: '🍲',
+        timeAgo: 'Az önce',
+        color: const Color(0xFFFFA34E),
+      ),
+    );
   }
 
-  void wash(double amount) {
+  void wash(double amount, {String author = 'Efe'}) {
     cleanliness = (cleanliness + amount).clamp(0.0, 100.0);
     happiness = (happiness + 4.0).clamp(0.0, 100.0);
     action = PetAction.bathing;
+    addExp(20);
     lastUpdated = DateTime.now();
+    careLogs.insert(
+      0,
+      CareLogEntry(
+        author: author,
+        action: 'Köpük banyosu yaptırdı (+20 XP)',
+        emoji: '🛁',
+        timeAgo: 'Az önce',
+        color: const Color(0xFF38C793),
+      ),
+    );
   }
 
-  void play(double amount) {
+  void play(double amount, {String author = 'Müge'}) {
     happiness = (happiness + amount).clamp(0.0, 100.0);
     energy = (energy - 8.0).clamp(0.0, 100.0);
     hunger = (hunger - 5.0).clamp(0.0, 100.0);
     action = PetAction.playing;
+    addExp(15);
     lastUpdated = DateTime.now();
+    careLogs.insert(
+      0,
+      CareLogEntry(
+        author: author,
+        action: 'Tenis topu fırlatıp eğlendirdi (+15 XP)',
+        emoji: '🎾',
+        timeAgo: 'Az önce',
+        color: const Color(0xFF4F8CFF),
+      ),
+    );
   }
 
-  void toggleSleep() {
+  void toggleSleep({String author = 'Efe'}) {
     isSleeping = !isSleeping;
     if (isSleeping) {
       currentRoom = PetRoom.bedroom;
       action = PetAction.sleeping;
+      careLogs.insert(
+        0,
+        CareLogEntry(
+          author: author,
+          action: 'Gece lambasını kapatıp uyuttu 🌙',
+          emoji: '🛏️',
+          timeAgo: 'Az önce',
+          color: const Color(0xFF8B5CF6),
+        ),
+      );
     } else {
       action = PetAction.idle;
     }
@@ -150,8 +273,8 @@ class PetModel {
         orElse: () => PetOutfit.bowTie,
       ),
       isSleeping: json['isSleeping'] as bool? ?? false,
-      lastUpdated: json['lastUpdated'] != null 
-          ? DateTime.tryParse(json['lastUpdated'] as String) ?? DateTime.now() 
+      lastUpdated: json['lastUpdated'] != null
+          ? DateTime.tryParse(json['lastUpdated'] as String) ?? DateTime.now()
           : DateTime.now(),
     );
   }

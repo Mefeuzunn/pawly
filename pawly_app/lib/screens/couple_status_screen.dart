@@ -2,17 +2,21 @@ import 'package:flutter/material.dart';
 import '../core/theme/app_colors.dart';
 import '../core/theme/app_typography.dart';
 import '../models/couple_model.dart';
+import '../models/pet_model.dart';
 import '../widgets/clay_card.dart';
 import '../widgets/clay_button.dart';
 import '../core/utils/haptics.dart';
+import 'coparenting_hub_screen.dart';
 
 class CoupleStatusScreen extends StatefulWidget {
   final CoupleModel couple;
+  final PetModel? pet;
   final VoidCallback onStateChanged;
 
   const CoupleStatusScreen({
     super.key,
     required this.couple,
+    this.pet,
     required this.onStateChanged,
   });
 
@@ -163,6 +167,67 @@ class _CoupleStatusScreenState extends State<CoupleStatusScreen> {
                   ],
                 ),
               ),
+
+              if (widget.pet != null) ...[
+                const SizedBox(height: 16),
+                ClayCard(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => CoparentingHubScreen(
+                          pet: widget.pet!,
+                          couple: widget.couple,
+                          onStateChanged: widget.onStateChanged,
+                        ),
+                      ),
+                    );
+                  },
+                  color: const Color(0xFFFFF7E6),
+                  borderColor: const Color(0xFFFF9F1C),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFFFE0B2),
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(color: const Color(0xFF261914), width: 1.8),
+                        ),
+                        child: const Text('🐾', style: TextStyle(fontSize: 26)),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Text('Ortak Patili Ebeveynliği', style: AppTypography.bodyLarge.copyWith(fontWeight: FontWeight.bold)),
+                                const SizedBox(width: 6),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFFFF6584),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Text('ÇİFT MODU', style: AppTypography.tag.copyWith(color: Colors.white, fontSize: 9, fontWeight: FontWeight.bold)),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              '${widget.pet!.name} ile 24 günlük kesintisiz seri! • Çarkı çevir',
+                              style: AppTypography.bodySmall,
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Icon(Icons.arrow_forward_ios_rounded, size: 14, color: Color(0xFF261914)),
+                    ],
+                  ),
+                ),
+              ],
 
               const SizedBox(height: 24),
 
