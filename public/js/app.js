@@ -1117,6 +1117,49 @@ function closeTravelAlbumModal() {
   if (modal) modal.classList.add('hidden');
 }
 
+// ==========================================================================
+// FAZ 6: KİLİT EKRANI DUVAR KÂĞIDI & PWA
+// ==========================================================================
+
+let currentWallpaperTheme = 'sakura';
+
+function openWallpaperModal() {
+  const modal = $('#wallpaperModal');
+  if (!modal) return;
+  modal.classList.remove('hidden');
+  updateWallpaperPreview();
+}
+
+function closeWallpaperModal() {
+  const modal = $('#wallpaperModal');
+  if (modal) modal.classList.add('hidden');
+}
+
+function updateWallpaperPreview() {
+  const canvas = $('#wallpaperPreviewCanvas');
+  if (!canvas || !window.PawlyWallpaper) return;
+  window.PawlyWallpaper.renderPreview(canvas, {
+    theme: currentWallpaperTheme,
+    petName: activePet ? activePet.name : 'Mochi',
+    partnerName: partnerUser ? partnerUser.name : 'Alex',
+    streakDays: (activePet && activePet.relationship) ? activePet.relationship.streakDays : 12,
+    petSpecies: activePet ? activePet.species : 'cat'
+  });
+}
+
+function downloadHdWallpaper() {
+  if (!window.PawlyWallpaper) return;
+  if (window.PawlyAudio) window.PawlyAudio.soundCameraShutter();
+  toast('HD Kilit ekranı duvar kâğıdı hazırlanıp indiriliyor... 📸');
+  window.PawlyWallpaper.downloadWallpaper({
+    theme: currentWallpaperTheme,
+    petName: activePet ? activePet.name : 'Mochi',
+    partnerName: partnerUser ? partnerUser.name : 'Alex',
+    streakDays: (activePet && activePet.relationship) ? activePet.relationship.streakDays : 12,
+    petSpecies: activePet ? activePet.species : 'cat'
+  });
+}
+
 function bindHomeEvents() {
   if ($('#btnMissYouHeart')) $('#btnMissYouHeart').onclick = () => sendMissAction();
   if ($('#missYouHeart3DBox')) $('#missYouHeart3DBox').onclick = () => sendMissAction();
@@ -1801,6 +1844,21 @@ async function init() {
     };
   }
 
+  // Faz 6: Duvar Kâğıdı Butonları
+  if ($('#btnOpenWallpaperModal')) $('#btnOpenWallpaperModal').onclick = openWallpaperModal;
+  if ($('#btnCloseWallpaper')) $('#btnCloseWallpaper').onclick = closeWallpaperModal;
+  if ($('#btnDownloadWallpaper')) $('#btnDownloadWallpaper').onclick = downloadHdWallpaper;
+
+  $$('#wallpaperThemePicker button').forEach(btn => {
+    btn.onclick = () => {
+      if (window.PawlyAudio) window.PawlyAudio.soundPop(600);
+      $$('#wallpaperThemePicker button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentWallpaperTheme = btn.dataset.wpTheme || 'sakura';
+      updateWallpaperPreview();
+    };
+  });
+
   // Yeni Yumurta Al
   if ($('#createPet')) {
     $('#createPet').onclick = async () => {
@@ -1984,3 +2042,12 @@ async function bootApp() {
 }
 
 window.addEventListener('DOMContentLoaded', init);
+
+// PWA Service Worker Kaydı
+if (typeof navigator !== 'undefined' && 'serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(err => {
+      console.warn('PWA ServiceWorker kayıt hatası:', err);
+    });
+  });
+}

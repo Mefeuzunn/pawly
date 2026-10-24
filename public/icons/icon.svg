@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFEEDD"/>
+      <stop offset="100%" stop-color="#FFD6BA"/>
+    </linearGradient>
+    <linearGradient id="petGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#FFF2E5"/>
+    </linearGradient>
+    <linearGradient id="pinkGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF8DA1"/>
+      <stop offset="100%" stop-color="#FF6584"/>
+    </linearGradient>
+    <filter id="softShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="16" stdDeviation="20" flood-color="#4A3525" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+
+  <!-- Arka Plan Squircle -->
+  <rect x="0" y="0" width="512" height="512" rx="128" fill="url(#bgGrad)"/>
+
+  <!-- Gölgeli Maskot Gövdesi -->
+  <g filter="url(#softShadow)">
+    <!-- Kulaklar -->
+    <path d="M140 210 L190 120 C205 135 220 170 215 220 Z" fill="url(#petGrad)"/>
+    <path d="M155 195 L190 140 C198 150 205 170 202 200 Z" fill="url(#pinkGrad)" opacity="0.6"/>
+
+    <path d="M372 210 L322 120 C307 135 292 170 297 220 Z" fill="url(#petGrad)"/>
+    <path d="M357 195 L322 140 C314 150 307 170 310 200 Z" fill="url(#pinkGrad)" opacity="0.6"/>
+
+    <!-- Kafa & Yanaklar -->
+    <ellipse cx="256" cy="275" rx="145" ry="125" fill="url(#petGrad)"/>
+
+    <!-- Sevimli Gözler -->
+    <circle cx="205" cy="265" r="14" fill="#3D291D"/>
+    <circle cx="209" cy="261" r="5" fill="#FFFFFF"/>
+
+    <circle cx="307" cy="265" r="14" fill="#3D291D"/>
+    <circle cx="311" cy="261" r="5" fill="#FFFFFF"/>
+
+    <!-- Pembe Yanak Allıkları -->
+    <ellipse cx="175" cy="295" rx="18" ry="10" fill="url(#pinkGrad)" opacity="0.45"/>
+    <ellipse cx="337" cy="295" rx="18" ry="10" fill="url(#pinkGrad)" opacity="0.45"/>
+
+    <!-- Sevimli Burun ve Gülümseme -->
+    <ellipse cx="256" cy="285" rx="8" ry="6" fill="#FF8DA1"/>
+    <path d="M244 294 Q256 304 268 294" fill="none" stroke="#3D291D" stroke-width="4.5" stroke-linecap="round"/>
+
+    <!-- Çift Kalbi -->
+    <path d="M256 405 C242 390 205 365 205 342 C205 328 217 318 231 318 C242 318 251 325 256 333 C261 325 270 318 281 318 C295 318 307 328 307 342 C307 365 270 390 256 405 Z" fill="url(#pinkGrad)"/>
+  </g>
+</svg>
