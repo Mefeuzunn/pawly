@@ -580,6 +580,13 @@ class Pet3DScene {
 
       this.headGroup.rotation.y = this.currentHeadLook.x;
       this.headGroup.rotation.x = -this.currentHeadLook.y;
+
+      // Çiğneme Mimikleri (Chew Motion when Eating)
+      if (this.state === 'eating') {
+        const chew = Math.sin(this.animTime * 16);
+        this.headGroup.position.y = 0.45 + Math.abs(chew) * 0.035;
+        this.headGroup.rotation.x += Math.sin(this.animTime * 16) * 0.06;
+      }
     }
 
     // 3. Kuyruk Sallama (Tail Wagging Physics)
@@ -606,6 +613,26 @@ class Pet3DScene {
 
     // 5. Render
     this.renderer.render(this.scene, this.camera);
+  }
+
+  lookAtPoint(screenX, screenY) {
+    if (!this.container) return;
+    const rect = this.container.getBoundingClientRect();
+    const nx = (screenX - (rect.left + rect.width / 2)) / (rect.width / 2);
+    const ny = (screenY - (rect.top + rect.height / 2)) / (rect.height / 2);
+    this.targetHeadLook.x = Math.max(-0.55, Math.min(0.55, nx * 0.45));
+    this.targetHeadLook.y = Math.max(-0.35, Math.min(0.35, -ny * 0.35));
+  }
+
+  triggerChew(durationMs = 2200) {
+    const prevState = this.state;
+    this.state = 'eating';
+    this.triggerSquish();
+    setTimeout(() => {
+      if (this.state === 'eating') {
+        this.state = prevState;
+      }
+    }, durationMs);
   }
 
   destroy() {

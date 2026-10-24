@@ -2605,3 +2605,322 @@ input:focus, textarea:focus, select:focus {
   font-size: 10px;
   color: var(--text-dim);
 }
+
+/* ==========================================================================
+   FAZ 3: İNTERAKTİF YAŞAYAN ODALAR & MİNİ-OYUN STİLLERİ
+   ========================================================================== */
+
+/* Pet Canlı Durum HUD Paneli */
+.pet-stats-hud {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  gap: 8px;
+  width: 92%;
+  max-width: 480px;
+  margin: 8px auto 14px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(8px);
+  border: 1.5px solid var(--border-card);
+  border-radius: var(--r-pill);
+  padding: 8px 14px;
+  box-shadow: 0 4px 12px rgba(160, 115, 80, 0.08);
+  z-index: 10;
+}
+
+.stat-hud-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex: 1;
+}
+
+.stat-icon {
+  font-size: 15px;
+  line-height: 1;
+}
+
+.stat-bar-track {
+  flex: 1;
+  height: 8px;
+  background: #F0ECE4;
+  border-radius: var(--r-pill);
+  overflow: hidden;
+  position: relative;
+}
+
+.stat-bar-fill {
+  height: 100%;
+  border-radius: var(--r-pill);
+  transition: width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.stat-food { background: linear-gradient(90deg, #FF6584, #FFA34E); }
+.stat-clean { background: linear-gradient(90deg, #38C793, #4CC9F0); }
+.stat-energy { background: linear-gradient(90deg, #FFD166, #FFA34E); }
+.stat-happy { background: linear-gradient(90deg, #FF85A1, #FF4D79); }
+
+.stat-val {
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--text-muted);
+  min-width: 26px;
+  text-align: right;
+}
+
+/* Mutfak: Sürükle Bırak Yemekler */
+.drag-food-tip {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.9);
+  padding: 4px 12px;
+  border-radius: var(--r-pill);
+  border: 1.5px solid #FFD2DC;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent-pink);
+  box-shadow: 0 2px 6px rgba(255, 101, 132, 0.15);
+  animation: pulseTip 1.6s infinite alternate ease-in-out;
+  pointer-events: none;
+  z-index: 10;
+}
+
+@keyframes pulseTip {
+  0% { transform: translateX(-50%) translateY(0); }
+  100% { transform: translateX(-50%) translateY(-3px); }
+}
+
+.draggable-food-item {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--r-md);
+  background: #FFFFFF;
+  border: 2px solid var(--border-card);
+  box-shadow: 0 4px 10px rgba(160, 115, 80, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.draggable-food-item:hover {
+  transform: translateY(-4px) scale(1.08);
+  box-shadow: 0 8px 16px rgba(160, 115, 80, 0.2);
+}
+
+.draggable-food-item:active {
+  cursor: grabbing;
+  transform: scale(0.92);
+}
+
+.floating-drag-ghost {
+  position: fixed;
+  font-size: 42px;
+  pointer-events: none;
+  z-index: 999999;
+  transform: translate(-50%, -50%);
+  filter: drop-shadow(0 12px 20px rgba(0, 0, 0, 0.25));
+  animation: ghostFloat 0.3s infinite alternate ease-in-out;
+}
+
+@keyframes ghostFloat {
+  0% { transform: translate(-50%, -50%) rotate(-4deg); }
+  100% { transform: translate(-50%, -50%) rotate(4deg); }
+}
+
+/* Banyo: Sabun Süngeri & Duş Başlığı */
+.scrub-sponge-tool {
+  position: absolute;
+  top: 40px;
+  right: 28px;
+  font-size: 34px;
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
+  transition: transform 0.15s;
+  z-index: 12;
+}
+
+.scrub-sponge-tool:hover {
+  transform: scale(1.15) rotate(-6deg);
+}
+
+.sponge-active {
+  position: fixed !important;
+  cursor: grabbing;
+  transform: scale(1.25) rotate(12deg);
+  z-index: 99999;
+}
+
+.shower-head-fixture {
+  position: absolute;
+  top: 18px;
+  left: 32px;
+  font-size: 36px;
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.15s;
+  z-index: 10;
+}
+
+.shower-head-fixture:hover {
+  transform: scale(1.12);
+}
+
+.water-stream-line {
+  position: absolute;
+  top: 60px;
+  width: 3px;
+  height: 90px;
+  background: linear-gradient(180deg, rgba(76, 201, 240, 0.8), rgba(56, 199, 147, 0.2));
+  border-radius: 2px;
+  animation: waterFallStream 0.4s infinite linear;
+  pointer-events: none;
+  z-index: 8;
+}
+
+@keyframes waterFallStream {
+  0% { transform: translateY(0); opacity: 0.9; }
+  100% { transform: translateY(30px); opacity: 0.2; }
+}
+
+.foam-sud-dot {
+  position: absolute;
+  font-size: 20px;
+  pointer-events: none;
+  z-index: 11;
+  animation: sudPopIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes sudPopIn {
+  0% { transform: scale(0); }
+  100% { transform: scale(1); }
+}
+
+.bubble-pop-burst {
+  transform: scale(2.2) !important;
+  opacity: 0 !important;
+  transition: transform 0.18s, opacity 0.18s !important;
+}
+
+.water-drop-spray {
+  position: fixed;
+  font-size: 16px;
+  pointer-events: none;
+  z-index: 99999;
+  animation: dropScatter 0.5s forwards ease-out;
+}
+
+@keyframes dropScatter {
+  0% { transform: translate(0, 0) scale(1); opacity: 1; }
+  100% { transform: translate(calc((var(--rnd, 0.5) - 0.5) * 60px), 30px) scale(0.4); opacity: 0; }
+}
+
+/* Yatak Odası: Lamba İpi & Rüya Baloncukları */
+.lamp-cord-pull {
+  width: 4px;
+  height: 22px;
+  background: #C4B5A5;
+  margin: -4px auto 0;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.cord-pulled {
+  transform: translateY(12px) scaleY(1.4);
+}
+
+.dream-bubble-float {
+  position: absolute;
+  top: 50px;
+  right: 70px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 2px solid #A58BFF;
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 18px;
+  box-shadow: 0 4px 14px rgba(165, 139, 255, 0.3);
+  z-index: 12;
+}
+
+.dream-pulse {
+  animation: dreamPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes dreamPop {
+  0% { transform: scale(0.6); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Uçuşan Puan & Skor Rozeti */
+.floating-score-badge {
+  position: fixed;
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 800;
+  text-shadow: 0 2px 4px rgba(255, 255, 255, 0.9);
+  pointer-events: none;
+  z-index: 999999;
+  transform: translate(-50%, -50%);
+  animation: floatScoreUp 1.1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes floatScoreUp {
+  0% { transform: translate(-50%, 0) scale(0.8); opacity: 0; }
+  25% { transform: translate(-50%, -15px) scale(1.15); opacity: 1; }
+  100% { transform: translate(-50%, -45px) scale(0.9); opacity: 0; }
+}
+
+/* Yumurta Çatlama Kademeleri */
+.egg-crack-0 {
+  animation: eggWarmGlow 2.5s infinite alternate ease-in-out;
+}
+
+.egg-crack-1 {
+  filter: drop-shadow(0 0 16px rgba(255, 183, 77, 0.6));
+  animation: eggRattle 1.8s infinite ease-in-out;
+}
+
+.egg-crack-2 {
+  filter: drop-shadow(0 0 24px rgba(255, 215, 0, 0.85));
+  animation: eggViolentRattle 0.8s infinite ease-in-out;
+}
+
+@keyframes eggWarmGlow {
+  0% { transform: scale(1); filter: drop-shadow(0 8px 16px rgba(255, 101, 132, 0.2)); }
+  100% { transform: scale(1.04); filter: drop-shadow(0 12px 24px rgba(255, 101, 132, 0.4)); }
+}
+
+@keyframes eggRattle {
+  0%, 100% { transform: rotate(0); }
+  20% { transform: rotate(-4deg); }
+  40% { transform: rotate(4deg); }
+  60% { transform: rotate(-2deg); }
+  80% { transform: rotate(2deg); }
+}
+
+@keyframes eggViolentRattle {
+  0%, 100% { transform: rotate(0) scale(1.02); }
+  25% { transform: rotate(-8deg) scale(1.08); }
+  75% { transform: rotate(8deg) scale(1.08); }
+}
+
+.egg-sparkle-dot {
+  position: absolute;
+  font-size: 18px;
+  pointer-events: none;
+  animation: sparkFade 0.6s forwards ease-out;
+}
+
+@keyframes sparkFade {
+  0% { transform: scale(0.5); opacity: 1; }
+  100% { transform: scale(1.4) translateY(-20px); opacity: 0; }
+}

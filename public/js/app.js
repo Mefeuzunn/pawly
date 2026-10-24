@@ -870,14 +870,21 @@ function renderPetList() {
 
 async function petCare(id, action) {
   try {
-    const res = await api(`/api/pets/${id}/care`, {
-      method: 'POST',
-      body: JSON.stringify({ action })
-    });
+    let res;
+    if (action === 'sleep') {
+      res = await api(`/api/pets/${id}/sleep`, { method: 'POST' });
+    } else if (action === 'hatch') {
+      res = await api(`/api/pets/${id}/hatch`, { method: 'POST' });
+    } else {
+      res = await api(`/api/pets/${id}/care`, {
+        method: 'POST',
+        body: JSON.stringify({ action })
+      });
+    }
     spawnHeart(null, null, '✨');
     triggerPetSquish();
-    toast('Bakım yapıldı! 🐾');
-    loadPets();
+    if (res && res.toast) toast(res.toast);
+    await loadPets();
   } catch (e) {
     toast(e.message);
   }
