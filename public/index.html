@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1">
+<title>Pawly — Birlikte Büyüyen Dostlar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">🐾 <span>Pawly</span></div>
+  <div class="who" id="whoami"></div>
+</header>
+
+<main id="app" class="app">
+
+  <!-- ANA EKRAN: BENTO WIDGET PANOSU -->
+  <section class="screen" id="screen-home">
+    <div class="home-header">
+      <div>
+        <h1 class="screen-title">Merhaba, <b id="hiName">...</b> 👋</h1>
+        <p class="screen-sub">Ortak Bento Panon ve Canlı Durumun</p>
+      </div>
+      <div class="home-quick-actions">
+        <button class="btn ghost btn-sm" id="btnRefreshBoard" title="Panoyu Yenile">🔄</button>
+      </div>
+    </div>
+
+    <!-- MODERN BENTO GRID -->
+    <div class="bento-grid" id="bentoGrid"></div>
+  </section>
+
+  <!-- CANAVARLAR -->
+  <section class="screen hidden" id="screen-pets">
+    <h1 class="screen-title">Canavarlarım</h1>
+    <div id="petList" class="pet-list"></div>
+
+    <div class="panel">
+      <h3>🥚 Yeni yumurta</h3>
+      <input id="petName" placeholder="İsim" maxlength="24">
+      <div class="species-row" id="speciesRow"></div>
+      <div class="with-row">
+        <input id="petWith" placeholder="Arkadaş kullanıcı adı (boş = tek başıma)">
+        <button class="btn" id="createPet">Oluştur</button>
+      </div>
+      <p class="hint">Bir arkadaş yazarsan birlikte çatlatacaksınız — ikisi de tıklamalı.</p>
+    </div>
+  </section>
+
+  <!-- ARKADAŞLAR & EŞLEŞME (PAIRING) -->
+  <section class="screen hidden" id="screen-friends">
+    <h1 class="screen-title">Dostluk & Eşleşme</h1>
+    <p class="screen-sub">Widgetable tarzı 6 haneli kodunla bağlan veya ara</p>
+
+    <!-- WIDGETABLE PAIR KODU KARTI -->
+    <div class="pair-card">
+      <div style="font-weight:700;font-size:15px;color:var(--txt)">🔗 Senin Eşleşme Kodun</div>
+      <div class="pair-code-display" id="myPairCode">------</div>
+      <div class="pair-actions">
+        <button class="btn" id="btnCopyCode">📋 Kodu Kopyala</button>
+        <button class="btn ghost" id="btnRegenCode" title="Yeni kod üret">🔄 Yenile</button>
+      </div>
+      <p class="hint" style="margin-top:8px">Bu kodu arkadaşına/sevgiline gönder, anında ortak panonuz kurulsun.</p>
+    </div>
+
+    <!-- KOD İLE BAĞLAN KARTI -->
+    <div class="panel">
+      <h3>✨ Kod ile Eşleş</h3>
+      <form class="pair-connect-form" id="pairConnectForm">
+        <input id="inputPairCode" placeholder="6 haneli kodu yaz (örn. A7K9X2)" maxlength="6" style="text-transform:uppercase;letter-spacing:2px;font-weight:700">
+        <div style="display:flex;gap:8px">
+          <select id="selectPairType" class="pair-select" style="flex:1">
+            <option value="best_friend">⭐ Kanka (Best Friend)</option>
+            <option value="couple">❤️ Sevgili (Couple)</option>
+            <option value="friend">🐾 Dost (Friend)</option>
+          </select>
+          <button type="submit" class="btn" id="btnPairConnect">Eşleş 🚀</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- AKTİF EŞLEŞMELERİM (RELATIONSHIPS) -->
+    <div class="panel">
+      <h3>💞 Aktif Eşleşmelerim</h3>
+      <div id="relationshipList" class="list"></div>
+    </div>
+
+    <div class="panel">
+      <h3>🔍 Kullanıcı Ara</h3>
+      <input id="searchInput" placeholder="Kullanıcı adı veya isim ara...">
+      <div id="searchResults" class="list"></div>
+    </div>
+
+    <div class="panel">
+      <h3>📨 Gelen İstekler</h3>
+      <div id="incomingList" class="list"></div>
+    </div>
+
+    <div class="panel">
+      <h3>👥 Tüm Arkadaşlar</h3>
+      <div id="friendList" class="list"></div>
+    </div>
+  </section>
+
+  <!-- MESAJLAR -->
+  <section class="screen hidden" id="screen-messages">
+    <h1 class="screen-title">Mesajlar</h1>
+    <div class="msg-wrap">
+      <div class="convo-list" id="convoList"></div>
+      <div class="chat">
+        <div class="chat-head" id="chatHead">Bir arkadaş seç</div>
+        <div class="chat-body" id="chatBody"><p class="hint">Sohbet seç</p></div>
+        <div class="chat-foot hidden" id="chatFoot">
+          <div class="sticker-tray hidden" id="stickerTray"></div>
+          <div class="chat-tools">
+            <button id="btnSticker" title="Sticker">😊</button>
+            <button id="btnDoodle" title="Çizim">🎨</button>
+          </div>
+          <div class="chat-input">
+            <input id="msgInput" placeholder="Mesaj yaz..." maxlength="500">
+            <button id="btnSend">➤</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ÇİZİM MODAL -->
+    <div class="modal hidden" id="doodleModal">
+      <div class="modal-box">
+        <h3>🎨 Çizimini gönder</h3>
+        <div class="colors" id="colorRow"></div>
+        <canvas id="canvas" width="320" height="260"></canvas>
+        <div class="modal-actions">
+          <button class="btn ghost" id="doodleClear">Temizle</button>
+          <button class="btn ghost" id="doodleCancel">Vazgeç</button>
+          <button class="btn" id="doodleSend">Gönder</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROFİL -->
+  <section class="screen hidden" id="screen-profile">
+    <h1 class="screen-title">Profil</h1>
+    <div class="panel" id="profilePanel"></div>
+  </section>
+
+</main>
+
+<nav class="tabbar" id="tabbar">
+  <button data-screen="home" class="active">🏠<span>Ana</span></button>
+  <button data-screen="pets">🐾<span>Canavar</span></button>
+  <button data-screen="friends">👥<span>Arkadaş</span></button>
+  <button data-screen="messages">💬<span>Mesaj</span></button>
+  <button data-screen="profile">👤<span>Profil</span></button>
+</nav>
+
+<!-- GİRİŞ / KAYIT -->
+<div class="modal" id="authModal">
+  <div class="modal-box auth">
+    <h2>🐾 Pawly</h2>
+    <p class="hint">Arkadaşlarınla bir canavar büyüt, panonu paylaş.</p>
+    <div class="auth-tabs">
+      <button id="tabLogin" class="active">Giriş</button>
+      <button id="tabRegister">Kayıt</button>
+    </div>
+    <input id="authName" class="hidden" placeholder="İsim" maxlength="30">
+    <input id="authUser" placeholder="Kullanıcı adı" maxlength="24">
+    <input id="authPass" type="password" placeholder="Şifre">
+    <div id="authErr" class="err"></div>
+    <button class="btn wide" id="authSubmit">Devam</button>
+    <div style="margin:12px 0 8px;display:flex;align-items:center;gap:8px;color:var(--dim);font-size:12px">
+      <div style="flex:1;height:1px;background:var(--line)"></div>
+      <span>veya</span>
+      <div style="flex:1;height:1px;background:var(--line)"></div>
+    </div>
+    <button class="btn ghost wide" id="authGuest" type="button">⚡ Kaydolmadan Misafir Olarak Dene</button>
+  </div>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+
+<script src="/js/app.js"></script>
+</body>
+</html>

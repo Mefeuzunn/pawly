@@ -1,0 +1,1308 @@
+{
+  "users": [
+    {
+      "username": "ita82625058",
+      "name": "İta A",
+      "color": "#ff9f1c",
+      "passHash": "$2a$10$/B7l863p3zIrDiHYgQGSYeGd.l6QmmwPwTgaY52qj1cct5ROlQ2ju",
+      "widget": {
+        "mood": "🥰",
+        "todos": [],
+        "note": "Flutter notu",
+        "countdowns": [],
+        "stamps": [
+          {
+            "id": "tokyo",
+            "at": "2026-10-20T07:50:25.494Z"
+          }
+        ],
+        "moodDate": "2026-10-20"
+      },
+      "createdAt": "2026-10-20T07:50:25.247Z",
+      "isGuest": false,
+      "pairCode": "4MKAA6"
+    },
+    {
+      "username": "itb82625058",
+      "name": "İta B",
+      "color": "#ff9f1c",
+      "passHash": "$2a$10$OJQkJ01dKAtycS/cZRkYk.74uCUf1toFQBwtFsDCR0QDy9bKqfT7e",
+      "widget": {
+        "mood": null,
+        "todos": [],
+        "note": "",
+        "countdowns": [],
+        "stamps": []
+      },
+      "createdAt": "2026-10-20T07:50:25.598Z",
+      "isGuest": false,
+      "pairCode": "ENNLLK"
+    },
+    {
+      "username": "itx82625058",
+      "name": "Yabancı",
+      "color": "#ff9f1c",
+      "passHash": "$2a$10$8YCJ9eHg0cS.Hqb/teU05OfLcdhleyYzg8n58cWcD7OqdLp.AigTu",
+      "widget": {
+        "mood": null,
+        "todos": [],
+        "note": "",
+        "countdowns": [],
+        "stamps": []
+      },
+      "createdAt": "2026-10-20T07:50:25.731Z",
+      "isGuest": false,
+      "pairCode": "7LQX38"
+    },
+    {
+      "username": "ita82639527",
+      "name": "İta A",
+      "color": "#ff9f1c",
+      "passHash": "$2a$10$IOqcHAMDGfLirC5IDnYcwepNxyo1oX74DNEN7iuQzYJZt6UF8ge8K",
+      "widget": {
+        "mood": "🥰",
+        "todos": [],
+        "note": "Flutter notu",
+        "countdowns": [],
+        "stamps": [
+          {
+            "id": "tokyo",
+            "at": "2026-10-20T07:50:39.924Z"
+          }
+        ],
+        "moodDate": "2026-10-20"
+      },
+      "createdAt": "2026-10-20T07:50:39.687Z",
+      "isGuest": false,
+      "pairCode": "SNCFFN"
+    },
+    {
+      "username": "itb82639527",
+      "name": "İta B",
+      "color": "#ff9f1c",
+      "passHash": "$2a$10$y1IjcpG/0P2Vi7lnOnUzR.quJP.DX8eR2iVpoQ7U1iIRRyidtBk0K",
+      "widget": {
+        "mood": null,
+        "todos": [],
+        "note": "",
+        "countdowns": [],
+        "stamps": []
+      },
+      "createdAt": "2026-10-20T07:50:40.027Z",
+      "isGuest": false,
+      "pairCode": "BEJ7U8"
+    },
+    {
+      "username": "itx82639527",
+      "name": "Yabancı",
+      "color": "#ff9f1c",
+      "passHash": "$2a$10$yVh9l3DzKKwn3kd.k1IFyuwnDQzWeqm.cfSc5apvlXQWueP1FIMai",
+      "widget": {
+        "mood": null,
+        "todos": [],
+        "note": "",
+        "countdowns": [],
+        "stamps": []
+      },
+      "createdAt": "2026-10-20T07:50:40.158Z",
+      "isGuest": false,
+      "pairCode": "2SEB5A"
+    },
+    {
+      "username": "ita83327736",
+      "name": "İta A",
+      "color": "#ff9f1c",
+      "passHash": "$2a$10$O9k1ZVGSwqsOom2EnrShceRK2qxgF.Wwr8TBXWNV/KsSH8bHJir7W",
+      "widget": {
+        "mood": "🥰",
+        "todos": [],
+        "note": "Flutter notu",
+        "countdowns": [],
+        "stamps": [
+          {
+            "id": "tokyo",
+            "at": "2026-10-20T08:02:08.213Z"
+          }
+        ],
+        "moodDate": "2026-10-20"
+      },
+      "createdAt": "2026-10-20T08:02:07.953Z",
+      "isGuest": false,
+      "pairCode": "LUTP2E"
+    },
+    {
+      "username": "itb83327736",
+      "name": "İta B",
+      "color": "#ff9f1c",
+      "passHash": "$2a$10$PvdoqJLkd.CabcXZ3OAy2.YssNXRy/5/CfxFc7us.yytp9adjXc7C",
+      "widget": {
+        "mood": null,
+        "todos": [],
+        "note": "",
+        "countdowns": [],
+        "stamps": []
+      },
+      "createdAt": "2026-10-20T08:02:08.332Z",
+      "isGuest": false,
+      "pairCode": "ARPSCV"
+    },
+    {
+      "username": "itx83327736",
+      "name": "Yabancı",
+      "color": "#ff9f1c",
+      "passHash": "$2a$10$EBGCwi76EQST4cUFaBqreeH6jDscuMZuhNO2Rszhp4y/IpIhhj.vm",
+      "widget": {
+        "mood": null,
+        "todos": [],
+        "note": "",
+        "countdowns": [],
+        "stamps": []
+      },
+      "createdAt": "2026-10-20T08:02:08.465Z",
+      "isGuest": false,
+      "pairCode": "YF39U2"
+    },
+    {
+      "username": "user_a_1792827164125",
+      "name": "Alice",
+      "color": "#3ddc97",
+      "passHash": "$2a$10$5SrDIzpGt9IRwk6GWLOA9e3pyZNgMnjOGWhgK3pvwqcYlLPnOLc7i",
+      "pairCode": "ARWCDN",
+      "isGuest": false,
+      "widget": {
+        "mood": null,
+        "todos": [],
+        "note": "",
+        "countdowns": [],
+        "stamps": []
+      },
+      "createdAt": "2026-10-24T07:32:44.185Z"
+    },
+    {
+      "username": "user_b_1792827164201",
+      "name": "Bob",
+      "color": "#7c5cff",
+      "passHash": "$2a$10$zGETPI3xa//5BwZCOcakgeoKZ6hWEF/rkNteDa2SX5v7BynXlvA/C",
+      "pairCode": "G3PJUK",
+      "isGuest": false,
+      "widget": {
+        "mood": null,
+        "todos": [],
+        "note": "",
+        "countdowns": [],
+        "stamps": []
+      },
+      "createdAt": "2026-10-24T07:32:44.201Z"
+    },
+    {
+      "username": "user_a_1792827301882",
+      "name": "Alice",
+      "color": "#3ddc97",
+      "passHash": "$2a$10$rk7y7cR2axcNZ5/pIZ4xxOcNQjPLdq8mHSiAAK4/JZZZnMnjCsgwC",
+      "pairCode": "JYKDSJ",
+      "isGuest": false,
+      "widget": {
+        "mood": null,
+        "todos": [],
+        "note": "",
+        "countdowns": [],
+        "stamps": []
+      },
+      "createdAt": "2026-10-24T07:35:01.938Z"
+    },
+    {
+      "username": "user_b_1792827301956",
+      "name": "Bob",
+      "color": "#7c5cff",
+      "passHash": "$2a$10$n6vSY/Qu1J2N1Ks2smcqs.4MA9Kfz2eoOnff8m4R5oQMIgZwSL/Rm",
+      "pairCode": "7M7HCG",
+      "isGuest": false,
+      "widget": {
+        "mood": null,
+        "todos": [],
+        "note": "",
+        "countdowns": [],
+        "stamps": []
+      },
+      "createdAt": "2026-10-24T07:35:01.955Z"
+    },
+    {
+      "username": "parent_a_1792827517049",
+      "name": "Aslı",
+      "color": "#4cc9f0",
+      "passHash": "$2a$10$78prCqq0SVsmBKZWpYcW3.EZvRzjsYAkR8Jx4CUNx1QugceT/ws6q",
+      "pairCode": "5THQA3",
+      "isGuest": false,
+      "widget": {
+        "mood": null,
+        "todos": [],
+        "note": "",
+        "countdowns": [],
+        "stamps": []
+      },
+      "createdAt": "2026-10-24T07:38:37.105Z"
+    },
+    {
+      "username": "parent_b_1792827517049",
+      "name": "Burak",
+      "color": "#4cc9f0",
+      "passHash": "$2a$10$GL/D1wG22aVWHS55zoajyu/3SSZLclYb8b/jHzDN.rWSswC3LY03O",
+      "pairCode": "Q7WUVP",
+      "isGuest": false,
+      "widget": {
+        "mood": null,
+        "todos": [],
+        "note": "",
+        "countdowns": [],
+        "stamps": []
+      },
+      "createdAt": "2026-10-24T07:38:37.159Z"
+    },
+    {
+      "username": "parent_a_1792827530185",
+      "name": "Aslı",
+      "color": "#4cc9f0",
+      "passHash": "$2a$10$aTrMz8a6G8/yxvMn0/jU9Oj8MIBris/1XzJim21ahdRK35Tbtxt1K",
+      "pairCode": "9PHDNQ",
+      "isGuest": false,
+      "widget": {
+        "mood": null,
+        "todos": [],
+        "note": "",
+        "countdowns": [],
+        "stamps": []
+      },
+      "createdAt": "2026-10-24T07:38:50.240Z"
+    },
+    {
+      "username": "parent_b_1792827530185",
+      "name": "Burak",
+      "color": "#4cc9f0",
+      "passHash": "$2a$10$iA7B9Kg.k7.0OsEKB8L4F.ESbiEvFk3nkpa5S54Ym8GKpk1wUKkia",
+      "pairCode": "GZSEJD",
+      "isGuest": false,
+      "widget": {
+        "mood": null,
+        "todos": [],
+        "note": "",
+        "countdowns": [],
+        "stamps": []
+      },
+      "createdAt": "2026-10-24T07:38:50.291Z"
+    },
+    {
+      "username": "user_a_1792827535223",
+      "name": "Alice",
+      "color": "#3ddc97",
+      "passHash": "$2a$10$jCcvgCnouiOc1OvjP9vBUu03tkDh4MqhqTw82KIlEzhQLolEYq9ee",
+      "pairCode": "ZVZXYG",
+      "isGuest": false,
+      "widget": {
+        "mood": null,
+        "todos": [],
+        "note": "",
+        "countdowns": [],
+        "stamps": []
+      },
+      "createdAt": "2026-10-24T07:38:55.277Z"
+    },
+    {
+      "username": "user_b_1792827535293",
+      "name": "Bob",
+      "color": "#3ddc97",
+      "passHash": "$2a$10$bhIKdsMFKSem9MsDtF3jLO4JogEhyVileWoHHRnmvOQp5wRlDRe4q",
+      "pairCode": "QRQCVW",
+      "isGuest": false,
+      "widget": {
+        "mood": null,
+        "todos": [],
+        "note": "",
+        "countdowns": [],
+        "stamps": []
+      },
+      "createdAt": "2026-10-24T07:38:55.293Z"
+    },
+    {
+      "username": "user_a_1792827668069",
+      "name": "Alice",
+      "color": "#3ddc97",
+      "passHash": "$2a$10$uNH3CcMYk0rLpKoJK.RSpecUFGA4.JiPfGuApKyWmki28JldbLxc2",
+      "pairCode": "DKFY2X",
+      "isGuest": false,
+      "widget": {
+        "mood": null,
+        "todos": [],
+        "note": "",
+        "countdowns": [],
+        "stamps": []
+      },
+      "createdAt": "2026-10-24T07:41:08.124Z"
+    },
+    {
+      "username": "user_b_1792827668141",
+      "name": "Bob",
+      "color": "#ffc93c",
+      "passHash": "$2a$10$8jMpitF7GjXNnj48UX/mU.X8RmsqXAl12JErjvcaUXHgVZr5sOMJK",
+      "pairCode": "L587FJ",
+      "isGuest": false,
+      "widget": {
+        "mood": null,
+        "todos": [],
+        "note": "",
+        "countdowns": [],
+        "stamps": []
+      },
+      "createdAt": "2026-10-24T07:41:08.141Z"
+    },
+    {
+      "username": "parent_a_1792827668239",
+      "name": "Aslı",
+      "color": "#4cc9f0",
+      "passHash": "$2a$10$mDm90dXX9RA3w0cFbIXAuexQ725tAl/DZmDWsA3H6V12AqvgFc2Wu",
+      "pairCode": "MJXPKF",
+      "isGuest": false,
+      "widget": {
+        "mood": null,
+        "todos": [],
+        "note": "",
+        "countdowns": [],
+        "stamps": []
+      },
+      "createdAt": "2026-10-24T07:41:08.294Z"
+    },
+    {
+      "username": "parent_b_1792827668239",
+      "name": "Burak",
+      "color": "#4cc9f0",
+      "passHash": "$2a$10$5pPwHNAH5nGj5RWCgbvyP.ZGMhs1W3baa6FQEPAIGu6swIMM9l5/u",
+      "pairCode": "Z9GDNW",
+      "isGuest": false,
+      "widget": {
+        "mood": null,
+        "todos": [],
+        "note": "",
+        "countdowns": [],
+        "stamps": []
+      },
+      "createdAt": "2026-10-24T07:41:08.345Z"
+    },
+    {
+      "username": "bento_user_1792828108016",
+      "name": "Can",
+      "color": "#ff7aa2",
+      "passHash": "$2a$10$XUsh7H.cuv2HpgP.UNUYP.m2W.OUzBASjTsYWu5XLVy/VNrI1VTMa",
+      "pairCode": "C3CDZT",
+      "isGuest": false,
+      "widget": {
+        "mood": "🥰",
+        "todos": [
+          {
+            "id": "t_18mvm3kdo2",
+            "text": "Canavara çilek al 🍓",
+            "done": true,
+            "createdAt": "2026-10-24T07:48:28.082Z"
+          }
+        ],
+        "note": "Bento sticky note notu!",
+        "countdowns": [
+          {
+            "id": "c_19mvm3kdo3",
+            "title": "Doğum Günü Partisi 🎂",
+            "date": "2026-11-15",
+            "createdAt": "2026-10-24T07:48:28.083Z"
+          }
+        ],
+        "stamps": [
+          {
+            "id": "tokyo",
+            "at": "2026-10-24T07:48:28.083Z"
+          }
+        ],
+        "layout": [
+          "streak",
+          "pet",
+          "todos",
+          "mood",
+          "note",
+          "countdown",
+          "stamps"
+        ],
+        "moodDate": "2026-10-24"
+      },
+      "createdAt": "2026-10-24T07:48:28.073Z"
+    },
+    {
+      "username": "user_a_1792828117913",
+      "name": "Alice",
+      "color": "#3ddc97",
+      "passHash": "$2a$10$MBMgO9gCNtNSFCEUVwaknORJQ.9WbpchpXKCfaSxFiVIxHS0HZFSC",
+      "pairCode": "E5MJUZ",
+      "isGuest": false,
+      "widget": {
+        "mood": null,
+        "todos": [],
+        "note": "",
+        "countdowns": [],
+        "stamps": []
+      },
+      "createdAt": "2026-10-24T07:48:37.968Z"
+    },
+    {
+      "username": "user_b_1792828117983",
+      "name": "Bob",
+      "color": "#ff7aa2",
+      "passHash": "$2a$10$uoFljNFRCeh.eUa2lnkFheTq1rOz56VUfnsoM3uSyWByEXZLt52Gy",
+      "pairCode": "TA8WBL",
+      "isGuest": false,
+      "widget": {
+        "mood": null,
+        "todos": [],
+        "note": "",
+        "countdowns": [],
+        "stamps": []
+      },
+      "createdAt": "2026-10-24T07:48:37.983Z"
+    },
+    {
+      "username": "parent_a_1792828118082",
+      "name": "Aslı",
+      "color": "#4cc9f0",
+      "passHash": "$2a$10$5JqM7qTV8.xVJaDKSSZjUuJtK/w6xr.P/Q94Now/Kf.j5ROIMvMqq",
+      "pairCode": "GEM6G5",
+      "isGuest": false,
+      "widget": {
+        "mood": null,
+        "todos": [],
+        "note": "",
+        "countdowns": [],
+        "stamps": []
+      },
+      "createdAt": "2026-10-24T07:48:38.137Z"
+    },
+    {
+      "username": "parent_b_1792828118082",
+      "name": "Burak",
+      "color": "#4cc9f0",
+      "passHash": "$2a$10$p0.Lll3KztGkc316b9ZmlewcGh/Enq90wvXOiv21OnHjEf36tw0Iq",
+      "pairCode": "TBWS3C",
+      "isGuest": false,
+      "widget": {
+        "mood": null,
+        "todos": [],
+        "note": "",
+        "countdowns": [],
+        "stamps": []
+      },
+      "createdAt": "2026-10-24T07:48:38.188Z"
+    },
+    {
+      "username": "bento_user_1792828118238",
+      "name": "Can",
+      "color": "#ff7aa2",
+      "passHash": "$2a$10$sCgwK65lMZKrTRL36rf1dO6VZBfuJ0VE7/wN0dskyfRarTGkvBl86",
+      "pairCode": "LPNP2R",
+      "isGuest": false,
+      "widget": {
+        "mood": "🥰",
+        "todos": [
+          {
+            "id": "t_1jmvm3kljy",
+            "text": "Canavara çilek al 🍓",
+            "done": true,
+            "createdAt": "2026-10-24T07:48:38.302Z"
+          }
+        ],
+        "note": "Bento sticky note notu!",
+        "countdowns": [
+          {
+            "id": "c_1kmvm3kljz",
+            "title": "Doğum Günü Partisi 🎂",
+            "date": "2026-11-15",
+            "createdAt": "2026-10-24T07:48:38.303Z"
+          }
+        ],
+        "stamps": [
+          {
+            "id": "tokyo",
+            "at": "2026-10-24T07:48:38.304Z"
+          }
+        ],
+        "layout": [
+          "streak",
+          "pet",
+          "todos",
+          "mood",
+          "note",
+          "countdown",
+          "stamps"
+        ],
+        "moodDate": "2026-10-24"
+      },
+      "createdAt": "2026-10-24T07:48:38.293Z"
+    },
+    {
+      "username": "guest_xiank",
+      "name": "Misafir #8E22",
+      "color": "#ff9f1c",
+      "passHash": "$2a$08$3UZdpj3lqvL4xtGylcOfR.Qx.3sHs3V2s6P769vNGHN2XQ1rRGiMa",
+      "pairCode": "8E228V",
+      "isGuest": true,
+      "widget": {
+        "mood": null,
+        "todos": [],
+        "note": "",
+        "countdowns": [],
+        "stamps": [
+          {
+            "id": "paris",
+            "at": "2026-10-24T07:54:25.439Z"
+          }
+        ]
+      },
+      "createdAt": "2026-10-24T07:54:07.108Z"
+    }
+  ],
+  "friends": [
+    {
+      "a": "ita82625058",
+      "b": "itb82625058",
+      "since": "2026-10-20T07:50:25.607Z"
+    },
+    {
+      "a": "ita82639527",
+      "b": "itb82639527",
+      "since": "2026-10-20T07:50:40.035Z"
+    },
+    {
+      "a": "ita83327736",
+      "b": "itb83327736",
+      "since": "2026-10-20T08:02:08.341Z"
+    },
+    {
+      "a": "user_a_1792827164125",
+      "b": "user_b_1792827164201",
+      "since": "2026-10-24T07:32:44.252Z"
+    },
+    {
+      "a": "user_a_1792827301882",
+      "b": "user_b_1792827301956",
+      "since": "2026-10-24T07:35:02.006Z"
+    },
+    {
+      "a": "parent_a_1792827517049",
+      "b": "parent_b_1792827517049",
+      "since": "2026-10-24T07:38:37.160Z"
+    },
+    {
+      "a": "parent_a_1792827530185",
+      "b": "parent_b_1792827530185",
+      "since": "2026-10-24T07:38:50.292Z"
+    },
+    {
+      "a": "user_a_1792827535223",
+      "b": "user_b_1792827535293",
+      "since": "2026-10-24T07:38:55.344Z"
+    },
+    {
+      "a": "user_a_1792827668069",
+      "b": "user_b_1792827668141",
+      "since": "2026-10-24T07:41:08.192Z"
+    },
+    {
+      "a": "parent_a_1792827668239",
+      "b": "parent_b_1792827668239",
+      "since": "2026-10-24T07:41:08.346Z"
+    },
+    {
+      "a": "user_a_1792828117913",
+      "b": "user_b_1792828117983",
+      "since": "2026-10-24T07:48:38.034Z"
+    },
+    {
+      "a": "parent_a_1792828118082",
+      "b": "parent_b_1792828118082",
+      "since": "2026-10-24T07:48:38.188Z"
+    }
+  ],
+  "requests": [],
+  "pets": [
+    {
+      "id": "pet_3mvgdvhor",
+      "name": "PawlyTest",
+      "species": "dino",
+      "owners": [
+        "ita82625058",
+        "itb82625058"
+      ],
+      "stats": {
+        "food": 99.99999583333333,
+        "water": 69.99997333333332,
+        "clean": 69.9999822222222,
+        "energy": 70.00181444444448,
+        "happy": 69.99998444444441
+      },
+      "poops": [],
+      "sleeping": true,
+      "xp": 28,
+      "hatched": true,
+      "hatchTaps": [
+        "ita82625058",
+        "itb82625058"
+      ],
+      "cooldowns": {
+        "itb82625058:feed": 1792482625622,
+        "ita82625058:feed": 1792482625624
+      },
+      "lastTick": 1792482625957,
+      "mood": "mutlu",
+      "createdAt": "2026-10-20T07:50:25.611Z",
+      "logs": [],
+      "relationshipId": null
+    },
+    {
+      "id": "pet_8mvgdvstj",
+      "name": "PawlyTest",
+      "species": "dino",
+      "owners": [
+        "ita82639527",
+        "itb82639527"
+      ],
+      "stats": {
+        "food": 99.99999583333333,
+        "water": 69.99997499999998,
+        "clean": 69.99998333333332,
+        "energy": 70.00180972222226,
+        "happy": 69.99998541666663
+      },
+      "poops": [],
+      "sleeping": true,
+      "xp": 28,
+      "hatched": true,
+      "hatchTaps": [
+        "ita82639527",
+        "itb82639527"
+      ],
+      "cooldowns": {
+        "itb82639527:feed": 1792482640049,
+        "ita82639527:feed": 1792482640051
+      },
+      "lastTick": 1792482640382,
+      "mood": "mutlu",
+      "createdAt": "2026-10-20T07:50:40.039Z",
+      "logs": [],
+      "relationshipId": null
+    },
+    {
+      "id": "pet_dmvgeajx5",
+      "name": "PawlyTest",
+      "species": "dino",
+      "owners": [
+        "ita83327736",
+        "itb83327736"
+      ],
+      "stats": {
+        "food": 99.99999583333333,
+        "water": 69.99997333333332,
+        "clean": 69.9999822222222,
+        "energy": 70.00185888888892,
+        "happy": 69.99998444444441
+      },
+      "poops": [],
+      "sleeping": true,
+      "xp": 28,
+      "hatched": true,
+      "hatchTaps": [
+        "ita83327736",
+        "itb83327736"
+      ],
+      "cooldowns": {
+        "itb83327736:feed": 1792483328355,
+        "ita83327736:feed": 1792483328358
+      },
+      "lastTick": 1792483328698,
+      "mood": "mutlu",
+      "createdAt": "2026-10-20T08:02:08.345Z",
+      "logs": [],
+      "relationshipId": null
+    },
+    {
+      "id": "pet_jmvm37ppk",
+      "name": "Pofuduk",
+      "species": "dino",
+      "owners": [
+        "parent_a_1792827517049",
+        "parent_b_1792827517049"
+      ],
+      "relationshipId": "rel_imvm37ppk",
+      "stats": {
+        "food": 100,
+        "water": 75,
+        "clean": 100,
+        "energy": 80,
+        "happy": 92
+      },
+      "poops": [],
+      "sleeping": false,
+      "xp": 81,
+      "hatched": true,
+      "hatchTaps": [
+        "parent_a_1792827517049",
+        "parent_b_1792827517049"
+      ],
+      "cooldowns": {
+        "parent_a_1792827517049:feed": 1792827517161,
+        "parent_b_1792827517049:clean": 1792827517162
+      },
+      "logs": [
+        {
+          "id": "log_pmvm37ppn",
+          "actor": {
+            "username": "parent_a_1792827517049",
+            "name": "Aslı",
+            "color": "#4cc9f0"
+          },
+          "action": "wake",
+          "label": "Aslı canavarı uyandırdı ☀️",
+          "xpGain": 5,
+          "at": "2026-10-24T07:38:37.163Z"
+        },
+        {
+          "id": "log_omvm37ppm",
+          "actor": {
+            "username": "parent_b_1792827517049",
+            "name": "Burak",
+            "color": "#4cc9f0"
+          },
+          "action": "sleep",
+          "label": "Burak canavarı uyuttu 💤",
+          "xpGain": 5,
+          "at": "2026-10-24T07:38:37.162Z"
+        },
+        {
+          "id": "log_nmvm37ppm",
+          "actor": {
+            "username": "parent_b_1792827517049",
+            "name": "Burak",
+            "color": "#4cc9f0"
+          },
+          "action": "clean",
+          "label": "Burak köpüklü banyo yaptırdı 🫧",
+          "xpGain": 15,
+          "at": "2026-10-24T07:38:37.162Z"
+        },
+        {
+          "id": "log_mmvm37ppl",
+          "actor": {
+            "username": "parent_a_1792827517049",
+            "name": "Aslı",
+            "color": "#4cc9f0"
+          },
+          "action": "feed",
+          "label": "Aslı lezzetli mama verdi 🍓",
+          "xpGain": 15,
+          "at": "2026-10-24T07:38:37.161Z"
+        },
+        {
+          "id": "log_lmvm37ppl",
+          "actor": {
+            "username": "parent_b_1792827517049",
+            "name": "Burak",
+            "color": "#4cc9f0"
+          },
+          "action": "hatch",
+          "label": "Pofuduk başarıyla çatladı ve dünyaya geldi! 🐣",
+          "xpGain": 20,
+          "at": "2026-10-24T07:38:37.161Z"
+        },
+        {
+          "id": "log_kmvm37ppk",
+          "actor": {
+            "username": "parent_a_1792827517049",
+            "name": "Aslı",
+            "color": "#4cc9f0"
+          },
+          "action": "create",
+          "label": "Aslı ortak bir yumurta bıraktı 🥚",
+          "xpGain": 0,
+          "at": "2026-10-24T07:38:37.160Z"
+        }
+      ],
+      "lastTick": 1792827517163,
+      "mood": "mutlu",
+      "createdAt": "2026-10-24T07:38:37.160Z"
+    },
+    {
+      "id": "pet_rmvm37zud",
+      "name": "Pofuduk",
+      "species": "dino",
+      "owners": [
+        "parent_a_1792827530185",
+        "parent_b_1792827530185"
+      ],
+      "relationshipId": "rel_qmvm37zuc",
+      "stats": {
+        "food": 100,
+        "water": 75,
+        "clean": 100,
+        "energy": 80,
+        "happy": 92
+      },
+      "poops": [],
+      "sleeping": false,
+      "xp": 81,
+      "hatched": true,
+      "hatchTaps": [
+        "parent_a_1792827530185",
+        "parent_b_1792827530185"
+      ],
+      "cooldowns": {
+        "parent_a_1792827530185:feed": 1792827530294,
+        "parent_b_1792827530185:clean": 1792827530294
+      },
+      "logs": [
+        {
+          "id": "log_xmvm37zuf",
+          "actor": {
+            "username": "parent_a_1792827530185",
+            "name": "Aslı",
+            "color": "#4cc9f0"
+          },
+          "action": "wake",
+          "label": "Aslı canavarı uyandırdı ☀️",
+          "xpGain": 5,
+          "at": "2026-10-24T07:38:50.295Z"
+        },
+        {
+          "id": "log_wmvm37zuf",
+          "actor": {
+            "username": "parent_b_1792827530185",
+            "name": "Burak",
+            "color": "#4cc9f0"
+          },
+          "action": "sleep",
+          "label": "Burak canavarı uyuttu 💤",
+          "xpGain": 5,
+          "at": "2026-10-24T07:38:50.295Z"
+        },
+        {
+          "id": "log_vmvm37zue",
+          "actor": {
+            "username": "parent_b_1792827530185",
+            "name": "Burak",
+            "color": "#4cc9f0"
+          },
+          "action": "clean",
+          "label": "Burak köpüklü banyo yaptırdı 🫧",
+          "xpGain": 15,
+          "at": "2026-10-24T07:38:50.294Z"
+        },
+        {
+          "id": "log_umvm37zue",
+          "actor": {
+            "username": "parent_a_1792827530185",
+            "name": "Aslı",
+            "color": "#4cc9f0"
+          },
+          "action": "feed",
+          "label": "Aslı lezzetli mama verdi 🍓",
+          "xpGain": 15,
+          "at": "2026-10-24T07:38:50.294Z"
+        },
+        {
+          "id": "log_tmvm37zud",
+          "actor": {
+            "username": "parent_b_1792827530185",
+            "name": "Burak",
+            "color": "#4cc9f0"
+          },
+          "action": "hatch",
+          "label": "Pofuduk başarıyla çatladı ve dünyaya geldi! 🐣",
+          "xpGain": 20,
+          "at": "2026-10-24T07:38:50.293Z"
+        },
+        {
+          "id": "log_smvm37zud",
+          "actor": {
+            "username": "parent_a_1792827530185",
+            "name": "Aslı",
+            "color": "#4cc9f0"
+          },
+          "action": "create",
+          "label": "Aslı ortak bir yumurta bıraktı 🥚",
+          "xpGain": 0,
+          "at": "2026-10-24T07:38:50.293Z"
+        }
+      ],
+      "lastTick": 1792827530295,
+      "mood": "mutlu",
+      "createdAt": "2026-10-24T07:38:50.293Z"
+    },
+    {
+      "id": "pet_11mvm3ayd6",
+      "name": "Pofuduk",
+      "species": "dino",
+      "owners": [
+        "parent_a_1792827668239",
+        "parent_b_1792827668239"
+      ],
+      "relationshipId": "rel_10mvm3ayd6",
+      "stats": {
+        "food": 100,
+        "water": 75,
+        "clean": 100,
+        "energy": 80,
+        "happy": 92
+      },
+      "poops": [],
+      "sleeping": false,
+      "xp": 81,
+      "hatched": true,
+      "hatchTaps": [
+        "parent_a_1792827668239",
+        "parent_b_1792827668239"
+      ],
+      "cooldowns": {
+        "parent_a_1792827668239:feed": 1792827668347,
+        "parent_b_1792827668239:clean": 1792827668348
+      },
+      "logs": [
+        {
+          "id": "log_17mvm3ayd9",
+          "actor": {
+            "username": "parent_a_1792827668239",
+            "name": "Aslı",
+            "color": "#4cc9f0"
+          },
+          "action": "wake",
+          "label": "Aslı canavarı uyandırdı ☀️",
+          "xpGain": 5,
+          "at": "2026-10-24T07:41:08.349Z"
+        },
+        {
+          "id": "log_16mvm3ayd8",
+          "actor": {
+            "username": "parent_b_1792827668239",
+            "name": "Burak",
+            "color": "#4cc9f0"
+          },
+          "action": "sleep",
+          "label": "Burak canavarı uyuttu 💤",
+          "xpGain": 5,
+          "at": "2026-10-24T07:41:08.348Z"
+        },
+        {
+          "id": "log_15mvm3ayd8",
+          "actor": {
+            "username": "parent_b_1792827668239",
+            "name": "Burak",
+            "color": "#4cc9f0"
+          },
+          "action": "clean",
+          "label": "Burak köpüklü banyo yaptırdı 🫧",
+          "xpGain": 15,
+          "at": "2026-10-24T07:41:08.348Z"
+        },
+        {
+          "id": "log_14mvm3ayd7",
+          "actor": {
+            "username": "parent_a_1792827668239",
+            "name": "Aslı",
+            "color": "#4cc9f0"
+          },
+          "action": "feed",
+          "label": "Aslı lezzetli mama verdi 🍓",
+          "xpGain": 15,
+          "at": "2026-10-24T07:41:08.347Z"
+        },
+        {
+          "id": "log_13mvm3ayd7",
+          "actor": {
+            "username": "parent_b_1792827668239",
+            "name": "Burak",
+            "color": "#4cc9f0"
+          },
+          "action": "hatch",
+          "label": "Pofuduk başarıyla çatladı ve dünyaya geldi! 🐣",
+          "xpGain": 20,
+          "at": "2026-10-24T07:41:08.347Z"
+        },
+        {
+          "id": "log_12mvm3ayd6",
+          "actor": {
+            "username": "parent_a_1792827668239",
+            "name": "Aslı",
+            "color": "#4cc9f0"
+          },
+          "action": "create",
+          "label": "Aslı ortak bir yumurta bıraktı 🥚",
+          "xpGain": 0,
+          "at": "2026-10-24T07:41:08.346Z"
+        }
+      ],
+      "lastTick": 1792827668349,
+      "mood": "mutlu",
+      "createdAt": "2026-10-24T07:41:08.346Z"
+    },
+    {
+      "id": "pet_1cmvm3klgt",
+      "name": "Pofuduk",
+      "species": "dino",
+      "owners": [
+        "parent_a_1792828118082",
+        "parent_b_1792828118082"
+      ],
+      "relationshipId": "rel_1bmvm3klgs",
+      "stats": {
+        "food": 100,
+        "water": 75,
+        "clean": 100,
+        "energy": 80,
+        "happy": 92
+      },
+      "poops": [],
+      "sleeping": false,
+      "xp": 81,
+      "hatched": true,
+      "hatchTaps": [
+        "parent_a_1792828118082",
+        "parent_b_1792828118082"
+      ],
+      "cooldowns": {
+        "parent_a_1792828118082:feed": 1792828118190,
+        "parent_b_1792828118082:clean": 1792828118190
+      },
+      "logs": [
+        {
+          "id": "log_1imvm3klgv",
+          "actor": {
+            "username": "parent_a_1792828118082",
+            "name": "Aslı",
+            "color": "#4cc9f0"
+          },
+          "action": "wake",
+          "label": "Aslı canavarı uyandırdı ☀️",
+          "xpGain": 5,
+          "at": "2026-10-24T07:48:38.191Z"
+        },
+        {
+          "id": "log_1hmvm3klgv",
+          "actor": {
+            "username": "parent_b_1792828118082",
+            "name": "Burak",
+            "color": "#4cc9f0"
+          },
+          "action": "sleep",
+          "label": "Burak canavarı uyuttu 💤",
+          "xpGain": 5,
+          "at": "2026-10-24T07:48:38.191Z"
+        },
+        {
+          "id": "log_1gmvm3klgu",
+          "actor": {
+            "username": "parent_b_1792828118082",
+            "name": "Burak",
+            "color": "#4cc9f0"
+          },
+          "action": "clean",
+          "label": "Burak köpüklü banyo yaptırdı 🫧",
+          "xpGain": 15,
+          "at": "2026-10-24T07:48:38.190Z"
+        },
+        {
+          "id": "log_1fmvm3klgu",
+          "actor": {
+            "username": "parent_a_1792828118082",
+            "name": "Aslı",
+            "color": "#4cc9f0"
+          },
+          "action": "feed",
+          "label": "Aslı lezzetli mama verdi 🍓",
+          "xpGain": 15,
+          "at": "2026-10-24T07:48:38.190Z"
+        },
+        {
+          "id": "log_1emvm3klgu",
+          "actor": {
+            "username": "parent_b_1792828118082",
+            "name": "Burak",
+            "color": "#4cc9f0"
+          },
+          "action": "hatch",
+          "label": "Pofuduk başarıyla çatladı ve dünyaya geldi! 🐣",
+          "xpGain": 20,
+          "at": "2026-10-24T07:48:38.190Z"
+        },
+        {
+          "id": "log_1dmvm3klgt",
+          "actor": {
+            "username": "parent_a_1792828118082",
+            "name": "Aslı",
+            "color": "#4cc9f0"
+          },
+          "action": "create",
+          "label": "Aslı ortak bir yumurta bıraktı 🥚",
+          "xpGain": 0,
+          "at": "2026-10-24T07:48:38.189Z"
+        }
+      ],
+      "lastTick": 1792828118191,
+      "mood": "mutlu",
+      "createdAt": "2026-10-24T07:48:38.189Z"
+    }
+  ],
+  "messages": [
+    {
+      "id": "m_4mvgdvhv4",
+      "from": "ita82625058",
+      "to": "itb82625058",
+      "kind": "text",
+      "text": "merhaba",
+      "read": true,
+      "createdAt": "2026-10-20T07:50:25.840Z"
+    },
+    {
+      "id": "m_5mvgdvhv7",
+      "from": "itb82625058",
+      "to": "ita82625058",
+      "kind": "sticker",
+      "text": "🐶",
+      "read": true,
+      "createdAt": "2026-10-20T07:50:25.843Z"
+    },
+    {
+      "id": "m_9mvgdvszu",
+      "from": "ita82639527",
+      "to": "itb82639527",
+      "kind": "text",
+      "text": "merhaba",
+      "read": true,
+      "createdAt": "2026-10-20T07:50:40.266Z"
+    },
+    {
+      "id": "m_amvgdvszx",
+      "from": "itb82639527",
+      "to": "ita82639527",
+      "kind": "sticker",
+      "text": "🐶",
+      "read": true,
+      "createdAt": "2026-10-20T07:50:40.269Z"
+    },
+    {
+      "id": "m_emvgeak3j",
+      "from": "ita83327736",
+      "to": "itb83327736",
+      "kind": "text",
+      "text": "merhaba",
+      "read": true,
+      "createdAt": "2026-10-20T08:02:08.575Z"
+    },
+    {
+      "id": "m_fmvgeak3m",
+      "from": "itb83327736",
+      "to": "ita83327736",
+      "kind": "sticker",
+      "text": "🐶",
+      "read": true,
+      "createdAt": "2026-10-20T08:02:08.578Z"
+    }
+  ],
+  "doodles": [],
+  "seq": 57,
+  "relationships": [
+    {
+      "id": "rel_gmvm305ek",
+      "a": "user_a_1792827164125",
+      "b": "user_b_1792827164201",
+      "type": "best_friend",
+      "status": "ended",
+      "streakDays": 1,
+      "lastInteractionAt": "2026-10-24T07:32:44.252Z",
+      "createdAt": "2026-10-24T07:32:44.252Z"
+    },
+    {
+      "id": "rel_hmvm333p2",
+      "a": "user_a_1792827301882",
+      "b": "user_b_1792827301956",
+      "type": "best_friend",
+      "status": "ended",
+      "streakDays": 1,
+      "lastInteractionAt": "2026-10-24T07:35:02.006Z",
+      "createdAt": "2026-10-24T07:35:02.006Z"
+    },
+    {
+      "id": "rel_imvm37ppk",
+      "a": "parent_a_1792827517049",
+      "b": "parent_b_1792827517049",
+      "type": "couple",
+      "status": "active",
+      "streakDays": 1,
+      "lastInteractionAt": "2026-10-24T07:38:37.162Z",
+      "createdAt": "2026-10-24T07:38:37.160Z",
+      "sharedPetId": "pet_jmvm37ppk"
+    },
+    {
+      "id": "rel_qmvm37zuc",
+      "a": "parent_a_1792827530185",
+      "b": "parent_b_1792827530185",
+      "type": "couple",
+      "status": "active",
+      "streakDays": 1,
+      "lastInteractionAt": "2026-10-24T07:38:50.294Z",
+      "createdAt": "2026-10-24T07:38:50.292Z",
+      "sharedPetId": "pet_rmvm37zud"
+    },
+    {
+      "id": "rel_ymvm383qo",
+      "a": "user_a_1792827535223",
+      "b": "user_b_1792827535293",
+      "type": "best_friend",
+      "status": "ended",
+      "streakDays": 1,
+      "lastInteractionAt": "2026-10-24T07:38:55.344Z",
+      "createdAt": "2026-10-24T07:38:55.344Z"
+    },
+    {
+      "id": "rel_zmvm3ay8w",
+      "a": "user_a_1792827668069",
+      "b": "user_b_1792827668141",
+      "type": "best_friend",
+      "status": "ended",
+      "streakDays": 1,
+      "lastInteractionAt": "2026-10-24T07:41:08.192Z",
+      "createdAt": "2026-10-24T07:41:08.192Z"
+    },
+    {
+      "id": "rel_10mvm3ayd6",
+      "a": "parent_a_1792827668239",
+      "b": "parent_b_1792827668239",
+      "type": "couple",
+      "status": "active",
+      "streakDays": 1,
+      "lastInteractionAt": "2026-10-24T07:41:08.348Z",
+      "createdAt": "2026-10-24T07:41:08.346Z",
+      "sharedPetId": "pet_11mvm3ayd6"
+    },
+    {
+      "id": "rel_1amvm3klci",
+      "a": "user_a_1792828117913",
+      "b": "user_b_1792828117983",
+      "type": "best_friend",
+      "status": "ended",
+      "streakDays": 1,
+      "lastInteractionAt": "2026-10-24T07:48:38.034Z",
+      "createdAt": "2026-10-24T07:48:38.034Z"
+    },
+    {
+      "id": "rel_1bmvm3klgs",
+      "a": "parent_a_1792828118082",
+      "b": "parent_b_1792828118082",
+      "type": "couple",
+      "status": "active",
+      "streakDays": 1,
+      "lastInteractionAt": "2026-10-24T07:48:38.190Z",
+      "createdAt": "2026-10-24T07:48:38.188Z",
+      "sharedPetId": "pet_1cmvm3klgt"
+    }
+  ],
+  "interactions": []
+}
