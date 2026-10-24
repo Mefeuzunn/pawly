@@ -33,4 +33,8 @@ app.get('/api/health', (req, res) => {
 // SPA fallback
 app.get('*', (req, res) => res.sendFile(path.join(__dirname, '..', 'public', 'index.html')));
 
-app.listen(PORT, () => console.log(`🐾 Pawly hazır: http://localhost:${PORT}`));
+if (require.main === module) {
+  app.listen(PORT, () => console.log(`🐾 Pawly hazır: http://localhost:${PORT}`));
+}
+
+module.exports = app;

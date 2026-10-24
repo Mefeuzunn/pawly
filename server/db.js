@@ -42,6 +42,15 @@ function migrate(d) {
     u.widget.todos = u.widget.todos || [];
     u.widget.countdowns = u.widget.countdowns || [];
     u.widget.stamps = u.widget.stamps || [];
+    u.widget.missYou = typeof u.widget.missYou === 'number' ? u.widget.missYou : 0;
+    u.widget.statusBubble = u.widget.statusBubble || { status: 'Mutlu 🥰', emoji: '🥰', text: 'Seni düşünüyorum!' };
+    u.widget.sleep = u.widget.sleep || { hours: 7.5, quality: 'Excellent', weekly: [7, 8, 6.5, 7.5, 8, 7.5, 8] };
+    u.widget.location = u.widget.location || { label: 'home', name: 'Evde 🏠' };
+    u.widget.jarCandies = u.widget.jarCandies || [
+      { id: 'c1', mood: 'love', color: '#FF7B90', emoji: '💖' },
+      { id: 'c2', mood: 'happy', color: '#FFD166', emoji: '✨' },
+      { id: 'c3', mood: 'calm', color: '#70D6BB', emoji: '🌿' }
+    ];
     u.isGuest = !!u.isGuest;
     if (!u.pairCode) {
       u.pairCode = generatePairCode(d.users);

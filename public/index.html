@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1">
-<title>Pawly — Birlikte Büyüyen Dostlar</title>
+<title>Pawly — Widgetable Tarzı Sosyal Widget'lar ve Evcil Hayvan</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -11,71 +11,210 @@
 </head>
 <body>
 
+<!-- TOPBAR -->
 <header class="topbar">
-  <div class="brand">🐾 <span>Pawly</span></div>
-  <div class="who" id="whoami"></div>
+  <div class="brand">
+    <div class="brand-icon">🐾</div>
+    <span class="brand-name">Pawly</span>
+  </div>
+
+  <div id="topbarPartnerPill" class="header-partner-pill hidden" title="Partner Paneli">
+    <span id="topbarPartnerName">Alex ⇄</span>
+    <span class="header-streak-badge" id="topbarStreak">🔥 12</span>
+  </div>
+
+  <div class="who" id="whoami">
+    <div class="who-avatar" id="myAvatar" style="background:var(--accent-pink)">🐾</div>
+  </div>
 </header>
 
+<!-- MAIN APP CONTAINER -->
 <main id="app" class="app">
 
-  <!-- ANA EKRAN: BENTO WIDGET PANOSU -->
+  <!-- ======================================================================
+       EKRAN 1: WIDGETABLE BENTO ANA PANO (HOME SCREEN)
+       ====================================================================== -->
   <section class="screen" id="screen-home">
-    <div class="home-header">
+    <div class="screen-header">
       <div>
-        <h1 class="screen-title">Merhaba, <b id="hiName">...</b> 👋</h1>
-        <p class="screen-sub">Ortak Bento Panon ve Canlı Durumun</p>
+        <h1 class="screen-title">Merhaba, <span id="hiName" style="color:var(--accent-pink)">...</span> 👋</h1>
+        <p class="screen-sub">Widgetable tarzı ortak bento panon ve anlık durumun</p>
       </div>
-      <div class="home-quick-actions">
+      <div style="display:flex;gap:6px">
         <button class="btn ghost btn-sm" id="btnRefreshBoard" title="Panoyu Yenile">🔄</button>
       </div>
     </div>
 
-    <!-- MODERN BENTO GRID -->
-    <div class="bento-grid" id="bentoGrid"></div>
-  </section>
-
-  <!-- CANAVARLAR -->
-  <section class="screen hidden" id="screen-pets">
-    <h1 class="screen-title">Canavarlarım</h1>
-    <div id="petList" class="pet-list"></div>
-
-    <div class="panel">
-      <h3>🥚 Yeni yumurta</h3>
-      <input id="petName" placeholder="İsim" maxlength="24">
-      <div class="species-row" id="speciesRow"></div>
-      <div class="with-row">
-        <input id="petWith" placeholder="Arkadaş kullanıcı adı (boş = tek başıma)">
-        <button class="btn" id="createPet">Oluştur</button>
-      </div>
-      <p class="hint">Bir arkadaş yazarsan birlikte çatlatacaksınız — ikisi de tıklamalı.</p>
+    <!-- BENTO GRID -->
+    <div class="bento-grid" id="bentoGrid">
+      <!-- Dinamik olarak app.js tarafından render edilecek -->
     </div>
   </section>
 
-  <!-- ARKADAŞLAR & EŞLEŞME (PAIRING) -->
-  <section class="screen hidden" id="screen-friends">
-    <h1 class="screen-title">Dostluk & Eşleşme</h1>
-    <p class="screen-sub">Widgetable tarzı 6 haneli kodunla bağlan veya ara</p>
+  <!-- ======================================================================
+       EKRAN 2: SEVİMLİ PET ODASI & TAMAGOTCHI (PET HOUSE & ROOMS)
+       ====================================================================== -->
+  <section class="screen hidden" id="screen-pets">
+    <div class="screen-header">
+      <div>
+        <h1 class="screen-title">🐾 Pet Evi & Tamagotchi</h1>
+        <p class="screen-sub">Evcil hayvanını giydir, odalarda besle ve birlikte büyüt</p>
+      </div>
+    </div>
 
-    <!-- WIDGETABLE PAIR KODU KARTI -->
-    <div class="pair-card">
-      <div style="font-weight:700;font-size:15px;color:var(--txt)">🔗 Senin Eşleşme Kodun</div>
+    <!-- PET HOUSE VİTRİNİ -->
+    <div class="pet-house-container" id="petHouseBox">
+      <!-- Oda Değiştirici -->
+      <nav class="room-tabs-bar" id="roomTabsBar">
+        <button class="room-tab-btn active" data-room="living">🛋️ Salon</button>
+        <button class="room-tab-btn" data-room="kitchen">🍽️ Mutfak</button>
+        <button class="room-tab-btn" data-room="bath">🫧 Banyo</button>
+        <button class="room-tab-btn" data-room="bed">🛏️ Yatak Odası</button>
+        <button class="room-tab-btn" data-room="tamagotchi">🕹️ Tamagotchi</button>
+        <button class="room-tab-btn" data-room="closet">👗 Gardırop</button>
+      </nav>
+
+      <!-- Oda Sahnesi -->
+      <div class="room-stage room-theme-living" id="roomStage">
+        <!-- Dinamik Arka Plan Öğeleri JS tarafından yönetilir -->
+        <div class="pet-character-wrap" id="petCharacterWrap">
+          <div class="pet-speech-bubble" id="petSpeechBubble">So hungry! My tummy is rumbling! 🥺</div>
+          <div class="pet-avatar-figure" id="petAvatarFigure">
+            <span class="pet-outfit-hat" id="petHatSlot"></span>
+            <span class="pet-face-emoji" id="petFaceEmoji">🐱</span>
+            <span class="pet-outfit-clothes" id="petClothesSlot"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bakım & Eylem Çubuğu -->
+      <div class="pet-care-actions-grid" id="petCareActionsGrid">
+        <button class="pet-care-btn" data-pet-care="feed" id="btnCareFeed">
+          <span class="icon">🍓</span>
+          <span>Besle</span>
+        </button>
+        <button class="pet-care-btn" data-pet-care="water" id="btnCareWater">
+          <span class="icon">💧</span>
+          <span>Su Ver</span>
+        </button>
+        <button class="pet-care-btn" data-pet-care="clean" id="btnCareClean">
+          <span class="icon">🫧</span>
+          <span>Yıka</span>
+        </button>
+        <button class="pet-care-btn" data-pet-care="play" id="btnCarePlay">
+          <span class="icon">🎾</span>
+          <span>Oyna</span>
+        </button>
+        <button class="pet-care-btn" data-pet-care="sleep" id="btnCareSleep">
+          <span class="icon">💤</span>
+          <span>Uyu</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- GARDIROP SEÇİCİ (CLOSET PANEL) -->
+    <div class="panel hidden" id="closetPanel">
+      <h3>👗 Gardırop & Kıyafetler</h3>
+      <p class="hint" style="margin-bottom:10px">Canavarına sevimli şapkalar ve kostümler giydir:</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap" id="outfitButtonsRow">
+        <button class="btn ghost btn-sm" data-outfit-hat="">❌ Şapkasız</button>
+        <button class="btn ghost btn-sm" data-outfit-hat="👒">👒 Safari Şapkası</button>
+        <button class="btn ghost btn-sm" data-outfit-hat="🧢">🧢 Yeşil Kep</button>
+        <button class="btn ghost btn-sm" data-outfit-hat="🎀">🎀 Pembe Fiyonk</button>
+        <button class="btn ghost btn-sm" data-outfit-hat="🕶️">🕶️ Havalı Gözlük</button>
+        <button class="btn ghost btn-sm" data-outfit-clothes="">❌ Kıyafetsiz</button>
+        <button class="btn ghost btn-sm" data-outfit-clothes="👗">👗 Pembe Elbise</button>
+        <button class="btn ghost btn-sm" data-outfit-clothes="👕">👕 Çizgili Tişört</button>
+        <button class="btn ghost btn-sm" data-outfit-clothes="🧥">🧥 Yeşil Eşofman</button>
+      </div>
+    </div>
+
+    <!-- PET LİSTESİ VE YENİ YUMURTA -->
+    <div id="petList" class="list" style="margin-top:16px"></div>
+
+    <div class="panel" style="margin-top:16px">
+      <h3>🥚 Yeni Bir Yumurta Edin</h3>
+      <input id="petName" placeholder="Canavarına tatlı bir isim ver (örn. Ponçik)" maxlength="24">
+      <div style="margin:10px 0 6px;font-size:12px;font-weight:700;color:var(--text-muted)">Tür Seç:</div>
+      <div class="species-row" id="speciesRow" style="display:flex;gap:8px;margin-bottom:12px"></div>
+      <div style="display:flex;gap:8px">
+        <input id="petWith" placeholder="Partner kullanıcı adı (boş = tek kişilik)" style="flex:1">
+        <button class="btn" id="createPet">Yumurta Al 🥚</button>
+      </div>
+      <p class="hint" style="margin-top:6px">Bir arkadaş eklerseniz yumurtayı çatlatmak için ikinizin de dokunması gerekir.</p>
+    </div>
+  </section>
+
+  <!-- ======================================================================
+       EKRAN 3: TELEFON WIDGET SİMÜLATÖRÜ (SCREENSHOT 3, 4, 5)
+       ====================================================================== -->
+  <section class="screen hidden" id="screen-simulator">
+    <div class="screen-header">
+      <div>
+        <h1 class="screen-title">📱 Widget Simülatörü</h1>
+        <p class="screen-sub">Widgetable'ın kilit ve ana ekran widget'larını canlı deneyimle</p>
+      </div>
+    </div>
+
+    <div class="simulator-container">
+      <!-- Kilit Ekranı / Ana Ekran Değiştirici -->
+      <div class="simulator-mode-toggle">
+        <button class="simulator-mode-btn active" data-sim-mode="lock">🔒 Kilit Ekranı</button>
+        <button class="simulator-mode-btn" data-sim-mode="home">📱 Ana Ekran</button>
+      </div>
+
+      <!-- iPhone Çerçevesi -->
+      <div class="iphone-frame">
+        <div class="iphone-island"></div>
+        <div class="iphone-screen" id="iphoneScreenContent">
+          <!-- Dinamik içerik JS tarafından doldurulur -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================================================================
+       EKRAN 4: DOSTLUK, EŞLEŞME VE PARTNER (PAIRING & TOGETHER HUB)
+       ====================================================================== -->
+  <section class="screen hidden" id="screen-friends">
+    <div class="screen-header">
+      <div>
+        <h1 class="screen-title">💞 Birlikte & Eşleşme</h1>
+        <p class="screen-sub">Widgetable 6 haneli kodunla partnerinle bağlan</p>
+      </div>
+    </div>
+
+    <!-- 6 HANELİ PAIR KODU KARTI -->
+    <div class="pair-hero-card">
+      <div style="font-size:14px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px">🔗 Senin Widgetable Eşleşme Kodun</div>
       <div class="pair-code-display" id="myPairCode">------</div>
-      <div class="pair-actions">
+      <div style="display:flex;gap:8px;justify-content:center">
         <button class="btn" id="btnCopyCode">📋 Kodu Kopyala</button>
         <button class="btn ghost" id="btnRegenCode" title="Yeni kod üret">🔄 Yenile</button>
       </div>
-      <p class="hint" style="margin-top:8px">Bu kodu arkadaşına/sevgiline gönder, anında ortak panonuz kurulsun.</p>
+      <p class="hint" style="margin-top:10px">Bu kodu sevgiline veya kankana ver, anında ortak bento panonuz açılsın!</p>
+    </div>
+
+    <!-- HIZLI DEMO PARTNER BAĞLA (TEK TIKLA DENEYİM) -->
+    <div class="panel" style="background:linear-gradient(135deg,#FFF2E5,#FFEBF0);border-color:#FFD2DC">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div>
+          <div style="font-weight:700;font-size:15px;color:var(--text-pure)">✨ Demo Partner ile Hemen Dene</div>
+          <div style="font-size:12px;color:var(--text-muted)">Tek başına deniyorsan, Alex ile anında eşleşip tüm widget'ları gör.</div>
+        </div>
+        <button class="btn peach btn-sm" id="btnConnectDemoPartner">Alex ile Eşleş 💕</button>
+      </div>
     </div>
 
     <!-- KOD İLE BAĞLAN KARTI -->
     <div class="panel">
       <h3>✨ Kod ile Eşleş</h3>
-      <form class="pair-connect-form" id="pairConnectForm">
-        <input id="inputPairCode" placeholder="6 haneli kodu yaz (örn. A7K9X2)" maxlength="6" style="text-transform:uppercase;letter-spacing:2px;font-weight:700">
+      <form id="pairConnectForm" style="display:flex;flex-direction:column;gap:10px">
+        <input id="inputPairCode" placeholder="6 haneli kodu yaz (örn. A7K9X2)" maxlength="6" style="text-transform:uppercase;letter-spacing:2px;font-weight:700;text-align:center;font-size:18px">
         <div style="display:flex;gap:8px">
-          <select id="selectPairType" class="pair-select" style="flex:1">
-            <option value="best_friend">⭐ Kanka (Best Friend)</option>
+          <select id="selectPairType" style="flex:1">
             <option value="couple">❤️ Sevgili (Couple)</option>
+            <option value="best_friend">⭐ Kanka (Best Friend)</option>
             <option value="friend">🐾 Dost (Friend)</option>
           </select>
           <button type="submit" class="btn" id="btnPairConnect">Eşleş 🚀</button>
@@ -89,99 +228,119 @@
       <div id="relationshipList" class="list"></div>
     </div>
 
+    <!-- KULLANICI ARAMA & ARKADAŞLAR -->
     <div class="panel">
-      <h3>🔍 Kullanıcı Ara</h3>
+      <h3>🔍 Arkadaş Ara</h3>
       <input id="searchInput" placeholder="Kullanıcı adı veya isim ara...">
-      <div id="searchResults" class="list"></div>
+      <div id="searchResults" class="list" style="margin-top:8px"></div>
     </div>
 
     <div class="panel">
-      <h3>📨 Gelen İstekler</h3>
-      <div id="incomingList" class="list"></div>
-    </div>
-
-    <div class="panel">
-      <h3>👥 Tüm Arkadaşlar</h3>
+      <h3>👥 Arkadaşlarım</h3>
       <div id="friendList" class="list"></div>
     </div>
   </section>
 
-  <!-- MESAJLAR -->
+  <!-- ======================================================================
+       EKRAN 5: SOHBET & DOODLE ÇİZİM (MESSAGES)
+       ====================================================================== -->
   <section class="screen hidden" id="screen-messages">
-    <h1 class="screen-title">Mesajlar</h1>
-    <div class="msg-wrap">
-      <div class="convo-list" id="convoList"></div>
-      <div class="chat">
-        <div class="chat-head" id="chatHead">Bir arkadaş seç</div>
-        <div class="chat-body" id="chatBody"><p class="hint">Sohbet seç</p></div>
-        <div class="chat-foot hidden" id="chatFoot">
-          <div class="sticker-tray hidden" id="stickerTray"></div>
-          <div class="chat-tools">
-            <button id="btnSticker" title="Sticker">😊</button>
-            <button id="btnDoodle" title="Çizim">🎨</button>
-          </div>
-          <div class="chat-input">
-            <input id="msgInput" placeholder="Mesaj yaz..." maxlength="500">
-            <button id="btnSend">➤</button>
-          </div>
-        </div>
+    <div class="screen-header">
+      <div>
+        <h1 class="screen-title">💬 Mesajlar & Karalama</h1>
+        <p class="screen-sub">Partnerinle sohbet et, sticker veya çizim gönder</p>
       </div>
     </div>
 
-    <!-- ÇİZİM MODAL -->
-    <div class="modal hidden" id="doodleModal">
-      <div class="modal-box">
-        <h3>🎨 Çizimini gönder</h3>
-        <div class="colors" id="colorRow"></div>
-        <canvas id="canvas" width="320" height="260"></canvas>
-        <div class="modal-actions">
-          <button class="btn ghost" id="doodleClear">Temizle</button>
-          <button class="btn ghost" id="doodleCancel">Vazgeç</button>
-          <button class="btn" id="doodleSend">Gönder</button>
+    <div class="msg-wrap">
+      <div class="chat-head" id="chatHead">Bir arkadaş seç</div>
+      <div class="chat-body" id="chatBody">
+        <p class="hint" style="margin:auto">Sohbet etmek için bir partner seç</p>
+      </div>
+      <div class="chat-foot hidden" id="chatFoot">
+        <div class="chat-input">
+          <input id="msgInput" placeholder="Mesaj yaz..." maxlength="500">
+          <button class="btn btn-sm" id="btnSend">➤</button>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- PROFİL -->
+  <!-- ======================================================================
+       EKRAN 6: PROFİL VE AYARLAR
+       ====================================================================== -->
   <section class="screen hidden" id="screen-profile">
-    <h1 class="screen-title">Profil</h1>
+    <div class="screen-header">
+      <h1 class="screen-title">👤 Profil & Ayarlar</h1>
+    </div>
     <div class="panel" id="profilePanel"></div>
   </section>
 
 </main>
 
+<!-- BOTTOM NAVIGATION TABBAR -->
 <nav class="tabbar" id="tabbar">
-  <button data-screen="home" class="active">🏠<span>Ana</span></button>
-  <button data-screen="pets">🐾<span>Canavar</span></button>
-  <button data-screen="friends">👥<span>Arkadaş</span></button>
-  <button data-screen="messages">💬<span>Mesaj</span></button>
-  <button data-screen="profile">👤<span>Profil</span></button>
+  <button data-screen="home" class="active">
+    <span class="tab-icon">🏠</span>
+    <span>Ana Pano</span>
+  </button>
+  <button data-screen="pets">
+    <span class="tab-icon">🐾</span>
+    <span>Pet Evi</span>
+  </button>
+  <button data-screen="simulator">
+    <span class="tab-icon">📱</span>
+    <span>Simülatör</span>
+  </button>
+  <button data-screen="friends">
+    <span class="tab-icon">💞</span>
+    <span>Partner</span>
+  </button>
+  <button data-screen="messages">
+    <span class="tab-icon">💬</span>
+    <span>Sohbet</span>
+  </button>
+  <button data-screen="profile">
+    <span class="tab-icon">👤</span>
+    <span>Profil</span>
+  </button>
 </nav>
 
-<!-- GİRİŞ / KAYIT -->
+<!-- GİRİŞ / KAYIT / MİSAFİR MODAL -->
 <div class="modal" id="authModal">
   <div class="modal-box auth">
-    <h2>🐾 Pawly</h2>
-    <p class="hint">Arkadaşlarınla bir canavar büyüt, panonu paylaş.</p>
-    <div class="auth-tabs">
-      <button id="tabLogin" class="active">Giriş</button>
-      <button id="tabRegister">Kayıt</button>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+      <div class="brand-icon">🐾</div>
+      <div>
+        <h2 style="font-size:22px;margin:0">Pawly</h2>
+        <div style="font-size:12px;color:var(--text-muted)">Widgetable tarzı sosyal widget uygulaması</div>
+      </div>
     </div>
-    <input id="authName" class="hidden" placeholder="İsim" maxlength="30">
-    <input id="authUser" placeholder="Kullanıcı adı" maxlength="24">
-    <input id="authPass" type="password" placeholder="Şifre">
-    <div id="authErr" class="err"></div>
-    <button class="btn wide" id="authSubmit">Devam</button>
-    <div style="margin:12px 0 8px;display:flex;align-items:center;gap:8px;color:var(--dim);font-size:12px">
-      <div style="flex:1;height:1px;background:var(--line)"></div>
-      <span>veya</span>
-      <div style="flex:1;height:1px;background:var(--line)"></div>
+
+    <div style="display:flex;gap:6px;margin-bottom:16px;background:var(--bg-surface-sunken);padding:4px;border-radius:14px">
+      <button id="tabLogin" class="btn ghost btn-sm" style="flex:1;background:#fff">Giriş Yap</button>
+      <button id="tabRegister" class="btn ghost btn-sm" style="flex:1">Yeni Kayıt</button>
     </div>
-    <button class="btn ghost wide" id="authGuest" type="button">⚡ Kaydolmadan Misafir Olarak Dene</button>
+
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <input id="authName" class="hidden" placeholder="İsminiz (örn. Mefe)" maxlength="30">
+      <input id="authUser" placeholder="Kullanıcı adı" maxlength="24">
+      <input id="authPass" type="password" placeholder="Şifre">
+      <div id="authErr" style="font-size:12px;color:#D94848;font-weight:600" class="hidden"></div>
+      <button class="btn wide" id="authSubmit">Giriş Yap 🚀</button>
+    </div>
+
+    <div style="margin:16px 0 12px;display:flex;align-items:center;gap:8px;color:var(--text-dim);font-size:12px">
+      <div style="flex:1;height:1px;background:var(--border-card)"></div>
+      <span>veya hemen dene</span>
+      <div style="flex:1;height:1px;background:var(--border-card)"></div>
+    </div>
+
+    <button class="btn peach wide" id="authGuest" type="button">⚡ Kaydolmadan Misafir Olarak Başla</button>
   </div>
 </div>
 
+<!-- TOAST BİLDİRİM -->
 <div id="toast" class="toast hidden"></div>
 
 <script src="/js/app.js"></script>

@@ -1,8 +1,19 @@
 const express = require('express');
 const { get, save, nid } = require('./db');
-const { requireAuth } = require('./auth');
+const { requireAuth, publicUser } = require('./auth');
+const { sendToUser } = require('./events');
 
 const router = express.Router();
+
+function getActivePartner(user) {
+  const db = get();
+  const rel = (db.relationships || []).find(r => 
+    (r.a === user.username || r.b === user.username) && r.status === 'active'
+  );
+  if (!rel) return null;
+  const partnerUsername = rel.a === user.username ? rel.b : rel.a;
+  return db.users.find(u => u.username === partnerUsername) || null;
+}
 
 const MOODS = ['😀', '🥰', '😐', '😢', '😡', '😴', '🤩', '🤒'];
 const STAMPS = [
@@ -106,6 +117,167 @@ router.post('/stamps', requireAuth, (req, res) => {
   req.user.widget.stamps.push({ id: st.id, at: new Date().toISOString() });
   save();
   res.json({ stamps: req.user.widget.stamps });
+});
+
+// ==========================================================================
+// WIDGETABLE ÖZEL SOSYAL WIDGET'LARI
+// ==========================================================================
+
+// 1. Miss You Widget (Özlemini Gönder)
+router.post('/miss-you', requireAuth, (req, res) => {
+  req.user.widget.missYou = (req.user.widget.missYou || 0) + 1;
+  const partner = getActivePartner(req.user);
+  if (partner) {
+    partner.widget.missYouReceived = (partner.widget.missYouReceived || 0) + 1;
+    sendToUser(partner.username, 'widget:miss_you', {
+      from: publicUser(req.user),
+      count: req.user.widget.missYou,
+      toast: `${req.user.name} sana kocaman bir özlem gönderdi! ❤️`
+    });
+  }
+  save();
+  res.json({ ok: true, count: req.user.widget.missYou });
+});
+
+router.get('/miss-you', requireAuth, (req, res) => {
+  const partner = getActivePartner(req.user);
+  res.json({
+    sent: req.user.widget.missYou || 0,
+    received: req.user.widget.missYouReceived || 0,
+    partner: partner ? publicUser(partner) : null
+  });
+});
+
+// 2. Mesafe & Konum Durumu Widget'ı (Distance Widget)
+router.post('/distance', requireAuth, (req, res) => {
+  const { location, distanceKm, together } = req.body || {};
+  if (location) req.user.widget.location = location;
+  const partner = getActivePartner(req.user);
+
+  let currentDist = typeof distanceKm === 'number' ? distanceKm : 5.3;
+  let isTogether = !!together;
+
+  if (partner) {
+    sendToUser(partner.username, 'widget:distance', {
+      partner: publicUser(req.user),
+      location: req.user.widget.location,
+      distanceKm: currentDist,
+      together: isTogether
+    });
+  }
+  save();
+  res.json({
+    ok: true,
+    distanceKm: currentDist,
+    together: isTogether,
+    myLocation: req.user.widget.location,
+    partnerLocation: partner ? partner.widget.location : null
+  });
+});
+
+router.get('/distance', requireAuth, (req, res) => {
+  const partner = getActivePartner(req.user);
+  res.json({
+    distanceKm: 5.3,
+    together: false,
+    myLocation: req.user.widget.location || { label: 'home', name: 'Evde 🏠' },
+    partnerLocation: partner ? (partner.widget.location || { label: 'work', name: 'İşte 🏢' }) : null,
+    partner: partner ? publicUser(partner) : null
+  });
+});
+
+// 3. Uyku Takibi (Me vs Partner Sleep VS Widget)
+router.post('/sleep', requireAuth, (req, res) => {
+  const { hours, quality } = req.body || {};
+  req.user.widget.sleep = {
+    hours: typeof hours === 'number' ? hours : 7.5,
+    quality: quality || 'Excellent',
+    weekly: [7, 7.5, 8, 6.5, 7.5, 8, hours || 7.5]
+  };
+  const partner = getActivePartner(req.user);
+  if (partner) {
+    sendToUser(partner.username, 'widget:sleep', {
+      partner: publicUser(req.user),
+      sleep: req.user.widget.sleep
+    });
+  }
+  save();
+  res.json({ ok: true, sleep: req.user.widget.sleep });
+});
+
+router.get('/sleep', requireAuth, (req, res) => {
+  const partner = getActivePartner(req.user);
+  res.json({
+    me: req.user.widget.sleep || { hours: 7.5, quality: 'Excellent', weekly: [7, 8, 6.5, 7.5, 8, 7.5, 8] },
+    partner: partner ? (partner.widget.sleep || { hours: 6.2, quality: 'Good', weekly: [6, 7, 5.5, 6, 7, 6.5, 6.2] }) : null,
+    partnerUser: partner ? publicUser(partner) : null
+  });
+});
+
+// 4. Duygu Kavanozu (Mood Jar Widget)
+router.post('/jar/drop', requireAuth, (req, res) => {
+  const { mood, color, emoji } = req.body || {};
+  const candy = {
+    id: nid('j'),
+    mood: mood || 'happy',
+    color: color || '#FFCAD4',
+    emoji: emoji || '✨',
+    sender: req.user.username,
+    at: new Date().toISOString()
+  };
+  req.user.widget.jarCandies = req.user.widget.jarCandies || [];
+  req.user.widget.jarCandies.push(candy);
+  if (req.user.widget.jarCandies.length > 50) {
+    req.user.widget.jarCandies = req.user.widget.jarCandies.slice(-50);
+  }
+
+  const partner = getActivePartner(req.user);
+  if (partner) {
+    partner.widget.jarCandies = partner.widget.jarCandies || [];
+    partner.widget.jarCandies.push(candy);
+    if (partner.widget.jarCandies.length > 50) partner.widget.jarCandies = partner.widget.jarCandies.slice(-50);
+    sendToUser(partner.username, 'widget:jar', {
+      candy,
+      toast: `${req.user.name} kavanoza yeni bir duygu şekeri attı! 🍬`
+    });
+  }
+  save();
+  res.json({ ok: true, candies: req.user.widget.jarCandies });
+});
+
+router.get('/jar', requireAuth, (req, res) => {
+  res.json({
+    candies: req.user.widget.jarCandies || []
+  });
+});
+
+// 5. Anlık Durum Balonu (Status Bubble: Pooping, Hungry, Sleeping...)
+router.post('/status', requireAuth, (req, res) => {
+  const { status, emoji, text } = req.body || {};
+  req.user.widget.statusBubble = {
+    status: status || 'Mutlu 🥰',
+    emoji: emoji || '🥰',
+    text: text || 'Seni düşünüyorum!',
+    at: new Date().toISOString()
+  };
+  const partner = getActivePartner(req.user);
+  if (partner) {
+    sendToUser(partner.username, 'widget:status', {
+      partner: publicUser(req.user),
+      statusBubble: req.user.widget.statusBubble
+    });
+  }
+  save();
+  res.json({ ok: true, statusBubble: req.user.widget.statusBubble });
+});
+
+router.get('/status', requireAuth, (req, res) => {
+  const partner = getActivePartner(req.user);
+  res.json({
+    me: req.user.widget.statusBubble,
+    partner: partner ? partner.widget.statusBubble : null,
+    partnerUser: partner ? publicUser(partner) : null
+  });
 });
 
 module.exports = router;
