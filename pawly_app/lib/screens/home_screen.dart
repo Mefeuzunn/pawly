@@ -7,7 +7,7 @@ import '../models/garden_model.dart';
 import '../models/adventure_model.dart';
 import '../widgets/clay_card.dart';
 import '../widgets/dynamic_island_pill.dart';
-import '../widgets/pet_3d_interactive_view.dart';
+import '../widgets/ios_widget_cards.dart';
 import '../widgets/status_meter.dart';
 import '../widgets/floating_hearts_burst.dart';
 import 'pet_selector_modal.dart';
@@ -40,6 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final FloatingHeartsBurstController _heartBurst = FloatingHeartsBurstController();
 
   int _currentIndex = 0;
+  bool _showTamagotchiOnHome = true;
 
   void _openPetSelector() {
     AppHaptics.mediumImpact();
@@ -52,7 +53,6 @@ class _HomeScreenState extends State<HomeScreen> {
           pet: _pet,
           onSelectSpecies: (sp) {
             setState(() {
-              // Create new pet or switch species
               Navigator.pop(context);
               _pet.hunger = 85;
             });
@@ -71,7 +71,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _showSpeciesChange(PetSpecies sp) {
     setState(() {
-      // Re-assign species
       final newPet = PetModel(
         id: _pet.id,
         name: sp == PetSpecies.cat ? 'Mochi' : sp == PetSpecies.shiba ? 'Hachi' : sp == PetSpecies.bear ? 'Barnaby' : 'Usagi',
@@ -89,7 +88,7 @@ class _HomeScreenState extends State<HomeScreen> {
       _couple.sendMissYou();
     });
     final size = MediaQuery.of(context).size;
-    _heartBurst.burstAt(Offset(size.width / 2, 100), count: 20);
+    _heartBurst.burstAt(Offset(size.width / 2, 100), count: 24);
     AppHaptics.heavyImpact();
   }
 
@@ -98,14 +97,14 @@ class _HomeScreenState extends State<HomeScreen> {
     return FloatingHeartsBurstOverlay(
       controller: _heartBurst,
       child: Scaffold(
-        backgroundColor: AppColors.background,
+        backgroundColor: const Color(0xFFFDFBF7),
         body: SafeArea(
           bottom: false,
           child: Column(
             children: [
               // 1. Dynamic Island Floating Header
               Padding(
-                padding: const EdgeInsets.only(top: 8, bottom: 4),
+                padding: const EdgeInsets.only(top: 6, bottom: 4),
                 child: Center(
                   child: DynamicIslandPill(
                     pet: _pet,
@@ -118,111 +117,203 @@ class _HomeScreenState extends State<HomeScreen> {
               // 2. Main Scrollable Dashboard
               Expanded(
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                  padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Top Row: Level Badge & Pet Selector
+                      // Top Row: Level & Pet Selector & Tamagotchi toggle
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                             decoration: BoxDecoration(
-                              color: AppColors.secondaryLight,
+                              color: const Color(0xFFFFF2D6),
                               borderRadius: BorderRadius.circular(16),
-                              border: Border.all(color: AppColors.secondary.withValues(alpha: 0.3)),
+                              border: Border.all(color: const Color(0xFF261914), width: 2),
                             ),
                             child: Row(
                               children: [
                                 const Text('⭐', style: TextStyle(fontSize: 14)),
                                 const SizedBox(width: 4),
                                 Text(
-                                  'Seviye ${_pet.level} • ${_pet.exp} XP',
-                                  style: AppTypography.tag.copyWith(color: AppColors.secondary, fontWeight: FontWeight.bold),
+                                  'Seviye ${_pet.level}',
+                                  style: AppTypography.tag.copyWith(color: const Color(0xFF8B5A2B), fontWeight: FontWeight.w900),
                                 ),
                               ],
                             ),
                           ),
-                          GestureDetector(
-                            onTap: _openPetSelector,
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                              decoration: BoxDecoration(
-                                color: AppColors.card,
-                                borderRadius: BorderRadius.circular(16),
-                                border: Border.all(color: AppColors.border),
-                                boxShadow: [
-                                  BoxShadow(color: AppColors.clayDark.withValues(alpha: 0.3), blurRadius: 6, offset: const Offset(0, 2)),
-                                ],
-                              ),
-                              child: Row(
-                                children: [
-                                  const Text('🐾', style: TextStyle(fontSize: 14)),
-                                  const SizedBox(width: 6),
-                                  Text(
-                                    _pet.speciesName,
-                                    style: AppTypography.tag.copyWith(color: AppColors.textPrimary, fontWeight: FontWeight.bold),
+                          Row(
+                            children: [
+                              GestureDetector(
+                                onTap: () => setState(() => _showTamagotchiOnHome = !_showTamagotchiOnHome),
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                  decoration: BoxDecoration(
+                                    color: _showTamagotchiOnHome ? const Color(0xFFFFD166) : Colors.white,
+                                    borderRadius: BorderRadius.circular(14),
+                                    border: Border.all(color: const Color(0xFF261914), width: 1.8),
                                   ),
-                                  const Icon(Icons.arrow_drop_down, size: 18, color: AppColors.textSecondary),
-                                ],
+                                  child: Text(
+                                    _showTamagotchiOnHome ? '👾 Tamagotchi' : '🏡 Ev Modu',
+                                    style: AppTypography.tag.copyWith(fontWeight: FontWeight.bold, fontSize: 11),
+                                  ),
+                                ),
                               ),
-                            ),
+                              const SizedBox(width: 8),
+                              GestureDetector(
+                                onTap: _openPetSelector,
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(16),
+                                    border: Border.all(color: const Color(0xFF261914), width: 2),
+                                    boxShadow: const [
+                                      BoxShadow(color: Color(0xFF261914), offset: Offset(0, 2)),
+                                    ],
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      const Text('🐾', style: TextStyle(fontSize: 13)),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        _pet.name,
+                                        style: AppTypography.tag.copyWith(color: AppColors.textPrimary, fontWeight: FontWeight.bold),
+                                      ),
+                                      const Icon(Icons.arrow_drop_down, size: 16, color: AppColors.textPrimary),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
 
-                      const SizedBox(height: 12),
+                      const SizedBox(height: 14),
 
-                      // 3. 3D Pet Center Stage Card
-                      ClayCard(
-                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                        child: Column(
-                          children: [
-                            // 3D Pet Interactive Viewport
-                            Pet3DInteractiveView(
-                              pet: _pet,
-                              height: 270,
-                              onPetTapped: () => setState(() {}),
-                            ),
-
-                            // Quick Room Buttons
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                _buildQuickRoomBtn(PetRoom.kitchen, 'Besle 🍲', AppColors.secondary),
-                                _buildQuickRoomBtn(PetRoom.bath, 'Yıka 🫧', AppColors.mint),
-                                _buildQuickRoomBtn(PetRoom.bedroom, 'Uyu 🛏️', AppColors.lavender),
-                                _buildQuickRoomBtn(PetRoom.playroom, 'Oyna 🎾', AppColors.sky),
-                              ],
-                            ),
-                          ],
-                        ),
+                      // 3. Featured Center Stage: Retro Tamagotchi or Pet Room Card
+                      Center(
+                        child: _showTamagotchiOnHome
+                            ? TamagotchiPetWidget(
+                                pet: _pet,
+                                onFeed: () {
+                                  setState(() => _pet.feed(18));
+                                  _heartBurst.burstAt(Offset(MediaQuery.of(context).size.width / 2, 260), count: 12);
+                                },
+                                onWash: () {
+                                  setState(() => _pet.wash(20));
+                                  _heartBurst.burstAt(Offset(MediaQuery.of(context).size.width / 2, 260), count: 12);
+                                },
+                                onPlay: () {
+                                  setState(() => _pet.play(15));
+                                  _heartBurst.burstAt(Offset(MediaQuery.of(context).size.width / 2, 260), count: 12);
+                                },
+                              )
+                            : GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (_) => PetRoomScreen(pet: _pet, onStateChanged: () => setState(() {}))),
+                                  );
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(16),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFFFBF0DB),
+                                    borderRadius: BorderRadius.circular(28),
+                                    border: Border.all(color: const Color(0xFF261914), width: 2.5),
+                                    boxShadow: const [
+                                      BoxShadow(color: Color(0xFF261914), offset: Offset(0, 4)),
+                                    ],
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text("kitty's home 🏡", style: AppTypography.displaySmall.copyWith(fontSize: 18)),
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius: BorderRadius.circular(12),
+                                              border: Border.all(color: const Color(0xFF261914), width: 1.5),
+                                            ),
+                                            child: Text('Odaya Gir 🚪', style: AppTypography.tag),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 12),
+                                      Text(
+                                        'Besle, banyo yaptır, uyut veya oyun oyna!',
+                                        style: AppTypography.bodySmall,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
                       ),
 
                       const SizedBox(height: 16),
 
-                      // 4. Quick Status Bars
-                      ClayCard(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      // Status Meters
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: const Color(0xFF261914), width: 2),
+                          boxShadow: const [
+                            BoxShadow(color: Color(0xFF261914), offset: Offset(0, 3)),
+                          ],
+                        ),
                         child: Row(
                           children: [
                             Expanded(child: StatusMeter(label: 'Doygunluk', icon: '🍗', value: _pet.hunger, color: AppColors.secondary)),
-                            const SizedBox(width: 14),
+                            const SizedBox(width: 12),
                             Expanded(child: StatusMeter(label: 'Temizlik', icon: '🫧', value: _pet.cleanliness, color: AppColors.mint)),
-                            const SizedBox(width: 14),
+                            const SizedBox(width: 12),
                             Expanded(child: StatusMeter(label: 'Mutluluk', icon: '💖', value: _pet.happiness, color: AppColors.primary)),
                           ],
                         ),
                       ),
 
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 22),
 
-                      // 5. Bento Grid Widgets (Miss You, Candy Jar, Garden, Adventure, Sleep VS)
-                      Text('Çift & Arkadaş Widgetları 🌟', style: AppTypography.displaySmall),
+                      // 4. Authentic Widgetable iOS Widgets Header
+                      Text('Canlı iOS Widgetları 📱', style: AppTypography.displaySmall),
+                      Text('Kilit ve Ana ekran widget standartları', style: AppTypography.bodySmall),
                       const SizedBox(height: 12),
 
-                      // Row 1: 3D Miss You & Candy Jar
+                      // Widget 1: Sleep VS Battle Card (1:1 from Widgetable)
+                      SleepVSWidget(
+                        couple: _couple,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => CoupleStatusScreen(couple: _couple, onStateChanged: () => setState(() {}))),
+                          );
+                        },
+                      ),
+
+                      const SizedBox(height: 14),
+
+                      // Widget 2: Together & Distance Card (1:1 from Widgetable)
+                      TogetherDistanceWidget(
+                        couple: _couple,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => CoupleStatusScreen(couple: _couple, onStateChanged: () => setState(() {}))),
+                          );
+                        },
+                      ),
+
+                      const SizedBox(height: 14),
+
+                      // Widget 3 & 4: Miss You Heart & Candy Jar Grid
                       Row(
                         children: [
                           Expanded(
@@ -230,13 +321,11 @@ class _HomeScreenState extends State<HomeScreen> {
                               onTap: () {
                                 Navigator.push(
                                   context,
-                                  MaterialPageRoute(
-                                    builder: (_) => MissYouScreen(couple: _couple, onMissYouSent: () => setState(() {})),
-                                  ),
+                                  MaterialPageRoute(builder: (_) => MissYouScreen(couple: _couple, onMissYouSent: () => setState(() {}))),
                                 );
                               },
-                              color: AppColors.primaryLight,
-                              borderColor: AppColors.primary.withValues(alpha: 0.3),
+                              color: const Color(0xFFFFE8EE),
+                              borderColor: const Color(0xFFFF6584),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -263,8 +352,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                   MaterialPageRoute(builder: (_) => const CandyJarScreen()),
                                 );
                               },
-                              color: AppColors.secondaryLight,
-                              borderColor: AppColors.secondary.withValues(alpha: 0.3),
+                              color: const Color(0xFFFFF3E0),
+                              borderColor: const Color(0xFFFFA34E),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -272,7 +361,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
                                       const Text('🍬', style: TextStyle(fontSize: 28)),
-                                      Text('Fizik', style: AppTypography.tag.copyWith(color: AppColors.secondary)),
+                                      Text('20 Not', style: AppTypography.tag.copyWith(color: AppColors.secondary)),
                                     ],
                                   ),
                                   const SizedBox(height: 8),
@@ -287,7 +376,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                       const SizedBox(height: 14),
 
-                      // Row 2: Love Garden & Adventures
+                      // Widget 5 & 6: Love Garden & Pet Adventures
                       Row(
                         children: [
                           Expanded(
@@ -295,20 +384,18 @@ class _HomeScreenState extends State<HomeScreen> {
                               onTap: () {
                                 Navigator.push(
                                   context,
-                                  MaterialPageRoute(
-                                    builder: (_) => LoveGardenScreen(garden: _garden, onStateChanged: () => setState(() {})),
-                                  ),
+                                  MaterialPageRoute(builder: (_) => LoveGardenScreen(garden: _garden, onStateChanged: () => setState(() {}))),
                                 );
                               },
-                              color: AppColors.mintLight,
-                              borderColor: AppColors.mint.withValues(alpha: 0.3),
+                              color: const Color(0xFFE8F8F0),
+                              borderColor: const Color(0xFF38C793),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
-                                      const Text('🌿', style: TextStyle(fontSize: 28)),
+                                      const Text('🌸', style: TextStyle(fontSize: 28)),
                                       Text('${(_garden.progress * 100).toInt()}%', style: AppTypography.tag.copyWith(color: AppColors.mint, fontWeight: FontWeight.bold)),
                                     ],
                                   ),
@@ -325,13 +412,11 @@ class _HomeScreenState extends State<HomeScreen> {
                               onTap: () {
                                 Navigator.push(
                                   context,
-                                  MaterialPageRoute(
-                                    builder: (_) => AdventureScreen(adventure: _adventure, onStateChanged: () => setState(() {})),
-                                  ),
+                                  MaterialPageRoute(builder: (_) => AdventureScreen(adventure: _adventure, onStateChanged: () => setState(() {}))),
                                 );
                               },
-                              color: AppColors.skyLight,
-                              borderColor: AppColors.sky.withValues(alpha: 0.3),
+                              color: const Color(0xFFEAF2FF),
+                              borderColor: const Color(0xFF4F8CFF),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -355,50 +440,13 @@ class _HomeScreenState extends State<HomeScreen> {
                         ],
                       ),
 
-                      const SizedBox(height: 14),
-
-                      // Row 3: Couple Status & Sleep VS
-                      ClayCard(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => CoupleStatusScreen(couple: _couple, onStateChanged: () => setState(() {})),
-                            ),
-                          );
-                        },
-                        child: Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                                color: AppColors.lavenderLight,
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                              child: const Text('💕', style: TextStyle(fontSize: 28)),
-                            ),
-                            const SizedBox(width: 14),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text('${_couple.partnerName} ile Bağlantı', style: AppTypography.bodyLarge.copyWith(fontWeight: FontWeight.bold)),
-                                  Text('Mesafe: ${_couple.distanceKm} km • Günün Sorusu & Uyku VS', style: AppTypography.bodySmall),
-                                ],
-                              ),
-                            ),
-                            const Icon(Icons.arrow_forward_ios_rounded, size: 16, color: AppColors.textMuted),
-                          ],
-                        ),
-                      ),
-
                       const SizedBox(height: 32),
                     ],
                   ),
                 ),
               ),
 
-              // 6. Bottom Navigation Bar
+              // Bottom Navigation Bar
               _buildBottomNavBar(),
             ],
           ),
@@ -407,42 +455,15 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildQuickRoomBtn(PetRoom room, String label, Color color) {
-    return GestureDetector(
-      onTap: () {
-        AppHaptics.selectionClick();
-        _pet.currentRoom = room;
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => PetRoomScreen(pet: _pet, onStateChanged: () => setState(() {})),
-          ),
-        );
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.12),
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: color.withValues(alpha: 0.25)),
-        ),
-        child: Text(label, style: AppTypography.tag.copyWith(color: color, fontWeight: FontWeight.bold)),
-      ),
-    );
-  }
-
   Widget _buildBottomNavBar() {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: Colors.white,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+        border: Border(top: BorderSide(color: Color(0xFF261914), width: 2)),
         boxShadow: [
-          BoxShadow(
-            color: AppColors.clayDark.withValues(alpha: 0.2),
-            blurRadius: 16,
-            offset: const Offset(0, -4),
-          ),
+          BoxShadow(color: Color(0xFF261914), offset: Offset(0, -3)),
         ],
       ),
       child: Row(
@@ -491,14 +512,14 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           Icon(
             icon,
-            color: isSelected ? AppColors.primary : AppColors.textMuted,
+            color: isSelected ? const Color(0xFFFF6584) : const Color(0xFFA1887F),
             size: 24,
           ),
           const SizedBox(height: 2),
           Text(
             label,
             style: AppTypography.tag.copyWith(
-              color: isSelected ? AppColors.primary : AppColors.textMuted,
+              color: isSelected ? const Color(0xFFFF6584) : const Color(0xFFA1887F),
               fontSize: 10,
               fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
             ),

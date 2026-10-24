@@ -1,14 +1,17 @@
-import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../core/theme/app_colors.dart';
 import '../core/theme/app_typography.dart';
 import '../models/pet_model.dart';
 import '../widgets/pet_3d_interactive_view.dart';
+import '../graphics/kawaii_art.dart';
+import '../graphics/cozy_room_painter.dart';
 import '../widgets/status_meter.dart';
 import '../widgets/clay_card.dart';
 import '../widgets/clay_button.dart';
 import '../graphics/physics/bubble_physics.dart';
 import '../core/utils/haptics.dart';
+
+enum RoomViewMode { kawaii2D, clay3D, tamagotchi }
 
 class PetRoomScreen extends StatefulWidget {
   final PetModel pet;
@@ -29,10 +32,11 @@ class _PetRoomScreenState extends State<PetRoomScreen>
   late AnimationController _roomAnim;
   final BubbleEngine _bubbleEngine = BubbleEngine();
   double _elapsedTime = 0.0;
+  RoomViewMode _viewMode = RoomViewMode.kawaii2D;
 
-  // Playroom ball position
   Offset _ballPos = const Offset(200, 180);
   bool _isBallThrown = false;
+  double _squish = 0.0;
 
   @override
   void initState() {
@@ -42,6 +46,11 @@ class _PetRoomScreenState extends State<PetRoomScreen>
         setState(() {
           _elapsedTime += 0.016;
           _bubbleEngine.update(0.016, _elapsedTime);
+          if (_squish > 0.01) {
+            _squish *= 0.88;
+          } else {
+            _squish = 0.0;
+          }
         });
       })
       ..repeat();
@@ -72,10 +81,10 @@ class _PetRoomScreenState extends State<PetRoomScreen>
     AppHaptics.heavyImpact();
     setState(() {
       widget.pet.feed(18.0);
+      _squish = 1.0;
     });
     widget.onStateChanged();
 
-    // Reset action to idle after chewing
     Future.delayed(const Duration(milliseconds: 1400), () {
       if (mounted && widget.pet.action == PetAction.eating) {
         setState(() {
@@ -90,14 +99,14 @@ class _PetRoomScreenState extends State<PetRoomScreen>
     setState(() {
       _bubbleEngine.clear();
       widget.pet.wash(25.0);
+      _squish = 0.8;
     });
     widget.onStateChanged();
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('${widget.pet.name} tertemiz ve mis gibi koktu! ✨🧼'),
-        backgroundColor: AppColors.mint,
-        duration: const Duration(seconds: 2),
+        content: Text('${widget.pet.name} banyodan mis gibi ve tertemiz çıktı! 🧼🫧'),
+        backgroundColor: const Color(0xFF38C793),
         behavior: SnackBarBehavior.floating,
       ),
     );
@@ -108,16 +117,13 @@ class _PetRoomScreenState extends State<PetRoomScreen>
     setState(() {
       _ballPos = tapPos;
       _isBallThrown = true;
+      _squish = 0.9;
       widget.pet.play(15.0);
     });
     widget.onStateChanged();
 
-    Future.delayed(const Duration(milliseconds: 900), () {
-      if (mounted) {
-        setState(() {
-          _isBallThrown = false;
-        });
-      }
+    Future.delayed(const Duration(milliseconds: 800), () {
+      if (mounted) setState(() => _isBallThrown = false);
     });
   }
 
@@ -126,92 +132,177 @@ class _PetRoomScreenState extends State<PetRoomScreen>
     final isNight = widget.pet.currentRoom == PetRoom.bedroom && widget.pet.isSleeping;
 
     return Scaffold(
-      backgroundColor: isNight ? AppColors.nightBg : AppColors.background,
+      backgroundColor: isNight ? const Color(0xFF131424) : AppColors.background,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: Text(
-          widget.pet.name,
-          style: AppTypography.displaySmall.copyWith(
-            color: isNight ? AppColors.nightText : AppColors.textPrimary,
-          ),
+        title: Column(
+          children: [
+            Text(
+              "kitty's home • ${widget.pet.name}",
+              style: AppTypography.displaySmall.copyWith(
+                color: isNight ? Colors.white : AppColors.textPrimary,
+                fontSize: 18,
+              ),
+            ),
+            Text(
+              widget.pet.speciesName,
+              style: AppTypography.bodySmall.copyWith(fontSize: 11),
+            ),
+          ],
         ),
         centerTitle: true,
         actions: [
-          IconButton(
-            icon: Icon(
-              isNight ? Icons.nightlight_round : Icons.wb_sunny_rounded,
-              color: isNight ? AppColors.nightAccent : AppColors.secondary,
-            ),
-            onPressed: () {
-              AppHaptics.selectionClick();
-              setState(() {
-                widget.pet.toggleSleep();
-              });
-              widget.onStateChanged();
-            },
+          // View Mode Selector (2D Kawaii / 3D Clay / Tamagotchi)
+          PopupMenuButton<RoomViewMode>(
+            icon: const Icon(Icons.style_rounded, color: AppColors.primary),
+            onSelected: (mode) => setState(() => _viewMode = mode),
+            itemBuilder: (context) => [
+              const PopupMenuItem(
+                value: RoomViewMode.kawaii2D,
+                child: Row(
+                  children: [
+                    Text('🎨'),
+                    SizedBox(width: 8),
+                    Text('Widgetable 2D Kawaii'),
+                  ],
+                ),
+              ),
+              const PopupMenuItem(
+                value: RoomViewMode.clay3D,
+                child: Row(
+                  children: [
+                    Text('🪐'),
+                    SizedBox(width: 8),
+                    Text('3D Clay Motoru'),
+                  ],
+                ),
+              ),
+              const PopupMenuItem(
+                value: RoomViewMode.tamagotchi,
+                child: Row(
+                  children: [
+                    Text('👾'),
+                    SizedBox(width: 8),
+                    Text('Tamagotchi Cihazı'),
+                  ],
+                ),
+              ),
+            ],
           ),
         ],
       ),
       body: SafeArea(
         child: Column(
           children: [
-            // Room Tabs (Kitchen, Bath, Bedroom, Playroom)
+            // Room Selection Tabs (Mutfak, Banyo, Yatak, Salon)
             _buildRoomTabs(isNight),
 
-            // Pet Status Meters
+            // Pet Status Pill Meters
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
               child: ClayCard(
-                color: isNight ? AppColors.nightCard : AppColors.card,
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                color: isNight ? const Color(0xFF1E1E38) : Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                 child: Row(
                   children: [
-                    Expanded(
-                      child: StatusMeter(
-                        label: 'Doygunluk',
-                        icon: '🐟',
-                        value: widget.pet.hunger,
-                        color: AppColors.secondary,
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: StatusMeter(
-                        label: 'Temizlik',
-                        icon: '🫧',
-                        value: widget.pet.cleanliness,
-                        color: AppColors.mint,
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: StatusMeter(
-                        label: 'Mutluluk',
-                        icon: '💖',
-                        value: widget.pet.happiness,
-                        color: AppColors.primary,
-                      ),
-                    ),
+                    Expanded(child: StatusMeter(label: 'Doygunluk', icon: '🍗', value: widget.pet.hunger, color: AppColors.secondary)),
+                    const SizedBox(width: 12),
+                    Expanded(child: StatusMeter(label: 'Temizlik', icon: '🫧', value: widget.pet.cleanliness, color: AppColors.mint)),
+                    const SizedBox(width: 12),
+                    Expanded(child: StatusMeter(label: 'Mutluluk', icon: '💖', value: widget.pet.happiness, color: AppColors.primary)),
                   ],
                 ),
               ),
             ),
 
-            // Center 3D Stage & Room Interactions
+            // Main Room Canvas Viewport
             Expanded(
               child: Stack(
                 alignment: Alignment.center,
                 children: [
-                  // 3D Pet Interactive Viewport
-                  Pet3DInteractiveView(
-                    pet: widget.pet,
-                    height: 320,
-                    onFoodDropped: _handleFeed,
-                    onPetTapped: () => widget.onStateChanged(),
+                  // 1. Cozy Room Interior Painter
+                  Positioned.fill(
+                    child: CustomPaint(
+                      painter: CozyRoomPainter(
+                        room: widget.pet.currentRoom,
+                        isNight: isNight,
+                        animationTime: _elapsedTime,
+                      ),
+                    ),
                   ),
 
-                  // Bath Room Floating Bubbles Layer
+                  // 2. Pet Render (Kawaii 2D or 3D Clay Viewport)
+                  if (_viewMode == RoomViewMode.clay3D)
+                    Positioned.fill(
+                      child: Pet3DInteractiveView(
+                        pet: widget.pet,
+                        height: 300,
+                        onFoodDropped: _handleFeed,
+                        onPetTapped: () {
+                          setState(() => _squish = 1.0);
+                          widget.onStateChanged();
+                        },
+                      ),
+                    )
+                  else
+                    Positioned(
+                      bottom: widget.pet.currentRoom == PetRoom.kitchen ? 80 : 50,
+                      child: DragTarget<String>(
+                        onAcceptWithDetails: (details) => _handleFeed(details.data),
+                        builder: (context, candidateData, _) {
+                          return GestureDetector(
+                            onTap: () {
+                              AppHaptics.mediumImpact();
+                              setState(() => _squish = 1.0);
+                            },
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                // Speech Bubble above Pet
+                                Positioned(
+                                  top: -24,
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(16),
+                                      border: Border.all(color: const Color(0xFF261914), width: 2),
+                                      boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 6, offset: Offset(0, 3))],
+                                    ),
+                                    child: Text(
+                                      widget.pet.isSleeping
+                                          ? 'Zzz... Tatlı rüyalar 🌙'
+                                          : widget.pet.action == PetAction.eating
+                                              ? 'Çok lezzetli! Ham ham 😋'
+                                              : widget.pet.hunger < 40
+                                                  ? 'Karnım gurulduyor! Acıktım 🥺'
+                                                  : 'Seni çok seviyorum! 🥰',
+                                      style: AppTypography.tag.copyWith(color: AppColors.textPrimary, fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                ),
+
+                                // 2D Kawaii Mascot
+                                CustomPaint(
+                                  size: const Size(220, 220),
+                                  painter: KawaiiPetPainter(
+                                    species: widget.pet.species,
+                                    action: widget.pet.action,
+                                    outfit: widget.pet.outfit,
+                                    animationTime: _elapsedTime,
+                                    isSleeping: widget.pet.isSleeping,
+                                    squish: _squish,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+
+                  // 3. Bath Room Floating Bubbles
                   if (widget.pet.currentRoom == PetRoom.bath)
                     Positioned.fill(
                       child: GestureDetector(
@@ -219,56 +310,39 @@ class _PetRoomScreenState extends State<PetRoomScreen>
                           _bubbleEngine.spawnAt(details.localPosition, count: 2);
                           AppHaptics.lightImpact();
                         },
-                        child: CustomPaint(
-                          painter: _BubblePainter(bubbles: _bubbleEngine.bubbles),
-                        ),
+                        child: CustomPaint(painter: _BubblePainter(bubbles: _bubbleEngine.bubbles)),
                       ),
                     ),
 
-                  // Playroom Tossable Ball
+                  // 4. Playroom Tossable Ball
                   if (widget.pet.currentRoom == PetRoom.playroom)
                     Positioned(
-                      left: _ballPos.dx - 22,
-                      top: _ballPos.dy - 22,
+                      left: _ballPos.dx - 24,
+                      top: _ballPos.dy - 24,
                       child: GestureDetector(
                         onPanUpdate: (details) {
                           setState(() {
                             _ballPos = Offset(
                               (_ballPos.dx + details.delta.dx).clamp(30.0, MediaQuery.of(context).size.width - 30),
-                              (_ballPos.dy + details.delta.dy).clamp(80.0, 300.0),
+                              (_ballPos.dy + details.delta.dy).clamp(80.0, 320.0),
                             );
                           });
                         },
                         onPanEnd: (_) => _throwBall(_ballPos),
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 200),
-                          transform: Matrix4.diagonal3Values(_isBallThrown ? 1.25 : 1.0, _isBallThrown ? 1.25 : 1.0, 1.0),
-                          width: 44,
-                          height: 44,
+                          transform: Matrix4.diagonal3Values(_isBallThrown ? 1.3 : 1.0, _isBallThrown ? 1.3 : 1.0, 1.0),
+                          width: 48,
+                          height: 48,
                           decoration: const BoxDecoration(
-                            color: Color(0xFFCDDC39),
+                            color: Color(0xFFD4E157),
                             shape: BoxShape.circle,
+                            border: Border.fromBorderSide(BorderSide(color: Color(0xFF261914), width: 2.5)),
                             boxShadow: [
-                              BoxShadow(color: Color(0x66827717), blurRadius: 10, offset: Offset(0, 4)),
+                              BoxShadow(color: Color(0x66261914), blurRadius: 8, offset: Offset(0, 4)),
                             ],
                           ),
-                          child: const Center(
-                            child: Text('🎾', style: TextStyle(fontSize: 24)),
-                          ),
-                        ),
-                      ),
-                    ),
-
-                  // Night room Zzz overlay
-                  if (isNight)
-                    Positioned(
-                      top: 40,
-                      right: 60,
-                      child: Text(
-                        'Zzz...',
-                        style: AppTypography.displayMedium.copyWith(
-                          color: AppColors.nightAccent.withValues(alpha: 0.8),
-                          fontStyle: FontStyle.italic,
+                          child: const Center(child: Text('🎾', style: TextStyle(fontSize: 24))),
                         ),
                       ),
                     ),
@@ -276,9 +350,9 @@ class _PetRoomScreenState extends State<PetRoomScreen>
               ),
             ),
 
-            // Bottom Room Interactive Controls
+            // Bottom Interactive Room Controls (Food Tray, Sponge, Bed Light, Ball)
             _buildBottomRoomControls(isNight),
-            const SizedBox(height: 12),
+            const SizedBox(height: 10),
           ],
         ),
       ),
@@ -290,16 +364,16 @@ class _PetRoomScreenState extends State<PetRoomScreen>
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: isNight ? AppColors.nightCard : AppColors.cardElevated,
+        color: isNight ? const Color(0xFF1E1E38) : Colors.white,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: isNight ? Colors.white10 : AppColors.border),
+        border: Border.all(color: const Color(0xFF261914), width: 2),
       ),
       child: Row(
         children: [
           _buildRoomTabItem(PetRoom.kitchen, 'Mutfak', '🍲', isNight),
           _buildRoomTabItem(PetRoom.bath, 'Banyo', '🛁', isNight),
           _buildRoomTabItem(PetRoom.bedroom, 'Yatak', '🛏️', isNight),
-          _buildRoomTabItem(PetRoom.playroom, 'Oyun', '🎾', isNight),
+          _buildRoomTabItem(PetRoom.playroom, 'Salon', '🎾', isNight),
         ],
       ),
     );
@@ -311,12 +385,10 @@ class _PetRoomScreenState extends State<PetRoomScreen>
       child: GestureDetector(
         onTap: () => _switchRoom(room),
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
+          duration: const Duration(milliseconds: 180),
           padding: const EdgeInsets.symmetric(vertical: 8),
           decoration: BoxDecoration(
-            color: isSelected
-                ? (isNight ? AppColors.lavender : AppColors.primary)
-                : Colors.transparent,
+            color: isSelected ? const Color(0xFFFF6584) : Colors.transparent,
             borderRadius: BorderRadius.circular(16),
           ),
           child: Row(
@@ -354,11 +426,11 @@ class _PetRoomScreenState extends State<PetRoomScreen>
   // Kitchen Food Tray
   Widget _buildKitchenControls() {
     final foods = [
-      {'name': 'Somon Balığı', 'emoji': '🐟', 'desc': '+20 Doygunluk'},
-      {'name': 'Kruvasan', 'emoji': '🥐', 'desc': '+15 Doygunluk'},
-      {'name': 'Biftek', 'emoji': '🥩', 'desc': '+25 Doygunluk'},
-      {'name': 'Çilekli Süt', 'emoji': '🍼', 'desc': '+15 Enerji'},
-      {'name': 'Donut', 'emoji': '🍩', 'desc': '+10 Mutluluk'},
+      {'name': 'Izgara Somon', 'emoji': '🐟', 'pts': '+20 Doygunluk'},
+      {'name': 'Tereyağlı Kruvasan', 'emoji': '🥐', 'pts': '+15 Doygunluk'},
+      {'name': 'Biftek', 'emoji': '🥩', 'pts': '+25 Doygunluk'},
+      {'name': 'Çilekli Süt', 'emoji': '🍼', 'pts': '+15 Enerji'},
+      {'name': 'Donut', 'emoji': '🍩', 'pts': '+10 Mutluluk'},
     ];
 
     return Container(
@@ -366,7 +438,7 @@ class _PetRoomScreenState extends State<PetRoomScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Yiyecekleri hayvana sürükleyip yedir:', style: AppTypography.bodySmall),
+          Text('Yiyecekleri hayvana doğru sürükle:', style: AppTypography.bodySmall.copyWith(fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
@@ -383,11 +455,10 @@ class _PetRoomScreenState extends State<PetRoomScreen>
                         decoration: BoxDecoration(
                           color: Colors.white,
                           shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(color: Colors.black.withValues(alpha: 0.25), blurRadius: 10),
-                          ],
+                          border: Border.all(color: const Color(0xFF261914), width: 2),
+                          boxShadow: const [BoxShadow(color: Colors.black26, blurRadius: 10)],
                         ),
-                        child: Text(f['emoji']!, style: const TextStyle(fontSize: 38)),
+                        child: Text(f['emoji']!, style: const TextStyle(fontSize: 40)),
                       ),
                     ),
                     childWhenDragging: Opacity(
@@ -406,14 +477,21 @@ class _PetRoomScreenState extends State<PetRoomScreen>
   }
 
   Widget _buildFoodItemCard(Map<String, String> f) {
-    return ClayCard(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-      radius: 18,
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: const Color(0xFF261914), width: 2),
+        boxShadow: const [
+          BoxShadow(color: Color(0xFF261914), offset: Offset(0, 3)),
+        ],
+      ),
       child: Column(
         children: [
           Text(f['emoji']!, style: const TextStyle(fontSize: 28)),
-          const SizedBox(height: 4),
-          Text(f['name']!, style: AppTypography.tag.copyWith(color: AppColors.textPrimary)),
+          const SizedBox(height: 2),
+          Text(f['name']!, style: AppTypography.tag.copyWith(color: AppColors.textPrimary, fontSize: 11)),
         ],
       ),
     );
@@ -426,16 +504,20 @@ class _PetRoomScreenState extends State<PetRoomScreen>
       child: Row(
         children: [
           Expanded(
-            child: ClayCard(
+            child: Container(
               padding: const EdgeInsets.all(12),
-              color: AppColors.mintLight,
+              decoration: BoxDecoration(
+                color: const Color(0xFFE3F8EE),
+                borderRadius: BorderRadius.circular(18),
+                border: Border.all(color: const Color(0xFF261914), width: 2),
+              ),
               child: Row(
                 children: [
                   const Text('🧼', style: TextStyle(fontSize: 26)),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      'Ekrana dokunarak köpük çıkar!',
+                      'Küvetin içinde parmağını gezdirerek köpükler oluştur!',
                       style: AppTypography.bodySmall.copyWith(color: AppColors.textPrimary),
                     ),
                   ),
@@ -446,7 +528,7 @@ class _PetRoomScreenState extends State<PetRoomScreen>
           const SizedBox(width: 12),
           ClayButton(
             text: 'Durula ✨',
-            color: AppColors.mint,
+            color: const Color(0xFF38C793),
             icon: const Icon(Icons.shower, color: Colors.white),
             onTap: _rinseBath,
           ),
@@ -463,8 +545,8 @@ class _PetRoomScreenState extends State<PetRoomScreen>
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           ClayButton(
-            text: isNight ? 'Uyandır ☀️' : 'Gece Lambasını Kapat & Uyu 🌙',
-            color: isNight ? AppColors.secondary : AppColors.lavender,
+            text: isNight ? 'Uyandır ☀️' : 'Komodin Lambasını Kapat & Uyu 🌙',
+            color: isNight ? const Color(0xFFFFA34E) : const Color(0xFF8B5CF6),
             onTap: () {
               AppHaptics.mediumImpact();
               setState(() {
@@ -485,16 +567,20 @@ class _PetRoomScreenState extends State<PetRoomScreen>
       child: Row(
         children: [
           Expanded(
-            child: ClayCard(
+            child: Container(
               padding: const EdgeInsets.all(12),
-              color: AppColors.skyLight,
+              decoration: BoxDecoration(
+                color: const Color(0xFFE8F1FF),
+                borderRadius: BorderRadius.circular(18),
+                border: Border.all(color: const Color(0xFF261914), width: 2),
+              ),
               child: Row(
                 children: [
                   const Text('🎾', style: TextStyle(fontSize: 26)),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      'Topu fırlat, dostun havada kapsın!',
+                      'Tenis topunu havaya fırlat, dostun kapsın!',
                       style: AppTypography.bodySmall.copyWith(color: AppColors.textPrimary),
                     ),
                   ),
@@ -504,9 +590,9 @@ class _PetRoomScreenState extends State<PetRoomScreen>
           ),
           const SizedBox(width: 12),
           ClayButton(
-            text: 'Fırlat! 🚀',
-            color: AppColors.sky,
-            onTap: () => _throwBall(const Offset(200, 140)),
+            text: 'Topu Fırlat! 🚀',
+            color: const Color(0xFF4F8CFF),
+            onTap: () => _throwBall(const Offset(190, 150)),
           ),
         ],
       ),
@@ -525,19 +611,9 @@ class _BubblePainter extends CustomPainter {
         ..color = b.tint
         ..style = PaintingStyle.fill;
       canvas.drawCircle(Offset(b.x, b.y), b.radius, paint);
-
-      // White shine arc
-      final shinePaint = Paint()
-        ..color = Colors.white.withValues(alpha: 0.75)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 2.0;
-      canvas.drawArc(
-        Rect.fromCircle(center: Offset(b.x, b.y), radius: b.radius * 0.7),
-        math.pi * 1.1,
-        math.pi * 0.45,
-        false,
-        shinePaint,
-      );
+      canvas.drawCircle(Offset(b.x, b.y), b.radius, Paint()..color = const Color(0xFF261914)..style = PaintingStyle.stroke..strokeWidth = 1.5);
+      // Shine
+      canvas.drawCircle(Offset(b.x - b.radius * 0.35, b.y - b.radius * 0.35), b.radius * 0.25, Paint()..color = Colors.white);
     }
   }
 
