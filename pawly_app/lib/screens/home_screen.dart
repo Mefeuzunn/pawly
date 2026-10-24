@@ -12,6 +12,7 @@ import '../widgets/status_meter.dart';
 import '../widgets/floating_hearts_burst.dart';
 import '../widgets/habit_tracker_widget.dart';
 import '../widgets/poop_clean_game.dart';
+import '../widgets/lofi_sound_player.dart';
 import 'pet_selector_modal.dart';
 import 'pet_room_screen.dart';
 import 'miss_you_screen.dart';
@@ -21,6 +22,9 @@ import 'adventure_screen.dart';
 import 'couple_status_screen.dart';
 import 'widget_simulator_screen.dart';
 import 'egg_hatching_screen.dart';
+import 'wardrobe_screen.dart';
+import 'doodle_widget_screen.dart';
+import 'diary_screen.dart';
 import '../core/utils/haptics.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -129,6 +133,36 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  void _openWardrobe() {
+    AppHaptics.mediumImpact();
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => WardrobeScreen(pet: _pet, onOutfitSaved: () => setState(() {})),
+      ),
+    );
+  }
+
+  void _openDoodle() {
+    AppHaptics.mediumImpact();
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => DoodleWidgetScreen(onDoodleSent: () => setState(() {})),
+      ),
+    );
+  }
+
+  void _openDiary() {
+    AppHaptics.mediumImpact();
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => DiaryScreen(pet: _pet),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return FloatingHeartsBurstOverlay(
@@ -230,55 +264,22 @@ class _HomeScreenState extends State<HomeScreen> {
 
                       const SizedBox(height: 12),
 
-                      // Quick Feature Pill Buttons (Widget Stüdyosu & Kuluçka Töreni)
-                      Row(
-                        children: [
-                          Expanded(
-                            child: GestureDetector(
-                              onTap: _openWidgetStudio,
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFE8F1FF),
-                                  borderRadius: BorderRadius.circular(16),
-                                  border: Border.all(color: const Color(0xFF261914), width: 2),
-                                  boxShadow: const [BoxShadow(color: Color(0xFF261914), offset: Offset(0, 2))],
-                                ),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    const Text('📱', style: TextStyle(fontSize: 15)),
-                                    const SizedBox(width: 6),
-                                    Text('iOS Widget Stüdyosu', style: AppTypography.tag.copyWith(color: const Color(0xFF1E3A8A), fontWeight: FontWeight.bold)),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: GestureDetector(
-                              onTap: _openEggHatching,
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFFFF2D6),
-                                  borderRadius: BorderRadius.circular(16),
-                                  border: Border.all(color: const Color(0xFF261914), width: 2),
-                                  boxShadow: const [BoxShadow(color: Color(0xFF261914), offset: Offset(0, 2))],
-                                ),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    const Text('🥚', style: TextStyle(fontSize: 15)),
-                                    const SizedBox(width: 6),
-                                    Text('Kuluçka Töreni', style: AppTypography.tag.copyWith(color: const Color(0xFF8B5A2B), fontWeight: FontWeight.bold)),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
+                      // Quick Feature Pill Buttons (Scrollable Horizontal Carousel)
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: [
+                            _buildQuickFeatureChip('👗 Gardırop', const Color(0xFFFFD6E0), _openWardrobe),
+                            const SizedBox(width: 8),
+                            _buildQuickFeatureChip('🎨 Çizim', const Color(0xFFE8F8F0), _openDoodle),
+                            const SizedBox(width: 8),
+                            _buildQuickFeatureChip('📱 Stüdyo', const Color(0xFFE8F1FF), _openWidgetStudio),
+                            const SizedBox(width: 8),
+                            _buildQuickFeatureChip('🥚 Kuluçka', const Color(0xFFFFF2D6), _openEggHatching),
+                            const SizedBox(width: 8),
+                            _buildQuickFeatureChip('📖 Günlük', const Color(0xFFF3E8FF), _openDiary),
+                          ],
+                        ),
                       ),
 
                       const SizedBox(height: 14),
@@ -370,7 +371,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
 
-                      const SizedBox(height: 22),
+                      const SizedBox(height: 14),
+
+                      // Lo-Fi Ambient Audio Player Bar
+                      const LofiSoundPlayer(),
+
+                      const SizedBox(height: 20),
 
                       // 4. Poop Clean Hygiene Mini-Game
                       PoopCleanGame(
@@ -557,6 +563,25 @@ class _HomeScreenState extends State<HomeScreen> {
               _buildBottomNavBar(),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildQuickFeatureChip(String label, Color bg, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        decoration: BoxDecoration(
+          color: bg,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: const Color(0xFF261914), width: 1.8),
+          boxShadow: const [BoxShadow(color: Color(0xFF261914), offset: Offset(0, 2))],
+        ),
+        child: Text(
+          label,
+          style: AppTypography.tag.copyWith(fontWeight: FontWeight.bold, fontSize: 11),
         ),
       ),
     );

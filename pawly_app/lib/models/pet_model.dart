@@ -4,7 +4,20 @@ enum PetRoom { kitchen, bath, bedroom, playroom }
 
 enum PetAction { idle, eating, bathing, sleeping, playing, happy, petted }
 
-enum PetOutfit { none, partyHat, bowTie, nightCap, aviatorGoggles, flowerCrown }
+enum PetOutfit {
+  none,
+  bowTie,
+  partyHat,
+  nightCap,
+  aviatorGoggles,
+  flowerCrown,
+  detectiveHat,
+  sailorShirt,
+  pinkDress,
+  greenTracksuit,
+  bucketHat,
+  heartGlasses,
+}
 
 class PetModel {
   final String id;

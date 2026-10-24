@@ -523,6 +523,9 @@ class Pet3DRenderer {
       case PetOutfit.flowerCrown:
         _drawFlowerCrown(canvas, center, scale, sy);
         break;
+      default:
+        // Other kawaii outfits rendered in 2D vector mode
+        break;
     }
   }
 

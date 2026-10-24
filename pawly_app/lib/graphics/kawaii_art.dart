@@ -596,7 +596,81 @@ class KawaiiPetPainter extends CustomPainter {
           canvas.drawCircle(Offset(fx, crownY + math.sin(i * 1.2) * 5), scale * 0.03, fillPaint..color = Colors.amber);
         }
         break;
+
+      case PetOutfit.detectiveHat:
+        // Safari / Explorer Detective Helmet (Yellow Khaki with brown band)
+        final hatCenter = Offset(0, -scale * 0.58);
+        final domeRect = Rect.fromCenter(center: hatCenter, width: scale * 0.72, height: scale * 0.42);
+        canvas.drawArc(domeRect, math.pi, math.pi, true, fillPaint..color = const Color(0xFFE9C46A));
+        canvas.drawArc(domeRect, math.pi, math.pi, true, linePaint);
+        // Brim
+        final brimRect = Rect.fromCenter(center: Offset(0, hatCenter.dy + 8), width: scale * 0.95, height: scale * 0.16);
+        canvas.drawOval(brimRect, fillPaint..color = const Color(0xFFF4A261));
+        canvas.drawOval(brimRect, linePaint);
+        // Brown Band
+        canvas.drawRect(Rect.fromLTWH(-scale * 0.32, hatCenter.dy - 6, scale * 0.64, 8), fillPaint..color = const Color(0xFF6B4226));
+        break;
+
+      case PetOutfit.sailorShirt:
+        // Striped Sailor Shirt on Body
+        final shirtRect = Rect.fromCenter(center: Offset(0, scale * 0.35), width: scale * 0.76, height: scale * 0.45);
+        canvas.drawRRect(RRect.fromRectAndRadius(shirtRect, const Radius.circular(16)), fillPaint..color = Colors.white);
+        canvas.drawRRect(RRect.fromRectAndRadius(shirtRect, const Radius.circular(16)), linePaint);
+        // Red Stripes
+        for (double sy = shirtRect.top + 8; sy < shirtRect.bottom - 4; sy += 12) {
+          canvas.drawLine(Offset(shirtRect.left + 4, sy), Offset(shirtRect.right - 4, sy), Paint()..color = const Color(0xFFE63946)..strokeWidth = 4);
+        }
+        break;
+
+      case PetOutfit.pinkDress:
+        // Cute Pink Dress with Ruffles
+        final dressRect = Rect.fromCenter(center: Offset(0, scale * 0.36), width: scale * 0.82, height: scale * 0.48);
+        canvas.drawRRect(RRect.fromRectAndRadius(dressRect, const Radius.circular(18)), fillPaint..color = const Color(0xFFFFB5A7));
+        canvas.drawRRect(RRect.fromRectAndRadius(dressRect, const Radius.circular(18)), linePaint);
+        // White collar
+        canvas.drawCircle(Offset(0, scale * 0.16), scale * 0.10, fillPaint..color = Colors.white);
+        canvas.drawCircle(Offset(0, scale * 0.16), scale * 0.10, linePaint);
+        break;
+
+      case PetOutfit.greenTracksuit:
+        // Athletic Green Tracksuit Jacket
+        final jacketRect = Rect.fromCenter(center: Offset(0, scale * 0.35), width: scale * 0.80, height: scale * 0.46);
+        canvas.drawRRect(RRect.fromRectAndRadius(jacketRect, const Radius.circular(16)), fillPaint..color = const Color(0xFF2A9D8F));
+        canvas.drawRRect(RRect.fromRectAndRadius(jacketRect, const Radius.circular(16)), linePaint);
+        // White zipper line in center
+        canvas.drawLine(Offset(0, jacketRect.top), Offset(0, jacketRect.bottom), Paint()..color = Colors.white..strokeWidth = 4);
+        break;
+
+      case PetOutfit.bucketHat:
+        // Pastel Pink Bucket Hat with brim
+        final bHatCenter = Offset(0, -scale * 0.52);
+        final bHatRect = Rect.fromCenter(center: bHatCenter, width: scale * 0.68, height: scale * 0.36);
+        canvas.drawRRect(RRect.fromRectAndRadius(bHatRect, const Radius.circular(10)), fillPaint..color = const Color(0xFFFFC6FF));
+        canvas.drawRRect(RRect.fromRectAndRadius(bHatRect, const Radius.circular(10)), linePaint);
+        // Floppy Brim
+        final fBrim = Rect.fromCenter(center: Offset(0, bHatCenter.dy + 12), width: scale * 0.90, height: scale * 0.16);
+        canvas.drawOval(fBrim, fillPaint..color = const Color(0xFFFFB3DE));
+        canvas.drawOval(fBrim, linePaint);
+        break;
+
+      case PetOutfit.heartGlasses:
+        // Heart Shaped Pink Sunglasses over eyes
+        final gy = -scale * 0.18;
+        _drawHeartGlass(canvas, Offset(-scale * 0.25, gy), scale * 0.18, const Color(0xFFFF4D6D), linePaint, fillPaint);
+        _drawHeartGlass(canvas, Offset(scale * 0.25, gy), scale * 0.18, const Color(0xFFFF4D6D), linePaint, fillPaint);
+        canvas.drawLine(Offset(-scale * 0.10, gy), Offset(scale * 0.10, gy), linePaint..strokeWidth = 3);
+        break;
     }
+  }
+
+  void _drawHeartGlass(Canvas canvas, Offset center, double size, Color color, Paint line, Paint fill) {
+    final path = Path()
+      ..moveTo(center.dx, center.dy + size * 0.4)
+      ..cubicTo(center.dx - size * 0.7, center.dy, center.dx - size * 0.6, center.dy - size * 0.6, center.dx, center.dy - size * 0.2)
+      ..cubicTo(center.dx + size * 0.6, center.dy - size * 0.6, center.dx + size * 0.7, center.dy, center.dx, center.dy + size * 0.4)
+      ..close();
+    canvas.drawPath(path, fill..color = color.withValues(alpha: 0.85));
+    canvas.drawPath(path, line..strokeWidth = 2.5);
   }
 
   @override
