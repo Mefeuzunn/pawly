@@ -114,11 +114,11 @@
     }
 
     // Sahneye Karakteri ve Objeleri Ekle
-    const mascotHtml = mascotRenderer.renderMascotSVG(
+    const mascotHtml = mascotRenderer ? mascotRenderer.renderMascotSVG(
       pet?.species || 'cat',
       isNightMode ? 'sleeping' : activePetState,
       { hat: localStorage.getItem('pawly_pet_hat') || '', clothes: localStorage.getItem('pawly_pet_clothes') || '' }
-    );
+    ) : '';
 
     let defaultSpeech = 'Hello there! Let\'s play together! 🐾';
     if (room === 'kitchen') defaultSpeech = 'So hungry! My tummy is rumbling! 🥺';
@@ -129,12 +129,32 @@
       ${stageProps}
       <div class="pet-stage-character" id="petInteractiveWrap">
         <div class="pet-speech-bubble" id="petSpeechBubble">${defaultSpeech}</div>
-        <div class="pet-svg-container" id="petSvgBox">
+        <div class="pet-3d-box" id="pet3DBox" style="width:260px;height:240px;margin:0 auto;position:relative">
           ${mascotHtml}
         </div>
       </div>
       ${gameDock}
     `;
+
+    // 3D Three.js WebGL Maskotunu Başlat
+    const petBox = container.querySelector('#pet3DBox');
+    if (petBox && window.Pet3DScene) {
+      if (window._currentPet3D) {
+        try { window._currentPet3D.destroy(); } catch {}
+      }
+      try {
+        window._currentPet3D = new window.Pet3DScene(petBox, {
+          species: pet?.species || 'cat',
+          state: isNightMode ? 'sleeping' : activePetState,
+          outfit: {
+            hat: localStorage.getItem('pawly_pet_hat') || '',
+            clothes: localStorage.getItem('pawly_pet_clothes') || ''
+          }
+        });
+      } catch (err) {
+        console.warn('3D WebGL başlatılamadı, 2.5D SVG devrede:', err);
+      }
+    }
 
     // Etkileşim Olaylarını Bağla
     bindRoomInteractions(container, pet, room, onAction);
@@ -236,8 +256,15 @@
   // 3. Geçici Durum Geçişi (Yemek yerken, Sevilirken)
   function setTemporaryState(state, durationMs, pet, room, container) {
     activePetState = state;
-    const petBox = container.querySelector('#petSvgBox');
-    if (petBox && window.PawlyMascot) {
+    if (window._currentPet3D) {
+      window._currentPet3D.state = state;
+      if (state === 'happy' || state === 'eating') {
+        window._currentPet3D.triggerSquish();
+      }
+    }
+
+    const petBox = container.querySelector('#pet3DBox') || container.querySelector('#petSvgBox');
+    if (petBox && window.PawlyMascot && !window._currentPet3D) {
       petBox.innerHTML = window.PawlyMascot.renderMascotSVG(
         pet?.species || 'cat',
         state,
@@ -247,7 +274,9 @@
 
     setTimeout(() => {
       activePetState = 'idle';
-      if (petBox && window.PawlyMascot) {
+      if (window._currentPet3D) {
+        window._currentPet3D.state = isNightMode ? 'sleeping' : 'idle';
+      } else if (petBox && window.PawlyMascot) {
         petBox.innerHTML = window.PawlyMascot.renderMascotSVG(
           pet?.species || 'cat',
           isNightMode ? 'sleeping' : 'idle',

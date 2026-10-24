@@ -1,0 +1,621 @@
+/* ==========================================================================
+   Pawly 3D WebGL Claymorphic Mascot Engine
+   Powered by Three.js • 60 FPS • Real-time Lighting, Shadows & Bone Physics
+   Procedural 3D Animals: Cat (Mochi), Shiba (Boba), Bear (Barnaby), Deer (Bambi)
+   ========================================================================== */
+
+import * as THREE from '/js/three.module.js';
+
+class Pet3DScene {
+  constructor(canvasContainer, options = {}) {
+    this.container = canvasContainer;
+    this.options = options;
+    this.species = options.species || 'cat';
+    this.state = options.state || 'idle'; // idle, happy, hungry, eating, sleeping
+    this.outfit = options.outfit || {};
+
+    this.scene = null;
+    this.camera = null;
+    this.renderer = null;
+    this.petGroup = null;
+    this.headGroup = null;
+    this.tailMesh = null;
+    this.eyelids = [];
+    this.eyes = [];
+    this.mouthMesh = null;
+    this.accessoriesGroup = null;
+    this.shadowPlane = null;
+
+    this.isDragging = false;
+    this.previousMousePosition = { x: 0, y: 0 };
+    this.targetRotationY = 0;
+    this.currentRotationY = 0;
+    this.targetHeadLook = { x: 0, y: 0 };
+    this.currentHeadLook = { x: 0, y: 0 };
+
+    this.blinkTimer = 0;
+    this.isBlinking = false;
+    this.animTime = 0;
+    this.squishFactor = { y: 1, x: 1 };
+    this.rafId = null;
+
+    this.init();
+  }
+
+  init() {
+    if (!this.container) return;
+
+    const width = this.container.clientWidth || 320;
+    const height = this.container.clientHeight || 280;
+
+    // 1. Scene
+    this.scene = new THREE.Scene();
+
+    // 2. Camera
+    this.camera = new THREE.PerspectiveCamera(38, width / height, 0.1, 100);
+    this.camera.position.set(0, 0.45, 3.3);
+    this.camera.lookAt(0, 0.1, 0);
+
+    // 3. Renderer
+    this.renderer = new THREE.WebGLRenderer({
+      alpha: true,
+      antialias: true,
+      powerPreference: 'high-performance'
+    });
+    this.renderer.setSize(width, height);
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    this.renderer.shadowMap.enabled = true;
+    this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+    this.container.innerHTML = '';
+    this.container.appendChild(this.renderer.domElement);
+
+    // 4. Lighting (Soft Warm Clay Studio Setup)
+    const ambientLight = new THREE.AmbientLight(0xfff6ed, 1.5);
+    this.scene.add(ambientLight);
+
+    const mainLight = new THREE.DirectionalLight(0xfff8ee, 1.9);
+    mainLight.position.set(2.5, 4.5, 3.5);
+    mainLight.castShadow = true;
+    mainLight.shadow.mapSize.width = 1024;
+    mainLight.shadow.mapSize.height = 1024;
+    mainLight.shadow.camera.near = 0.5;
+    mainLight.shadow.camera.far = 15;
+    mainLight.shadow.bias = -0.001;
+    this.scene.add(mainLight);
+
+    // Soft Rim Light (Mint/Sky highlight)
+    const rimLight = new THREE.DirectionalLight(0xd4f5eb, 0.9);
+    rimLight.position.set(-3, 2, -2);
+    this.scene.add(rimLight);
+
+    // Bottom Bounce Light
+    const bounceLight = new THREE.DirectionalLight(0xffe8d6, 0.6);
+    bounceLight.position.set(0, -2, 1);
+    this.scene.add(bounceLight);
+
+    // 5. Soft Ground Shadow Plane
+    this.createShadowPlane();
+
+    // 6. Build 3D Mascot
+    this.buildMascot(this.species);
+
+    // 7. Event Listeners
+    this.bindEvents();
+
+    // 8. Start Render Loop
+    this.animate();
+  }
+
+  createShadowPlane() {
+    const shadowGeo = new THREE.PlaneGeometry(1.6, 1.6);
+    // Radial soft shadow texture
+    const canvas = document.createElement('canvas');
+    canvas.width = 128;
+    canvas.height = 128;
+    const ctx = canvas.getContext('2d');
+    const grad = ctx.createRadialGradient(64, 64, 0, 64, 64, 64);
+    grad.addColorStop(0, 'rgba(120, 80, 50, 0.32)');
+    grad.addColorStop(0.5, 'rgba(120, 80, 50, 0.12)');
+    grad.addColorStop(1, 'rgba(120, 80, 50, 0)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, 128, 128);
+
+    const shadowTex = new THREE.CanvasTexture(canvas);
+    const shadowMat = new THREE.MeshBasicMaterial({
+      map: shadowTex,
+      transparent: true,
+      depthWrite: false
+    });
+
+    this.shadowPlane = new THREE.Mesh(shadowGeo, shadowMat);
+    this.shadowPlane.rotation.x = -Math.PI / 2;
+    this.shadowPlane.position.y = -0.42;
+    this.scene.add(this.shadowPlane);
+  }
+
+  // ========================================================================
+  // 3D PROCEDURAL MASCOT BUILDER
+  // ========================================================================
+  buildMascot(species) {
+    if (this.petGroup) {
+      this.scene.remove(this.petGroup);
+    }
+
+    this.petGroup = new THREE.Group();
+    this.eyelids = [];
+    this.eyes = [];
+
+    // Clay Shading Materials
+    const clayConfig = { roughness: 0.55, metalness: 0.05 };
+
+    // Species Color Palette
+    const palettes = {
+      cat: { body: 0xfffcf7, bodyDark: 0xf5ebd9, ear: 0xffb7b2, blush: 0xff8fa3, nose: 0xff6584 },
+      shiba: { body: 0xf6a857, bodyDark: 0xd9822f, white: 0xfffaf2, blush: 0xff8fa3, nose: 0x241408 },
+      bear: { body: 0xba8050, bodyDark: 0x996035, belly: 0xfde4c8, blush: 0xff8fa3, nose: 0x241408 },
+      deer: { body: 0xe09f67, bodyDark: 0xb5733e, belly: 0xfff5eb, spots: 0xffffff, nose: 0x241408 },
+      bunny: { body: 0xfff0f5, bodyDark: 0xe8d3dc, ear: 0xffb7c5, blush: 0xff6584, nose: 0xff4a6f }
+    };
+
+    const p = palettes[species] || palettes.cat;
+
+    const bodyMat = new THREE.MeshStandardMaterial({ color: p.body, ...clayConfig });
+    const earMat = new THREE.MeshStandardMaterial({ color: p.ear || p.white || p.belly, ...clayConfig });
+    const blushMat = new THREE.MeshStandardMaterial({ color: p.blush, ...clayConfig });
+    const noseMat = new THREE.MeshStandardMaterial({ color: p.nose, ...clayConfig });
+    const eyeMat = new THREE.MeshStandardMaterial({ color: 0x241408, roughness: 0.15, metalness: 0.1 });
+    const highlightMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+
+    // --- A. GÖVDE (TORSO) ---
+    const bodyGeo = new THREE.SphereGeometry(0.48, 32, 24);
+    bodyGeo.scale(1, 1.08, 0.95);
+    const bodyMesh = new THREE.Mesh(bodyGeo, bodyMat);
+    bodyMesh.position.y = 0.08;
+    bodyMesh.castShadow = true;
+    bodyMesh.receiveShadow = true;
+    this.petGroup.add(bodyMesh);
+
+    // Beyaz karın lekesi (Belly patch for Shiba/Bear/Deer)
+    if (p.white || p.belly) {
+      const bellyMat = new THREE.MeshStandardMaterial({ color: p.white || p.belly, ...clayConfig });
+      const bellyGeo = new THREE.SphereGeometry(0.38, 24, 18);
+      bellyGeo.scale(0.85, 0.95, 0.4);
+      const bellyMesh = new THREE.Mesh(bellyGeo, bellyMat);
+      bellyMesh.position.set(0, 0.06, 0.32);
+      this.petGroup.add(bellyMesh);
+    }
+
+    // --- B. PATİLER (PAWS) ---
+    const pawGeo = new THREE.SphereGeometry(0.12, 16, 12);
+    pawGeo.scale(1, 0.7, 1.3);
+
+    const pawFL = new THREE.Mesh(pawGeo, bodyMat);
+    pawFL.position.set(-0.24, -0.36, 0.22);
+    this.petGroup.add(pawFL);
+
+    const pawFR = new THREE.Mesh(pawGeo, bodyMat);
+    pawFR.position.set(0.24, -0.36, 0.22);
+    this.petGroup.add(pawFR);
+
+    // --- C. KAFA (HEAD GROUP) ---
+    this.headGroup = new THREE.Group();
+    this.headGroup.position.set(0, 0.52, 0.08);
+
+    const headGeo = new THREE.SphereGeometry(0.56, 32, 28);
+    headGeo.scale(1.12, 0.94, 1.0);
+    const headMesh = new THREE.Mesh(headGeo, bodyMat);
+    headMesh.castShadow = true;
+    this.headGroup.add(headMesh);
+
+    // Tombik Yanaklar (Chubby Cheeks)
+    const cheekGeo = new THREE.SphereGeometry(0.24, 16, 12);
+    cheekGeo.scale(1.1, 0.8, 0.8);
+    const cheekL = new THREE.Mesh(cheekGeo, bodyMat);
+    cheekL.position.set(-0.35, -0.12, 0.22);
+    this.headGroup.add(cheekL);
+
+    const cheekR = new THREE.Mesh(cheekGeo, bodyMat);
+    cheekR.position.set(0.35, -0.12, 0.22);
+    this.headGroup.add(cheekR);
+
+    // Yanak Allıkları (Rosy Blush Spheres)
+    const blushGeo = new THREE.SphereGeometry(0.1, 16, 12);
+    blushGeo.scale(1, 0.6, 0.2);
+    const blushL = new THREE.Mesh(blushGeo, blushMat);
+    blushL.position.set(-0.38, -0.06, 0.44);
+    blushL.rotation.y = -0.35;
+    this.headGroup.add(blushL);
+
+    const blushR = new THREE.Mesh(blushGeo, blushMat);
+    blushR.position.set(0.38, -0.06, 0.44);
+    blushR.rotation.y = 0.35;
+    this.headGroup.add(blushR);
+
+    // --- D. GÖZLER (EYES WITH BLINK SYSTEM) ---
+    const eyeGeo = new THREE.SphereGeometry(0.09, 20, 16);
+    eyeGeo.scale(0.9, 1.15, 0.7);
+
+    // Sol Göz
+    const eyeL = new THREE.Mesh(eyeGeo, eyeMat);
+    eyeL.position.set(-0.22, 0.04, 0.52);
+    const hlL = new THREE.Mesh(new THREE.SphereGeometry(0.035, 12, 10), highlightMat);
+    hlL.position.set(-0.02, 0.03, 0.06);
+    eyeL.add(hlL);
+    this.headGroup.add(eyeL);
+    this.eyes.push(eyeL);
+
+    // Sağ Göz
+    const eyeR = new THREE.Mesh(eyeGeo, eyeMat);
+    eyeR.position.set(0.22, 0.04, 0.52);
+    const hlR = new THREE.Mesh(new THREE.SphereGeometry(0.035, 12, 10), highlightMat);
+    hlR.position.set(-0.02, 0.03, 0.06);
+    eyeR.add(hlR);
+    this.headGroup.add(eyeR);
+    this.eyes.push(eyeR);
+
+    // 3D Eyelids (Göz Kapakları)
+    const lidGeo = new THREE.SphereGeometry(0.098, 18, 14, 0, Math.PI * 2, 0, Math.PI / 2);
+    lidGeo.scale(0.95, 1.2, 0.75);
+
+    const lidL = new THREE.Mesh(lidGeo, bodyMat);
+    lidL.position.copy(eyeL.position);
+    lidL.rotation.x = -Math.PI / 2; // Başlangıçta açık
+    this.headGroup.add(lidL);
+    this.eyelids.push(lidL);
+
+    const lidR = new THREE.Mesh(lidGeo, bodyMat);
+    lidR.position.copy(eyeR.position);
+    lidR.rotation.x = -Math.PI / 2;
+    this.headGroup.add(lidR);
+    this.eyelids.push(lidR);
+
+    // --- E. BURUN (NOSE) ---
+    const noseGeo = new THREE.ConeGeometry(0.045, 0.04, 16);
+    noseGeo.rotateX(Math.PI);
+    const noseMesh = new THREE.Mesh(noseGeo, noseMat);
+    noseMesh.position.set(0, -0.04, 0.57);
+    this.headGroup.add(noseMesh);
+
+    // --- F. KULAKLAR (EARS PER SPECIES) ---
+    if (species === 'cat') {
+      const earGeo = new THREE.ConeGeometry(0.18, 0.32, 16);
+      earGeo.scale(1, 1, 0.6);
+
+      const earL = new THREE.Mesh(earGeo, bodyMat);
+      earL.position.set(-0.35, 0.44, 0.05);
+      earL.rotation.z = 0.35;
+      earL.rotation.x = -0.15;
+      this.headGroup.add(earL);
+
+      const innerEarL = new THREE.Mesh(new THREE.ConeGeometry(0.12, 0.24, 16), earMat);
+      innerEarL.position.set(0, 0, 0.04);
+      earL.add(innerEarL);
+
+      const earR = new THREE.Mesh(earGeo, bodyMat);
+      earR.position.set(0.35, 0.44, 0.05);
+      earR.rotation.z = -0.35;
+      earR.rotation.x = -0.15;
+      this.headGroup.add(earR);
+
+      const innerEarR = new THREE.Mesh(new THREE.ConeGeometry(0.12, 0.24, 16), earMat);
+      innerEarR.position.set(0, 0, 0.04);
+      earR.add(innerEarR);
+    } else if (species === 'bear') {
+      const earGeo = new THREE.SphereGeometry(0.16, 20, 16);
+      earGeo.scale(1, 1, 0.5);
+
+      const earL = new THREE.Mesh(earGeo, bodyMat);
+      earL.position.set(-0.44, 0.42, 0);
+      this.headGroup.add(earL);
+
+      const innerL = new THREE.Mesh(new THREE.SphereGeometry(0.09, 16, 12), earMat);
+      innerL.position.set(0, 0, 0.06);
+      earL.add(innerL);
+
+      const earR = new THREE.Mesh(earGeo, bodyMat);
+      earR.position.set(0.44, 0.42, 0);
+      this.headGroup.add(earR);
+
+      const innerR = new THREE.Mesh(new THREE.SphereGeometry(0.09, 16, 12), earMat);
+      innerR.position.set(0, 0, 0.06);
+      earR.add(innerR);
+    } else if (species === 'shiba') {
+      const earGeo = new THREE.ConeGeometry(0.2, 0.35, 18);
+      earGeo.scale(0.9, 1, 0.6);
+
+      const earL = new THREE.Mesh(earGeo, bodyMat);
+      earL.position.set(-0.36, 0.46, 0.02);
+      earL.rotation.z = 0.28;
+      this.headGroup.add(earL);
+
+      const earR = new THREE.Mesh(earGeo, bodyMat);
+      earR.position.set(0.36, 0.46, 0.02);
+      earR.rotation.z = -0.28;
+      this.headGroup.add(earR);
+
+      // Shiba Kaş Noktaları (White eyebrow dots)
+      const dotGeo = new THREE.SphereGeometry(0.045, 12, 10);
+      const dotL = new THREE.Mesh(dotGeo, earMat);
+      dotL.position.set(-0.2, 0.24, 0.48);
+      this.headGroup.add(dotL);
+
+      const dotR = new THREE.Mesh(dotGeo, earMat);
+      dotR.position.set(0.2, 0.24, 0.48);
+      this.headGroup.add(dotR);
+    } else if (species === 'deer') {
+      // Bambi kulakları & sevimli boynuzlar
+      const earGeo = new THREE.ConeGeometry(0.14, 0.38, 16);
+      earGeo.scale(0.8, 1, 0.5);
+
+      const earL = new THREE.Mesh(earGeo, bodyMat);
+      earL.position.set(-0.4, 0.38, 0);
+      earL.rotation.z = 0.65;
+      this.headGroup.add(earL);
+
+      const earR = new THREE.Mesh(earGeo, bodyMat);
+      earR.position.set(0.4, 0.38, 0);
+      earR.rotation.z = -0.65;
+      this.headGroup.add(earR);
+
+      // Minik 3D Boynuzlar (Cute antlers)
+      const antlerMat = new THREE.MeshStandardMaterial({ color: 0x8a5a36, roughness: 0.6 });
+      const hornL = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.04, 0.26, 12), antlerMat);
+      hornL.position.set(-0.16, 0.58, 0.05);
+      hornL.rotation.z = 0.2;
+      this.headGroup.add(hornL);
+
+      const hornR = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.04, 0.26, 12), antlerMat);
+      hornR.position.set(0.16, 0.58, 0.05);
+      hornR.rotation.z = -0.2;
+      this.headGroup.add(hornR);
+    }
+
+    this.petGroup.add(this.headGroup);
+
+    // --- G. KUYRUK (TAIL WITH REALISTIC WAG PHYSICS) ---
+    const tailGeo = new THREE.CylinderGeometry(0.06, 0.09, 0.45, 16);
+    tailGeo.translate(0, 0.22, 0);
+    this.tailMesh = new THREE.Mesh(tailGeo, bodyMat);
+    this.tailMesh.position.set(0, -0.05, -0.42);
+    this.tailMesh.rotation.x = -0.65;
+    this.petGroup.add(this.tailMesh);
+
+    // --- H. GARDROP & 3D AKSESUARLAR ---
+    this.accessoriesGroup = new THREE.Group();
+    this.applyOutfits(this.outfit);
+    this.petGroup.add(this.accessoriesGroup);
+
+    this.scene.add(this.petGroup);
+  }
+
+  // ========================================================================
+  // 3D OUTFIT & ACCESSORY SYSTEM
+  // ========================================================================
+  applyOutfits(outfit = {}) {
+    if (!this.accessoriesGroup) return;
+
+    // Temizle
+    while (this.accessoriesGroup.children.length > 0) {
+      this.accessoriesGroup.remove(this.accessoriesGroup.children[0]);
+    }
+
+    const { hat = localStorage.getItem('pawly_pet_hat') || '', clothes = localStorage.getItem('pawly_pet_clothes') || '' } = outfit;
+
+    // 1. ŞAPKALAR (HATS)
+    if (hat === 'safari' || hat === '👒') {
+      // 3D Safari Bucket Hat (Screenshot 2)
+      const hatGroup = new THREE.Group();
+      const hatMat = new THREE.MeshStandardMaterial({ color: 0xd4b07b, roughness: 0.6 });
+      const brimGeo = new THREE.CylinderGeometry(0.68, 0.72, 0.05, 32);
+      const brim = new THREE.Mesh(brimGeo, hatMat);
+      hatGroup.add(brim);
+
+      const topGeo = new THREE.CylinderGeometry(0.42, 0.48, 0.32, 32);
+      const top = new THREE.Mesh(topGeo, hatMat);
+      top.position.y = 0.16;
+      hatGroup.add(top);
+
+      // Yeşil bant
+      const bandMat = new THREE.MeshStandardMaterial({ color: 0x4a6b32, roughness: 0.5 });
+      const band = new THREE.Mesh(new THREE.CylinderGeometry(0.49, 0.49, 0.06, 32), bandMat);
+      band.position.y = 0.08;
+      hatGroup.add(band);
+
+      hatGroup.position.set(0, 0.42, 0.06);
+      this.headGroup.add(hatGroup);
+    } else if (hat === 'nightcap' || this.state === 'sleeping') {
+      // 3D Uyku Külahı
+      const capGroup = new THREE.Group();
+      const capMat = new THREE.MeshStandardMaterial({ color: 0x9d7bff, roughness: 0.5 });
+      const cone = new THREE.Mesh(new THREE.ConeGeometry(0.38, 0.55, 24), capMat);
+      cone.rotation.z = -0.45;
+      cone.rotation.x = -0.15;
+      capGroup.add(cone);
+
+      const pompom = new THREE.Mesh(new THREE.SphereGeometry(0.08, 16, 12), new THREE.MeshStandardMaterial({ color: 0xffffff }));
+      pompom.position.set(0.32, 0.48, -0.05);
+      capGroup.add(pompom);
+
+      capGroup.position.set(0, 0.45, 0);
+      this.headGroup.add(capGroup);
+    } else if (hat === 'cap' || hat === '🧢') {
+      // 3D Yeşil Beyzbol Kepi
+      const capMat = new THREE.MeshStandardMaterial({ color: 0x38c793, roughness: 0.5 });
+      const dome = new THREE.Mesh(new THREE.SphereGeometry(0.46, 24, 18, 0, Math.PI * 2, 0, Math.PI / 2), capMat);
+      const visor = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.55, 0.04, 24, 1, false, 0, Math.PI), capMat);
+      visor.position.set(0, 0.02, 0.15);
+      dome.add(visor);
+      dome.position.set(0, 0.38, 0.04);
+      this.headGroup.add(dome);
+    }
+
+    // 2. KIYAFETLER (CLOTHES)
+    if (clothes === 'dress' || clothes === '👗') {
+      // 3D Fırfırlı Pembe Çay Elbisesi (Screenshot 2)
+      const dressMat = new THREE.MeshStandardMaterial({ color: 0xff85a1, roughness: 0.45 });
+      const skirtGeo = new THREE.ConeGeometry(0.62, 0.48, 32, 1, true);
+      skirtGeo.scale(1, 1, 0.9);
+      const skirt = new THREE.Mesh(skirtGeo, dressMat);
+      skirt.position.set(0, -0.12, 0);
+      this.accessoriesGroup.add(skirt);
+
+      // Beyaz dantel yakalık
+      const collarMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.3 });
+      const collar = new THREE.Mesh(new THREE.TorusGeometry(0.38, 0.05, 16, 32), collarMat);
+      collar.rotation.x = Math.PI / 2;
+      collar.position.set(0, 0.24, 0.08);
+      this.accessoriesGroup.add(collar);
+    } else if (clothes === 'tracksuit' || clothes === '🧥') {
+      // 3D Nane Yeşili Spor Eşofman
+      const suitMat = new THREE.MeshStandardMaterial({ color: 0x48cfad, roughness: 0.5 });
+      const jacket = new THREE.Mesh(new THREE.CylinderGeometry(0.49, 0.52, 0.42, 32), suitMat);
+      jacket.position.set(0, 0.04, 0);
+      this.accessoriesGroup.add(jacket);
+    }
+  }
+
+  // ========================================================================
+  // ETKİLEŞİM & GÖZ TAKİP DİNLEYİCİLERİ
+  // ========================================================================
+  bindEvents() {
+    const el = this.renderer.domElement;
+
+    // Mouse / Parmak Takibi (3D Look-At)
+    const onPointerMove = (e) => {
+      const rect = el.getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+      const normX = ((clientX - rect.left) / rect.width) * 2 - 1;
+      const normY = -(((clientY - rect.top) / rect.height) * 2 - 1);
+
+      this.targetHeadLook.x = normX * 0.45;
+      this.targetHeadLook.y = normY * 0.35;
+
+      // Eğer sürükleniyorsa 3D pet'i çevir
+      if (this.isDragging) {
+        const deltaX = clientX - this.previousMousePosition.x;
+        this.targetRotationY += deltaX * 0.015;
+        this.previousMousePosition = { x: clientX, y: clientY };
+      }
+    };
+
+    const onPointerDown = (e) => {
+      this.isDragging = true;
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      this.previousMousePosition = { x: clientX, y: clientY };
+
+      // Dokunulduğunda sevimli yaylanma (Squash)
+      this.triggerSquish();
+    };
+
+    const onPointerUp = () => {
+      this.isDragging = false;
+    };
+
+    el.addEventListener('mousemove', onPointerMove);
+    el.addEventListener('touchmove', onPointerMove, { passive: true });
+    el.addEventListener('mousedown', onPointerDown);
+    el.addEventListener('touchstart', onPointerDown, { passive: true });
+    window.addEventListener('mouseup', onPointerUp);
+    window.addEventListener('touchend', onPointerUp);
+
+    // Pencere yeniden boyutlandırma
+    window.addEventListener('resize', () => this.onResize());
+  }
+
+  triggerSquish() {
+    this.squishFactor.y = 0.82;
+    this.squishFactor.x = 1.15;
+    if (window.PawlyAudio) window.PawlyAudio.soundHappy();
+
+    setTimeout(() => {
+      this.squishFactor.y = 1;
+      this.squishFactor.x = 1;
+    }, 280);
+  }
+
+  onResize() {
+    if (!this.container || !this.renderer || !this.camera) return;
+    const width = this.container.clientWidth;
+    const height = this.container.clientHeight;
+    this.camera.aspect = width / height;
+    this.camera.updateProjectionMatrix();
+    this.renderer.setSize(width, height);
+  }
+
+  // ========================================================================
+  // RENDER DÖNGÜSÜ & DOĞAL FİZİK ANİMASYONLARI
+  // ========================================================================
+  animate() {
+    this.rafId = requestAnimationFrame(() => this.animate());
+
+    this.animTime += 0.035;
+
+    // 1. Doğal Nefes Alma (Breathe Sine Wave)
+    const breath = Math.sin(this.animTime * 1.8) * 0.025;
+    if (this.petGroup) {
+      this.petGroup.position.y = breath;
+      // Yaylanma (Squish/Stretch lerp)
+      this.petGroup.scale.y += (this.squishFactor.y - this.petGroup.scale.y) * 0.18;
+      this.petGroup.scale.x += (this.squishFactor.x - this.petGroup.scale.x) * 0.18;
+      this.petGroup.scale.z += (this.squishFactor.x - this.petGroup.scale.z) * 0.18;
+
+      // Döndürme yumuşatması (Smooth Orbit)
+      this.currentRotationY += (this.targetRotationY - this.currentRotationY) * 0.12;
+      this.petGroup.rotation.y = this.currentRotationY;
+
+      // Bırakıldığında yavaşça öne geri dönme
+      if (!this.isDragging) {
+        this.targetRotationY *= 0.96;
+      }
+    }
+
+    // 2. Kafa Göz Takibi (Head Look-At Lerp)
+    if (this.headGroup) {
+      this.currentHeadLook.x += (this.targetHeadLook.x - this.currentHeadLook.x) * 0.08;
+      this.currentHeadLook.y += (this.targetHeadLook.y - this.currentHeadLook.y) * 0.08;
+
+      this.headGroup.rotation.y = this.currentHeadLook.x;
+      this.headGroup.rotation.x = -this.currentHeadLook.y;
+    }
+
+    // 3. Kuyruk Sallama (Tail Wagging Physics)
+    if (this.tailMesh) {
+      const wagSpeed = this.state === 'happy' ? 7 : 3;
+      this.tailMesh.rotation.z = Math.sin(this.animTime * wagSpeed) * 0.35;
+    }
+
+    // 4. Göz Kırpma Döngüsü (Natural Blinking)
+    this.blinkTimer += 0.016;
+    if (this.blinkTimer > 3.8) {
+      this.isBlinking = true;
+      if (this.blinkTimer > 4.0) {
+        this.isBlinking = false;
+        this.blinkTimer = 0;
+      }
+    }
+
+    // Göz kapağı rotasyonu
+    this.eyelids.forEach(lid => {
+      const targetLidAngle = (this.isBlinking || this.state === 'sleeping') ? 0 : -Math.PI / 2;
+      lid.rotation.x += (targetLidAngle - lid.rotation.x) * 0.35;
+    });
+
+    // 5. Render
+    this.renderer.render(this.scene, this.camera);
+  }
+
+  destroy() {
+    if (this.rafId) cancelAnimationFrame(this.rafId);
+    if (this.renderer && this.renderer.domElement) {
+      this.renderer.domElement.remove();
+      this.renderer.dispose();
+    }
+  }
+}
+
+window.Pet3DScene = Pet3DScene;
+export { Pet3DScene };
