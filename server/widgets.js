@@ -255,7 +255,7 @@ router.post('/distance', requireAuth, (req, res) => {
   const partner = getActivePartner(req.user);
 
   let currentDist = typeof distanceKm === 'number' ? distanceKm : 5.3;
-  let isTogether = !!together;
+  let isTogether = !!together || (currentDist <= 0.1);
 
   if (partner) {
     sendToUser(partner.username, 'widget:distance', {
@@ -264,6 +264,13 @@ router.post('/distance', requireAuth, (req, res) => {
       distanceKm: currentDist,
       together: isTogether
     });
+
+    if (isTogether) {
+      sendToUser(partner.username, 'widget:together', {
+        partner: publicUser(req.user),
+        toast: `✨ ${req.user.name} ile Birlikteyiz moduna geçildi! 💕`
+      });
+    }
   }
   save();
   res.json({
@@ -286,13 +293,17 @@ router.get('/distance', requireAuth, (req, res) => {
   });
 });
 
-// 3. Uyku Takibi (Me vs Partner Sleep VS Widget)
+// 3. Uyku Takibi (Me vs Partner Sleep VS Widget & 7 Günlük Düello)
 router.post('/sleep', requireAuth, (req, res) => {
-  const { hours, quality } = req.body || {};
+  const { hours, quality, weekly } = req.body || {};
+  const currentHours = typeof hours === 'number' ? hours : 7.5;
+  const currentWeekly = Array.isArray(weekly) && weekly.length === 7 ? weekly : [7.2, 7.5, 8.0, 6.5, 7.5, 8.2, currentHours];
+
   req.user.widget.sleep = {
-    hours: typeof hours === 'number' ? hours : 7.5,
+    hours: currentHours,
     quality: quality || 'Excellent',
-    weekly: [7, 7.5, 8, 6.5, 7.5, 8, hours || 7.5]
+    weekly: currentWeekly,
+    updatedAt: new Date().toISOString()
   };
   const partner = getActivePartner(req.user);
   if (partner) {
@@ -307,14 +318,46 @@ router.post('/sleep', requireAuth, (req, res) => {
 
 router.get('/sleep', requireAuth, (req, res) => {
   const partner = getActivePartner(req.user);
+  const meSleep = req.user.widget.sleep || {
+    hours: 7.5,
+    quality: 'Excellent',
+    weekly: [7.2, 7.8, 6.5, 7.5, 8.0, 7.5, 7.5]
+  };
+  const partnerSleep = partner ? (partner.widget.sleep || {
+    hours: 6.2,
+    quality: 'Good',
+    weekly: [6.0, 6.5, 5.8, 6.2, 7.0, 6.5, 6.2]
+  }) : {
+    hours: 8.0,
+    quality: 'Great',
+    weekly: [7.5, 8.0, 8.0, 7.0, 8.5, 8.0, 8.0]
+  };
+
+  // 7 Günlük Galip Hesabı (Altın Kupa 🏆)
+  const meSum = meSleep.weekly.reduce((a, b) => a + b, 0);
+  const partnerSum = partnerSleep.weekly.reduce((a, b) => a + b, 0);
+  let winner = 'tie';
+  if (meSum > partnerSum + 1) winner = 'me';
+  else if (partnerSum > meSum + 1) winner = 'partner';
+
+  let caringAdvice = 'İkiniz de dengeli dinleniyorsunuz! 🌙';
+  if (partnerSleep.hours < 6.5) {
+    caringAdvice = `${partner ? partner.name : 'Partnerin'} bu gece az uyumuş, ona bir papatya çayı gönder ☕`;
+  } else if (meSleep.hours < 6.5) {
+    caringAdvice = 'Bu gece biraz erken uyumayı dene, sağlığın çok önemli 💕';
+  }
+
   res.json({
-    me: req.user.widget.sleep || { hours: 7.5, quality: 'Excellent', weekly: [7, 8, 6.5, 7.5, 8, 7.5, 8] },
-    partner: partner ? (partner.widget.sleep || { hours: 6.2, quality: 'Good', weekly: [6, 7, 5.5, 6, 7, 6.5, 6.2] }) : null,
-    partnerUser: partner ? publicUser(partner) : null
+    me: meSleep,
+    partner: partnerSleep,
+    partnerUser: partner ? publicUser(partner) : null,
+    winner,
+    days: ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'],
+    advice: caringAdvice
   });
 });
 
-// 4. Duygu Kavanozu (Mood Jar Widget)
+// 4. Duygu Kavanozu (Mood Jar Widget & 2D Fizik Verisi)
 router.post('/jar/drop', requireAuth, (req, res) => {
   const { mood, color, emoji } = req.body || {};
   const candy = {
@@ -323,26 +366,27 @@ router.post('/jar/drop', requireAuth, (req, res) => {
     color: color || '#FFCAD4',
     emoji: emoji || '✨',
     sender: req.user.username,
+    senderName: req.user.name,
     at: new Date().toISOString()
   };
   req.user.widget.jarCandies = req.user.widget.jarCandies || [];
   req.user.widget.jarCandies.push(candy);
-  if (req.user.widget.jarCandies.length > 50) {
-    req.user.widget.jarCandies = req.user.widget.jarCandies.slice(-50);
+  if (req.user.widget.jarCandies.length > 60) {
+    req.user.widget.jarCandies = req.user.widget.jarCandies.slice(-60);
   }
 
   const partner = getActivePartner(req.user);
   if (partner) {
     partner.widget.jarCandies = partner.widget.jarCandies || [];
     partner.widget.jarCandies.push(candy);
-    if (partner.widget.jarCandies.length > 50) partner.widget.jarCandies = partner.widget.jarCandies.slice(-50);
+    if (partner.widget.jarCandies.length > 60) partner.widget.jarCandies = partner.widget.jarCandies.slice(-60);
     sendToUser(partner.username, 'widget:jar', {
       candy,
       toast: `${req.user.name} kavanoza yeni bir duygu şekeri attı! 🍬`
     });
   }
   save();
-  res.json({ ok: true, candies: req.user.widget.jarCandies });
+  res.json({ ok: true, candies: req.user.widget.jarCandies, candy });
 });
 
 router.get('/jar', requireAuth, (req, res) => {
@@ -377,6 +421,42 @@ router.get('/status', requireAuth, (req, res) => {
     me: req.user.widget.statusBubble,
     partner: partner ? partner.widget.statusBubble : null,
     partnerUser: partner ? publicUser(partner) : null
+  });
+});
+
+// 6. Canlı Ortak Karalama & Çizim (Live Doodle Widget)
+router.post('/doodle', requireAuth, (req, res) => {
+  const { strokes, previewDataUrl } = req.body || {};
+  const doodle = {
+    id: nid('d'),
+    from: req.user.username,
+    fromName: req.user.name,
+    strokes: Array.isArray(strokes) ? strokes.slice(0, 500) : [],
+    previewDataUrl: typeof previewDataUrl === 'string' ? previewDataUrl.slice(0, 100000) : null,
+    at: new Date().toISOString()
+  };
+
+  req.user.widget.doodle = doodle;
+  const partner = getActivePartner(req.user);
+  if (partner) {
+    partner.widget.doodle = doodle;
+    sendToUser(partner.username, 'widget:doodle', {
+      doodle,
+      from: publicUser(req.user),
+      toast: `${req.user.name} sana yeni bir aşk karalaması çizdi! 🎨`
+    });
+  }
+
+  save();
+  res.json({ ok: true, doodle });
+});
+
+router.get('/doodle', requireAuth, (req, res) => {
+  const partner = getActivePartner(req.user);
+  const doodle = req.user.widget.doodle || (partner ? partner.widget.doodle : null);
+  res.json({
+    doodle,
+    partner: partner ? publicUser(partner) : null
   });
 });
 

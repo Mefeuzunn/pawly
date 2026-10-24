@@ -2924,3 +2924,194 @@ input:focus, textarea:focus, select:focus {
   0% { transform: scale(0.5); opacity: 1; }
   100% { transform: scale(1.4) translateY(-20px); opacity: 0; }
 }
+
+/* ==========================================================================
+   FAZ 4: WIDGETABLE SOSYAL WIDGET'LAR & 2D FİZİKSEL ŞEKER KAVANOZU
+   ========================================================================== */
+
+/* 1. 2D Fizik Motorlu Şeker Kavanozu */
+.candy-jar-canvas-box {
+  width: 170px;
+  height: 180px;
+  margin: 0 auto 8px;
+  position: relative;
+  cursor: pointer;
+  touch-action: none;
+}
+
+.candy-jar-canvas-box canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}
+
+.jar-lid-knob {
+  width: 50px;
+  height: 12px;
+  background: #C49A70;
+  border: 1.5px solid #8B5E3C;
+  border-radius: 6px 6px 0 0;
+  margin: 0 auto -2px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+/* 2. Sleep VS 7 Günlük Çubuk Grafik Düellosu */
+.sleep-weekly-chart {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 6px;
+  height: 80px;
+  margin: 12px 0 8px;
+  padding: 0 4px;
+}
+
+.sleep-day-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  justify-content: flex-end;
+}
+
+.sleep-dual-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 60px;
+  width: 100%;
+  justify-content: center;
+}
+
+.sleep-bar-me {
+  width: 6px;
+  background: #FFA34E;
+  border-radius: 3px 3px 0 0;
+  transition: height 0.3s ease;
+}
+
+.sleep-bar-partner {
+  width: 6px;
+  background: #38C793;
+  border-radius: 3px 3px 0 0;
+  transition: height 0.3s ease;
+}
+
+.sleep-day-lbl {
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--text-dim);
+  margin-top: 3px;
+}
+
+.sleep-trophy-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  background: #FFF8E1;
+  border: 1.5px solid #FFD54F;
+  border-radius: var(--r-pill);
+  font-size: 11px;
+  font-weight: 800;
+  color: #F57F17;
+  margin-top: 6px;
+}
+
+/* 3. Live Doodle Widget & Tuval */
+.widget-doodle {
+  background: linear-gradient(145deg, #FFF9F2 0%, #FFF2E5 100%);
+  border-color: #FFE0BD;
+  text-align: center;
+  padding: 16px;
+}
+
+.doodle-preview-box {
+  width: 100%;
+  height: 120px;
+  background: #FFFFFF;
+  border: 1.5px dashed var(--border-card);
+  border-radius: var(--r-md);
+  margin: 8px auto 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+}
+
+.doodle-preview-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.doodle-canvas-wrap {
+  background: #FFFFFF;
+  border: 2px solid var(--border-card);
+  border-radius: var(--r-lg);
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.05);
+  margin: 0 auto 12px;
+  width: 360px;
+  height: 280px;
+  touch-action: none;
+  cursor: crosshair;
+}
+
+.doodle-canvas-wrap canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+  border-radius: var(--r-lg);
+}
+
+.doodle-tools-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.doodle-palette {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.doodle-color-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid #FFFFFF;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+
+.doodle-color-btn:hover {
+  transform: scale(1.15);
+}
+
+.doodle-color-btn.active {
+  transform: scale(1.25);
+  box-shadow: 0 0 0 2px #4A3525, 0 3px 6px rgba(0, 0, 0, 0.25);
+}
+
+.doodle-actions-row {
+  display: flex;
+  gap: 8px;
+}
+
+/* 4. Together Mode Glow Aura */
+.together-glow-aura {
+  animation: togetherPulse 2s infinite alternate ease-in-out;
+  border-color: #FF85A1 !important;
+  background: linear-gradient(145deg, #FFF0F5 0%, #FFEBF0 100%) !important;
+}
+
+@keyframes togetherPulse {
+  0% { box-shadow: 0 4px 14px rgba(255, 101, 132, 0.2); }
+  100% { box-shadow: 0 8px 24px rgba(255, 101, 132, 0.5); }
+}

@@ -24,6 +24,11 @@ let comboTimer = null;
 let bentoHeart3D = null;
 let hubHeart3D = null;
 let hubHeartbeatTimer = null;
+let candyJarPhysics = null;
+let isDrawingDoodle = false;
+let doodleStrokes = [];
+let currentDoodleStroke = [];
+let currentDoodleColor = '#FF6584';
 
 // API Yardımcısı
 const api = async (p, o = {}) => {
@@ -136,10 +141,28 @@ function connectEvents() {
       loadHomeBento();
     });
 
+    sse.addEventListener('widget:together', (e) => {
+      const data = JSON.parse(e.data);
+      if (window.PawlyAudio) window.PawlyAudio.soundFanfare();
+      showTogetherCelebration(data.toast);
+      loadHomeBento();
+    });
+
     sse.addEventListener('widget:jar', (e) => {
       const data = JSON.parse(e.data);
       if (window.PawlyAudio) window.PawlyAudio.soundBubble();
+      if (candyJarPhysics && data.candy) {
+        candyJarPhysics.dropCandy(data.candy);
+      }
       toast(data.toast || 'Kavanoza yeni bir duygu şekeri eklendi! 🍬');
+      loadHomeBento();
+    });
+
+    sse.addEventListener('widget:doodle', (e) => {
+      const data = JSON.parse(e.data);
+      if (window.PawlyAudio) window.PawlyAudio.soundHappy();
+      spawnHeart(null, null, '🎨');
+      toast(data.toast || 'Partnerin sana yeni bir aşk karalaması gönderdi! 🎨');
       loadHomeBento();
     });
 
@@ -217,13 +240,19 @@ async function loadHomeBento() {
   if (!container) return;
 
   try {
-    const [boardData, missData, sleepData, distData, jarData, statusData] = await Promise.all([
+    const [boardData, missData, sleepData, distData, jarData, statusData, doodleData] = await Promise.all([
       api('/api/widgets'),
       api('/api/widgets/miss-you').catch(() => ({ sent: 999, received: 420 })),
-      api('/api/widgets/sleep').catch(() => ({ me: { hours: 7.5 }, partner: { hours: 8.2 } })),
+      api('/api/widgets/sleep').catch(() => ({
+        me: { hours: 7.5, weekly: [7.2, 7.8, 6.5, 7.5, 8.0, 7.5, 7.5] },
+        partner: { hours: 8.2, weekly: [8.0, 8.2, 7.5, 8.0, 8.5, 8.0, 8.2] },
+        winner: 'partner',
+        advice: 'İkiniz de dengeli dinleniyorsunuz! 🌙'
+      })),
       api('/api/widgets/distance').catch(() => ({ distanceKm: 5.3, myLocation: { name: 'Evde 🏠' }, partnerLocation: { name: 'Kafede ☕' } })),
       api('/api/widgets/jar').catch(() => ({ candies: [] })),
-      api('/api/widgets/status').catch(() => ({ me: { status: 'Mutlu 🥰' } }))
+      api('/api/widgets/status').catch(() => ({ me: { status: 'Mutlu 🥰' } })),
+      api('/api/widgets/doodle').catch(() => ({ doodle: null }))
     ]);
 
     const currentPet = pets[0] || null;
@@ -263,9 +292,19 @@ async function loadHomeBento() {
       </div>
     `;
 
-    // 2. SLEEP TRACKER (ME VS PARTNER)
+    // 2. SLEEP TRACKER (ME VS PARTNER & 7-DAY DUAL BARS + TROPHY)
     const meHours = sleepData.me?.hours || 7.5;
     const partnerHours = sleepData.partner?.hours || 8.2;
+    const meWeekly = sleepData.me?.weekly || [7.2, 7.8, 6.5, 7.5, 8.0, 7.5, 7.5];
+    const partnerWeekly = sleepData.partner?.weekly || [8.0, 8.2, 7.5, 8.0, 8.5, 8.0, 8.2];
+    const winner = sleepData.winner || 'tie';
+
+    const trophyHtml = winner === 'me' ?
+      `<div class="sleep-trophy-badge">🏆 Altın Uyku Kupası Sende!</div>` :
+      winner === 'partner' ?
+      `<div class="sleep-trophy-badge">🏆 Altın Uyku Kupası ${partnerUser?.name || 'Alex'}'te!</div>` :
+      `<div class="sleep-trophy-badge">🤝 Eşit Dinlenme!</div>`;
+
     const sleepCard = `
       <div class="bento-card widget-sleep">
         <div class="bento-header">
@@ -274,7 +313,6 @@ async function loadHomeBento() {
         </div>
         <div class="sleep-vs-container">
           <div class="sleep-circles">
-            <!-- Concentric Progress Rings -->
             <svg width="130" height="130" viewBox="0 0 130 130">
               <circle cx="65" cy="65" r="54" fill="none" stroke="#E2E8F0" stroke-width="8"/>
               <circle cx="65" cy="65" r="40" fill="none" stroke="#E2E8F0" stroke-width="8"/>
@@ -294,7 +332,22 @@ async function loadHomeBento() {
             <div class="sleep-person-val">${partnerHours} sa</div>
           </div>
         </div>
-        <div class="sleep-bubble-note">"Get some sleep, babe 💕"</div>
+
+        <!-- 7 Günlük Çubuk Grafik Karşılaştırması -->
+        <div class="sleep-weekly-chart">
+          ${['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'].map((day, idx) => `
+            <div class="sleep-day-col">
+              <div class="sleep-dual-bars">
+                <div class="sleep-bar-me" style="height:${Math.max(10, Math.min(55, Math.round(((meWeekly[idx] || 7) / 10) * 55)))}px" title="Sen: ${meWeekly[idx] || 7} sa"></div>
+                <div class="sleep-bar-partner" style="height:${Math.max(10, Math.min(55, Math.round(((partnerWeekly[idx] || 7) / 10) * 55)))}px" title="${partnerUser?.name || 'Partner'}: ${partnerWeekly[idx] || 7} sa"></div>
+              </div>
+              <span class="sleep-day-lbl">${day}</span>
+            </div>
+          `).join('')}
+        </div>
+
+        <div style="text-align:center">${trophyHtml}</div>
+        <div class="sleep-bubble-note">${sleepData.advice || '"Get some sleep, babe 💕"'}</div>
       </div>
     `;
 
@@ -302,13 +355,13 @@ async function loadHomeBento() {
     const distKm = distData.distanceKm || 5.3;
     const isTogether = distData.together;
     const distanceCard = `
-      <div class="bento-card bento-span-2 widget-distance">
+      <div class="bento-card bento-span-2 widget-distance ${isTogether ? 'together-glow-aura' : ''}">
         <div class="bento-header">
           <span class="bento-label">📍 Mesafe & Canlı Durum</span>
           <span class="badge ${isTogether ? 'badge-couple' : ''}">${isTogether ? 'Birlikteyiz 💕' : 'Farklı Yerlerde'}</span>
         </div>
         <div class="distance-km-hero">${isTogether ? '0 km' : `${distKm} km`}</div>
-        <div class="distance-sublabel">${isTogether ? 'Şu anda birliktesiniz!' : 'Aramızdaki tatlı mesafe'}</div>
+        <div class="distance-sublabel">${isTogether ? 'Şu anda birliktesiniz! Sarılma zamanı!' : 'Aramızdaki tatlı mesafe'}</div>
 
         <div class="distance-track-visual">
           <div class="distance-avatar" title="Sen">${me?.name ? me.name[0].toUpperCase() : 'B'}</div>
@@ -329,39 +382,61 @@ async function loadHomeBento() {
         ${isTogether ? `
           <div class="together-banner">
             <span>🥰</span>
-            <span>We are together in Istanbul! Sarılma zamanı!</span>
+            <span>Şu anda aynı yerdesiniz! Sarılma modu aktif!</span>
           </div>
         ` : ''}
       </div>
     `;
 
-    // 4. MOOD CANDY JAR WIDGET
+    // 4. MOOD CANDY JAR WIDGET (2D Fizik Motoru ile)
     const candies = jarData.candies || [];
     const moodJarCard = `
       <div class="bento-card widget-jar">
         <div class="bento-header">
           <span class="bento-label">🍬 Duygu Kavanozu</span>
-          <span class="badge">${candies.length} Şeker</span>
+          <span class="badge" id="jarCountBadge">${candies.length} Şeker</span>
         </div>
-        <div class="jar-illustration-wrap">
-          <div class="jar-lid"></div>
-          <div class="jar-candies-grid" id="jarCandiesGrid">
-            ${candies.slice(-18).map(c => `
-              <div class="jar-candy-bubble" style="background:${c.color || '#FF7B90'}">${c.emoji || '✨'}</div>
-            `).join('')}
-          </div>
+        <div class="jar-lid-knob"></div>
+        <div class="candy-jar-canvas-box" id="candyJarBox" title="Kavanozu sallamak için dokun!">
+          <canvas id="candyJarCanvas" width="170" height="180"></canvas>
         </div>
-        <div style="font-size:11px;font-weight:700;color:var(--text-muted)">Kavanoza Duygu Şekeri At:</div>
+        <div style="font-size:11px;font-weight:700;color:var(--text-muted);margin-bottom:6px">Kavanoza Duygu Şekeri At:</div>
         <div class="jar-mood-picker">
           <button class="jar-mood-btn" data-drop-mood="love" data-emoji="💖" data-color="#FF7B90" title="Aşk">💖</button>
           <button class="jar-mood-btn" data-drop-mood="happy" data-emoji="✨" data-color="#FFD166" title="Mutlu">✨</button>
           <button class="jar-mood-btn" data-drop-mood="calm" data-emoji="🌿" data-color="#70D6BB" title="Huzurlu">🌿</button>
           <button class="jar-mood-btn" data-drop-mood="tired" data-emoji="😴" data-color="#9D7BFF" title="Yorgun">😴</button>
+          <button class="jar-mood-btn" data-drop-mood="sweet" data-emoji="🍓" data-color="#FF4D79" title="Tatlı">🍓</button>
         </div>
       </div>
     `;
 
-    // 5. STATUS BUBBLE WIDGET
+    // 5. LIVE DOODLE WIDGET (Canlı Karalama & Ortak Çizim)
+    const curDoodle = doodleData?.doodle || null;
+    const doodleCard = `
+      <div class="bento-card widget-doodle">
+        <div class="bento-header">
+          <span class="bento-label">🎨 Canlı Karalama</span>
+          <span class="badge" style="background:#FFF0F5;color:#E91E63">Canlı Tuval</span>
+        </div>
+        <div class="doodle-preview-box" id="btnOpenDoodle" title="Çizim yapmak için tıkla!">
+          ${curDoodle && curDoodle.previewDataUrl ? `
+            <img src="${curDoodle.previewDataUrl}" class="doodle-preview-img" alt="Canlı Karalama">
+          ` : `
+            <div style="font-size:13px;color:var(--text-muted);display:flex;flex-direction:column;align-items:center;gap:4px">
+              <span style="font-size:26px">✏️</span>
+              <span>Partnerine bir aşk notu çiz!</span>
+            </div>
+          `}
+        </div>
+        <div style="font-size:11px;color:var(--text-dim);margin-bottom:8px">
+          ${curDoodle ? `${curDoodle.fromName} tarafından çizildi 💕` : 'Partnerinle kilit ekranı gibi ortak karala'}
+        </div>
+        <button class="btn peach btn-sm wide" id="btnDrawDoodle">🎨 Çiz / Karala</button>
+      </div>
+    `;
+
+    // 6. STATUS BUBBLE WIDGET
     const statusObj = statusData.me || { status: 'Mutlu 🥰', emoji: '🥰', text: 'Seni düşünüyorum!' };
     const statusCard = `
       <div class="bento-card widget-status">
@@ -386,7 +461,7 @@ async function loadHomeBento() {
       </div>
     `;
 
-    // 6. PET SUMMARY CARD WITH SVG MASCOT
+    // 7. PET SUMMARY CARD WITH SVG MASCOT
     let petSummaryCard = '';
     if (currentPet) {
       const petMascotSvg = window.PawlyMascot && currentPet.hatched ?
@@ -423,12 +498,14 @@ async function loadHomeBento() {
       ${sleepCard}
       ${distanceCard}
       ${moodJarCard}
+      ${doodleCard}
       ${statusCard}
       ${petSummaryCard}
     `;
 
     bindHomeEvents();
     initBentoHeart3D();
+    initCandyJar2D(candies);
 
   } catch (err) {
     console.error('Bento yükleme hatası:', err);
@@ -704,34 +781,145 @@ async function sendMissAction(options = {}) {
   }
 }
 
+// ==========================================================================
+// FAZ 4: 2D FİZİKSEL ŞEKER KAVANOZU, LIVE DOODLE & TOGETHER CELEBRATION
+// ==========================================================================
+
+function initCandyJar2D(candies = []) {
+  const canvas = $('#candyJarCanvas');
+  if (!canvas) return;
+
+  if (window.CandyJarPhysics) {
+    if (candyJarPhysics) {
+      candyJarPhysics.destroy();
+      candyJarPhysics = null;
+    }
+    try {
+      candyJarPhysics = new window.CandyJarPhysics(canvas);
+      candyJarPhysics.loadCandies(candies);
+    } catch (e) {
+      console.warn('Candy Jar 2D motoru başlatılamadı:', e);
+    }
+  }
+}
+
+function showTogetherCelebration(msg) {
+  const modal = $('#togetherModal');
+  if (!modal) return;
+  const sub = $('#togetherSubText');
+  if (sub && msg) sub.textContent = msg;
+  modal.classList.remove('hidden');
+  triggerLoveRain(60);
+}
+
+function openDoodleModal() {
+  const modal = $('#doodleModal');
+  if (!modal) return;
+  modal.classList.remove('hidden');
+
+  const canvas = $('#doodleDrawCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  ctx.lineWidth = 4;
+  ctx.strokeStyle = currentDoodleColor;
+
+  // Tuvali temizle ve beyaz arka plan ver
+  ctx.fillStyle = '#FFFFFF';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  doodleStrokes = [];
+
+  const getPos = (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    const clientX = e.clientX !== undefined ? e.clientX : (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
+    const clientY = e.clientY !== undefined ? e.clientY : (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
+    return {
+      x: (clientX - rect.left) * scaleX,
+      y: (clientY - rect.top) * scaleY
+    };
+  };
+
+  const startDraw = (e) => {
+    e.preventDefault();
+    isDrawingDoodle = true;
+    const p = getPos(e);
+    currentDoodleStroke = { color: currentDoodleColor, width: 4, points: [p] };
+    ctx.beginPath();
+    ctx.moveTo(p.x, p.y);
+  };
+
+  const drawMove = (e) => {
+    if (!isDrawingDoodle) return;
+    e.preventDefault();
+    const p = getPos(e);
+    currentDoodleStroke.points.push(p);
+    ctx.strokeStyle = currentDoodleColor;
+    ctx.lineWidth = 4;
+    ctx.lineTo(p.x, p.y);
+    ctx.stroke();
+  };
+
+  const endDraw = (e) => {
+    if (!isDrawingDoodle) return;
+    isDrawingDoodle = false;
+    if (currentDoodleStroke.points && currentDoodleStroke.points.length) {
+      doodleStrokes.push(currentDoodleStroke);
+    }
+    currentDoodleStroke = [];
+  };
+
+  canvas.onpointerdown = startDraw;
+  canvas.onpointermove = drawMove;
+  canvas.onpointerup = endDraw;
+  canvas.onpointerleave = endDraw;
+}
+
+function closeDoodleModal() {
+  const modal = $('#doodleModal');
+  if (modal) modal.classList.add('hidden');
+}
+
 function bindHomeEvents() {
   if ($('#btnMissYouHeart')) $('#btnMissYouHeart').onclick = () => sendMissAction();
   if ($('#missYouHeart3DBox')) $('#missYouHeart3DBox').onclick = () => sendMissAction();
   if ($('#btnSendMissYou')) $('#btnSendMissYou').onclick = () => sendMissAction();
   if ($('#btnOpenMissYouHub')) $('#btnOpenMissYouHub').onclick = openMissYouHub;
 
-  // Candy Jar Drop with audio
+  // Candy Jar Drop with 2D Canvas Physics
   $$('.jar-mood-btn').forEach(btn => {
     btn.onclick = async () => {
       const { dropMood, emoji, color } = btn.dataset;
       if (window.PawlyAudio) window.PawlyAudio.soundBubble();
       spawnHeart(null, null, emoji);
+
+      // 2D Fiziksel Şeker Düşürme
+      if (candyJarPhysics) {
+        candyJarPhysics.dropCandy({ mood: dropMood, emoji, color });
+      }
+
       try {
-        await api('/api/widgets/jar/drop', {
+        const res = await api('/api/widgets/jar/drop', {
           method: 'POST',
           body: JSON.stringify({ mood: dropMood, emoji, color })
         });
         toast('Kavanoza şeker attın! 🍬');
-        loadHomeBento();
+        const badge = $('#jarCountBadge');
+        if (badge && res.candies) badge.textContent = `${res.candies.length} Şeker`;
       } catch (e) { toast(e.message); }
     };
   });
 
-  // Location chips
+  // Location chips & Together Mode
   $$('.dist-chip').forEach(btn => {
     btn.onclick = async () => {
       if (window.PawlyAudio) window.PawlyAudio.soundPop(520);
       if (btn.dataset.together) {
+        if (window.PawlyAudio) window.PawlyAudio.soundFanfare();
+        showTogetherCelebration('✨ Mesafe 0 km! Birlikteyiz moduna geçildi! Sarılma zamanı! 💕');
         await api('/api/widgets/distance', {
           method: 'POST',
           body: JSON.stringify({ together: true, distanceKm: 0 })
@@ -751,6 +939,65 @@ function bindHomeEvents() {
       loadHomeBento();
     };
   });
+
+  // Live Doodle Butonları
+  if ($('#btnOpenDoodle')) $('#btnOpenDoodle').onclick = openDoodleModal;
+  if ($('#btnDrawDoodle')) $('#btnDrawDoodle').onclick = openDoodleModal;
+  if ($('#btnCloseDoodle')) $('#btnCloseDoodle').onclick = closeDoodleModal;
+  if ($('#btnCloseTogether')) $('#btnCloseTogether').onclick = () => $('#togetherModal')?.classList.add('hidden');
+
+  // Doodle Palet Seçimi
+  $$('.doodle-color-btn').forEach(btn => {
+    btn.onclick = () => {
+      $$('.doodle-color-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentDoodleColor = btn.dataset.color || '#FF6584';
+      const canvas = $('#doodleDrawCanvas');
+      if (canvas) {
+        const ctx = canvas.getContext('2d');
+        ctx.strokeStyle = currentDoodleColor;
+      }
+    };
+  });
+
+  // Doodle Temizle
+  if ($('#btnDoodleClear')) {
+    $('#btnDoodleClear').onclick = () => {
+      const canvas = $('#doodleDrawCanvas');
+      if (canvas) {
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        doodleStrokes = [];
+      }
+    };
+  }
+
+  // Doodle Gönder
+  if ($('#btnDoodleSend')) {
+    $('#btnDoodleSend').onclick = async () => {
+      const canvas = $('#doodleDrawCanvas');
+      if (!canvas) return;
+      const previewDataUrl = canvas.toDataURL('image/png', 0.85);
+
+      try {
+        if (window.PawlyAudio) window.PawlyAudio.soundFanfare();
+        toast('Aşk karalaman gönderiliyor... 🎨');
+        await api('/api/widgets/doodle', {
+          method: 'POST',
+          body: JSON.stringify({
+            strokes: doodleStrokes,
+            previewDataUrl
+          })
+        });
+        closeDoodleModal();
+        toast('Karalaman partnerine ulaştı! 💕');
+        loadHomeBento();
+      } catch (e) {
+        toast(e.message);
+      }
+    };
+  }
 
   // Status pickers
   $$('.status-pick-item').forEach(btn => {
